@@ -7,7 +7,7 @@
 
 import Foundation
 
-class RISParserInSwift {
+class RISParser {
     private var text = "Hello, World!"
     private var dict = [RISTag: String]()
     private var authors = [String]()

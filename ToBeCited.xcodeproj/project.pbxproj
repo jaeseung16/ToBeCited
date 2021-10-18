@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62040271E06BE005D0FEA /* RISReferenceType.swift */; };
+		90B62044271E06BE005D0FEA /* RISTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62041271E06BE005D0FEA /* RISTag.swift */; };
+		90B62045271E06BE005D0FEA /* RISRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62042271E06BE005D0FEA /* RISRecord.swift */; };
+		90B62047271E06D4005D0FEA /* RISParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62046271E06D4005D0FEA /* RISParser.swift */; };
+		90B62049271E07BE005D0FEA /* AddRISView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62048271E07BE005D0FEA /* AddRISView.swift */; };
+		90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */; };
 		90EDF321271C85BD0097F0E0 /* ToBeCitedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF320271C85BD0097F0E0 /* ToBeCitedApp.swift */; };
 		90EDF323271C85BD0097F0E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF322271C85BD0097F0E0 /* ContentView.swift */; };
 		90EDF325271C85BE0097F0E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90EDF324271C85BE0097F0E0 /* Assets.xcassets */; };
@@ -16,6 +22,7 @@
 		90EDF337271C85BF0097F0E0 /* ToBeCitedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF336271C85BF0097F0E0 /* ToBeCitedTests.swift */; };
 		90EDF341271C85BF0097F0E0 /* ToBeCitedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF340271C85BF0097F0E0 /* ToBeCitedUITests.swift */; };
 		90EDF343271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF342271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift */; };
+		90EDF350271CA3110097F0E0 /* AddArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF34F271CA3110097F0E0 /* AddArticleView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +43,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		90B62040271E06BE005D0FEA /* RISReferenceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RISReferenceType.swift; sourceTree = "<group>"; };
+		90B62041271E06BE005D0FEA /* RISTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RISTag.swift; sourceTree = "<group>"; };
+		90B62042271E06BE005D0FEA /* RISRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RISRecord.swift; sourceTree = "<group>"; };
+		90B62046271E06D4005D0FEA /* RISParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RISParser.swift; sourceTree = "<group>"; };
+		90B62048271E07BE005D0FEA /* AddRISView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRISView.swift; sourceTree = "<group>"; };
+		90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RISFilePickerViewController.swift; sourceTree = "<group>"; };
 		90EDF31D271C85BD0097F0E0 /* ToBeCited.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToBeCited.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90EDF320271C85BD0097F0E0 /* ToBeCitedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedApp.swift; sourceTree = "<group>"; };
 		90EDF322271C85BD0097F0E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -48,6 +61,8 @@
 		90EDF33C271C85BF0097F0E0 /* ToBeCitedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ToBeCitedUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		90EDF340271C85BF0097F0E0 /* ToBeCitedUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedUITests.swift; sourceTree = "<group>"; };
 		90EDF342271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		90EDF34F271CA3110097F0E0 /* AddArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddArticleView.swift; sourceTree = "<group>"; };
+		90EDF352271CFC0B0097F0E0 /* ToBeCited.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ToBeCited.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +90,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		90B6203F271E06AB005D0FEA /* RISParser */ = {
+			isa = PBXGroup;
+			children = (
+				90B62042271E06BE005D0FEA /* RISRecord.swift */,
+				90B62040271E06BE005D0FEA /* RISReferenceType.swift */,
+				90B62041271E06BE005D0FEA /* RISTag.swift */,
+				90B62046271E06D4005D0FEA /* RISParser.swift */,
+			);
+			path = RISParser;
+			sourceTree = "<group>";
+		};
 		90EDF314271C85BD0097F0E0 = {
 			isa = PBXGroup;
 			children = (
@@ -98,6 +124,9 @@
 		90EDF31F271C85BD0097F0E0 /* ToBeCited */ = {
 			isa = PBXGroup;
 			children = (
+				90B6203F271E06AB005D0FEA /* RISParser */,
+				90EDF352271CFC0B0097F0E0 /* ToBeCited.entitlements */,
+				90EDF351271CA3160097F0E0 /* Views */,
 				90EDF320271C85BD0097F0E0 /* ToBeCitedApp.swift */,
 				90EDF322271C85BD0097F0E0 /* ContentView.swift */,
 				90EDF324271C85BE0097F0E0 /* Assets.xcassets */,
@@ -131,6 +160,16 @@
 				90EDF342271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift */,
 			);
 			path = ToBeCitedUITests;
+			sourceTree = "<group>";
+		};
+		90EDF351271CA3160097F0E0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				90EDF34F271CA3110097F0E0 /* AddArticleView.swift */,
+				90B62048271E07BE005D0FEA /* AddRISView.swift */,
+				90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -265,8 +304,15 @@
 			files = (
 				90EDF32A271C85BF0097F0E0 /* Persistence.swift in Sources */,
 				90EDF32D271C85BF0097F0E0 /* ToBeCited.xcdatamodeld in Sources */,
+				90EDF350271CA3110097F0E0 /* AddArticleView.swift in Sources */,
+				90B62047271E06D4005D0FEA /* RISParser.swift in Sources */,
 				90EDF323271C85BD0097F0E0 /* ContentView.swift in Sources */,
+				90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */,
 				90EDF321271C85BD0097F0E0 /* ToBeCitedApp.swift in Sources */,
+				90B62044271E06BE005D0FEA /* RISTag.swift in Sources */,
+				90B62045271E06BE005D0FEA /* RISRecord.swift in Sources */,
+				90B62049271E07BE005D0FEA /* AddRISView.swift in Sources */,
+				90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,6 +470,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ToBeCited/ToBeCited.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ToBeCited/Preview Content\"";
@@ -443,6 +490,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.ToBeCited;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -454,6 +502,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ToBeCited/ToBeCited.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ToBeCited/Preview Content\"";
@@ -473,6 +522,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.ToBeCited;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
