@@ -8,56 +8,49 @@
 import Foundation
 
 class RISParser {
-    private var text = "Hello, World!"
     private var dict = [RISTag: String]()
     private var authors = [String]()
     private var keywords = [String]()
     private var relatedRecords = [String]()
     private var images = [String]()
     
-    public init() {
+    init() {
     }
     
     private let pattern = "^([a-zA-Z|\\d]{2})  - (.+)"
     
-    public func parse(_ risString: String) throws -> [RISRecord] {
+    func parse(_ risString: String) throws -> [RISRecord] {
         let re = try NSRegularExpression(pattern: pattern)
-        
-        let lines = risString.split(separator: "\n")
-
         var records = [RISRecord]()
         
-        for line in lines {
-            let stringToMatch = String(line)
-            
+        risString.enumerateLines { [self] stringToMatch, _ in
             if stringToMatch.starts(with: RISTag.ER.rawValue) {
-                let record = buildRecord(from: dict, authors: authors, keywords: keywords, relatedRecords: relatedRecords, images: images)
+                let record = self.buildRecord()
                 records.append(record)
-                
-                reset()
+                self.reset()
             } else {
-                let matches = re.matches(in: stringToMatch, options: .anchored, range: NSMakeRange(0, line.count))
-                
+                let matches = re.matches(in: stringToMatch, options: .anchored, range: NSMakeRange(0, stringToMatch.count))
                 for match in matches {
                     let tag = (stringToMatch as NSString).substring(with: match.range(at: 1))
                     let value = (stringToMatch as NSString).substring(with: match.range(at: 2))
                     if let risTag = RISTag(rawValue: tag) {
                         switch risTag {
                         case .AU:
-                            authors.append(value)
+                            self.authors.append(value)
                         case .KW:
-                            keywords.append(value)
+                            self.keywords.append(value)
                         case .L3:
-                            relatedRecords.append(value)
+                            self.relatedRecords.append(value)
                         case .L4:
-                            images.append(value)
+                            self.images.append(value)
                         default:
-                            dict[risTag] = value
+                            self.dict[risTag] = value
                         }
                     }
                 }
             }
         }
+        
         return records
     }
     
@@ -69,7 +62,7 @@ class RISParser {
         images.removeAll()
     }
     
-    private func buildRecord(from dict: [RISTag: String], authors: [String], keywords: [String], relatedRecords: [String], images: [String]) -> RISRecord {
+    private func buildRecord() -> RISRecord {
         let record = RISRecord(referenceType: RISReferenceType(rawValue: dict[.TY]!)!,
                                primaryAuthor: dict[.A1],
                                secondaryAuthor: dict[.A2],
@@ -92,15 +85,15 @@ class RISParser {
                                caption: dict[.CA],
                                callNumber: dict[.CN],
                                cp: dict[.CP],
-                               titleOfUnpublishedReference: dict[.CP],
-                               placePublished: dict[.CT],
+                               titleOfUnpublishedReference: dict[.CT],
+                               placePublished: dict[.CY],
                                date: dict[.DA],
                                databaseName: dict[.DB],
                                doi: dict[.DO],
                                databaseProvider: dict[.DP],
                                editor: dict[.ED],
                                endPage: dict[.EP],
-                               edition: dict[.ID],
+                               edition: dict[.ET],
                                referenceID: dict[.ID],
                                issueNumber: dict[.IS],
                                periodicalNameUserAbbreviation: dict[.J1],
