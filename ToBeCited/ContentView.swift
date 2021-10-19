@@ -15,32 +15,55 @@ struct ContentView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Article.created, ascending: false)],
         animation: .default)
     private var articles: FetchedResults<Article>
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true)],
+        animation: .default)
+    private var authors: FetchedResults<Author>
 
     @State private var presentAddArticleView = false
     
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(articles) { article in
-                    NavigationLink(destination: ArticleDetailView(article: article)) {
-                        Text(article.title ?? "")
+        TabView {
+            NavigationView {
+                List {
+                    ForEach(articles) { article in
+                        NavigationLink(destination: ArticleDetailView(article: article)) {
+                            Text(article.title ?? "")
+                        }
+                    }
+                    .onDelete(perform: deleteItems)
+                }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        EditButton()
+                    }
+                    ToolbarItem {
+                        Button(action: {
+                            presentAddArticleView = true
+                        }) {
+                            Label("Add Item", systemImage: "plus")
+                        }
                     }
                 }
-                .onDelete(perform: deleteItems)
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: {
-                        presentAddArticleView = true
-                    }) {
-                        Label("Add Item", systemImage: "plus")
+            .tabItem {
+                Text("Articles")
+            }
+            
+            NavigationView {
+                List {
+                    ForEach(authors) { author in
+                        NavigationLink(destination: AuthorDetailView(author: author)) {
+                            Text(author.lastName ?? "")
+                        }
                     }
+                    //.onDelete(perform: deleteItems)
                 }
             }
-            Text("Select an item")
+            .tabItem {
+                Text("Authors")
+            }
         }
         .sheet(isPresented: $presentAddArticleView) {
             AddRISView()

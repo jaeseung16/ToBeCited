@@ -51,5 +51,7 @@ struct PersistenceController {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
+        
+        print("persistentStores = \(container.persistentStoreCoordinator.persistentStores)")
     }
 }
