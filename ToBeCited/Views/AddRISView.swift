@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AddRISView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) private var presentationMode
     
     @State private var presentRISFilePicker = false
@@ -26,6 +27,23 @@ struct AddRISView: View {
         .padding()
         .sheet(isPresented: $presentRISFilePicker) {
             RISFilePickerViewController(risString: $risString)
+        }
+        .onChange(of: presentRISFilePicker) { _ in
+            if !presentRISFilePicker {
+                let parser = RISParser()
+                let records = try? parser.parse(risString)
+                
+                if records != nil {
+                    print("records.count = \(records!.count)")
+                    
+                    for record in records! {
+                        let writer = RISWriter(record: record)
+                        print(writer.toString())
+                        
+                        self.risRecords.append(record)
+                    }
+                }
+            }
         }
     }
     
@@ -53,12 +71,80 @@ struct AddRISView: View {
                 Spacer()
                 
                 Button(action: {
+                    addNewArticle()
                     presentationMode.wrappedValue.dismiss()
                 }, label: {
-                    Text("Done")
+                    Text("Save")
                 })
             }
         }
+    }
+    
+    private func addNewArticle() {
+        let created = Date()
+        
+        for record in risRecords {
+            let newArticle = Article(context: viewContext)
+            newArticle.created = created
+            newArticle.title = record.primaryTitle ?? record.title
+            newArticle.journal = record.periodicalNameFullFormat
+            newArticle.abstract = record.abstract
+            newArticle.doi = record.doi
+            newArticle.volume = record.volumeNumber
+            newArticle.issueNumber = record.issueNumber
+            newArticle.page = record.startPage
+            
+            if let primaryAuthor = record.primaryAuthor {
+                createAuthorEntity(primaryAuthor, article: newArticle)
+            }
+            
+            if let secondaryAuthor = record.secondaryAuthor {
+                createAuthorEntity(secondaryAuthor, article: newArticle)
+            }
+            
+            if let tertiaryAuthor = record.tertiaryAuthor {
+                createAuthorEntity(tertiaryAuthor, article: newArticle)
+            }
+            if let subsidiaryAuthor = record.subsidiaryAuthor {
+                createAuthorEntity(subsidiaryAuthor, article: newArticle)
+            }
+            
+            for author in record.authors {
+                createAuthorEntity(author, article: newArticle)
+            }
+        }
+        
+        do {
+            try viewContext.save()
+        } catch {
+            // Replace this implementation with code to handle the error appropriately.
+            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
+        
+        risRecords.removeAll()
+    }
+    
+    private func createAuthorEntity(_ authorName: String, article: Article) -> Void {
+        let authorEntity = Author(context: viewContext)
+        authorEntity.created = Date()
+        authorEntity.uuid = UUID()
+        
+        let name = authorName.split(separator: ",")
+        
+        authorEntity.lastName = String(name[0])
+        
+        if name.count > 1 {
+            let firstMiddleName = String(name[1]).split(separator: " ")
+            
+            authorEntity.firstName = String(firstMiddleName[0])
+            if firstMiddleName.count > 1 {
+                authorEntity.middleName = String(firstMiddleName[1])
+            }
+        }
+        
+        authorEntity.addToArticles(article)
     }
 }
 
