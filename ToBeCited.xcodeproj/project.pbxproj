@@ -13,6 +13,7 @@
 		90B62047271E06D4005D0FEA /* RISParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62046271E06D4005D0FEA /* RISParser.swift */; };
 		90B62049271E07BE005D0FEA /* AddRISView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62048271E07BE005D0FEA /* AddRISView.swift */; };
 		90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */; };
+		90B6204D271E2C96005D0FEA /* RISWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B6204C271E2C96005D0FEA /* RISWriter.swift */; };
 		90EDF321271C85BD0097F0E0 /* ToBeCitedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF320271C85BD0097F0E0 /* ToBeCitedApp.swift */; };
 		90EDF323271C85BD0097F0E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF322271C85BD0097F0E0 /* ContentView.swift */; };
 		90EDF325271C85BE0097F0E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90EDF324271C85BE0097F0E0 /* Assets.xcassets */; };
@@ -23,6 +24,7 @@
 		90EDF341271C85BF0097F0E0 /* ToBeCitedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF340271C85BF0097F0E0 /* ToBeCitedUITests.swift */; };
 		90EDF343271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF342271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift */; };
 		90EDF350271CA3110097F0E0 /* AddArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF34F271CA3110097F0E0 /* AddArticleView.swift */; };
+		90FE9771271F68A1002A75C3 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,7 @@
 		90B62046271E06D4005D0FEA /* RISParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RISParser.swift; sourceTree = "<group>"; };
 		90B62048271E07BE005D0FEA /* AddRISView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRISView.swift; sourceTree = "<group>"; };
 		90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RISFilePickerViewController.swift; sourceTree = "<group>"; };
+		90B6204C271E2C96005D0FEA /* RISWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RISWriter.swift; sourceTree = "<group>"; };
 		90EDF31D271C85BD0097F0E0 /* ToBeCited.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToBeCited.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90EDF320271C85BD0097F0E0 /* ToBeCitedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedApp.swift; sourceTree = "<group>"; };
 		90EDF322271C85BD0097F0E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -63,6 +66,7 @@
 		90EDF342271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		90EDF34F271CA3110097F0E0 /* AddArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddArticleView.swift; sourceTree = "<group>"; };
 		90EDF352271CFC0B0097F0E0 /* ToBeCited.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ToBeCited.entitlements; sourceTree = "<group>"; };
+		90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +101,7 @@
 				90B62040271E06BE005D0FEA /* RISReferenceType.swift */,
 				90B62041271E06BE005D0FEA /* RISTag.swift */,
 				90B62046271E06D4005D0FEA /* RISParser.swift */,
+				90B6204C271E2C96005D0FEA /* RISWriter.swift */,
 			);
 			path = RISParser;
 			sourceTree = "<group>";
@@ -167,6 +172,7 @@
 			children = (
 				90EDF34F271CA3110097F0E0 /* AddArticleView.swift */,
 				90B62048271E07BE005D0FEA /* AddRISView.swift */,
+				90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */,
 				90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */,
 			);
 			path = Views;
@@ -303,6 +309,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				90EDF32A271C85BF0097F0E0 /* Persistence.swift in Sources */,
+				90FE9771271F68A1002A75C3 /* ArticleDetailView.swift in Sources */,
 				90EDF32D271C85BF0097F0E0 /* ToBeCited.xcdatamodeld in Sources */,
 				90EDF350271CA3110097F0E0 /* AddArticleView.swift in Sources */,
 				90B62047271E06D4005D0FEA /* RISParser.swift in Sources */,
@@ -311,6 +318,7 @@
 				90EDF321271C85BD0097F0E0 /* ToBeCitedApp.swift in Sources */,
 				90B62044271E06BE005D0FEA /* RISTag.swift in Sources */,
 				90B62045271E06BE005D0FEA /* RISRecord.swift in Sources */,
+				90B6204D271E2C96005D0FEA /* RISWriter.swift in Sources */,
 				90B62049271E07BE005D0FEA /* AddRISView.swift in Sources */,
 				90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */,
 			);
