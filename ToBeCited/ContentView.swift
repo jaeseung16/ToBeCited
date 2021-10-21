@@ -55,7 +55,11 @@ struct ContentView: View {
                 List {
                     ForEach(authors) { author in
                         NavigationLink(destination: AuthorDetailView(author: author)) {
-                            Text(author.lastName ?? "")
+                            HStack {
+                                Text(author.lastName ?? "")
+                                Text(author.firstName ?? "")
+                                Text(author.middleName ?? "")
+                            }
                         }
                     }
                     //.onDelete(perform: deleteItems)

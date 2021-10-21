@@ -13,6 +13,16 @@ struct AuthorDetailView: View {
     
     var author: Author
     
+    private var articles: [Article] {
+        var articles = [Article]()
+        author.articles?.forEach { article in
+            if let article = article as? Article {
+                articles.append(article)
+            }
+        }
+        return articles
+    }
+    
     var body: some View {
         VStack {
             Text("LAST NAME")
@@ -26,6 +36,14 @@ struct AuthorDetailView: View {
             
             Text("NUMBER OF ARTICLES")
             Text("\(author.articles?.count ?? 0)")
+            
+            List {
+                ForEach(articles) { article in
+                    Text(article.title ?? "")
+                }
+            }
         }
+        .frame(maxHeight: .infinity, alignment: .top)
+        .padding()
     }
 }
