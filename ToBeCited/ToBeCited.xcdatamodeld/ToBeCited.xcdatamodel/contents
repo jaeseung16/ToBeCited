@@ -7,6 +7,7 @@
         <attribute name="issueNumber" optional="YES" attributeType="String"/>
         <attribute name="journal" optional="YES" attributeType="String"/>
         <attribute name="page" optional="YES" attributeType="String"/>
+        <attribute name="pdf" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
         <attribute name="published" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -37,7 +38,7 @@
         <relationship name="article" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Article" inverseName="ris" inverseEntity="Article"/>
     </entity>
     <elements>
-        <element name="Article" positionX="-36" positionY="18" width="128" height="209"/>
+        <element name="Article" positionX="-36" positionY="18" width="128" height="224"/>
         <element name="Author" positionX="-54" positionY="45" width="128" height="134"/>
         <element name="Citation" positionX="-18" positionY="117" width="128" height="74"/>
         <element name="Item" positionX="-63" positionY="-18" width="128" height="44"/>
