@@ -26,8 +26,8 @@ struct AuthorDetailView: View {
     }
     
     private var authors: [Author] {
-        if let lastName = author.lastName {
-            let predicate = NSPredicate(format: "lastName == %@", argumentArray: [lastName])
+        if let lastName = author.lastName, let firstLetterOfFirstName = author.firstName?.first {
+            let predicate = NSPredicate(format: "(lastName == %@) AND ((firstName beginswith %@) OR (firstName beginswith %@))", argumentArray: [lastName, firstLetterOfFirstName.lowercased(), firstLetterOfFirstName.uppercased()])
             let sortDesciptor = NSSortDescriptor(key: "firstName", ascending: true)
             
             let fetchRequest: NSFetchRequest<Author> = Author.fetchRequest()

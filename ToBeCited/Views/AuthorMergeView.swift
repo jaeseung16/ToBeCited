@@ -60,19 +60,17 @@ struct AuthorMergeView: View {
             } label: {
                 Text("Perform merge")
             }
+            .disabled(selected.count < 2)
 
         }
     }
     
     private func name(author: Author) -> some View {
-        VStack {
-            Text("LAST NAME")
+        HStack {
             Text(author.lastName ?? "")
-            
-            Text("FIRST NAME")
+            Spacer()
             Text(author.firstName ?? "")
-            
-            Text("MIDDLE NAME")
+            Spacer()
             Text(author.middleName ?? "")
         }
     }
