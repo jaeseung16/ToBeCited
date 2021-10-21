@@ -37,9 +37,6 @@ struct AddRISView: View {
                     print("records.count = \(records!.count)")
                     
                     for record in records! {
-                        let writer = RISWriter(record: record)
-                        print(writer.toString())
-                        
                         self.risRecords.append(record)
                     }
                 }
@@ -112,6 +109,13 @@ struct AddRISView: View {
             for author in record.authors {
                 createAuthorEntity(author, article: newArticle)
             }
+            
+            let writer = RISWriter(record: record)
+            let ris = RIS(context: viewContext)
+            ris.uuid = UUID()
+            ris.content = writer.toString()
+            ris.article = newArticle
+            
         }
         
         do {
