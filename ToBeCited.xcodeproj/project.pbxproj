@@ -11,6 +11,7 @@
 		9009B6732720B31A0023C316 /* PDFKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9009B6722720B31A0023C316 /* PDFKitView.swift */; };
 		9009B6752720B8220023C316 /* AddAbstractView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9009B6742720B8220023C316 /* AddAbstractView.swift */; };
 		9009B6772720CF080023C316 /* ShareActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9009B6762720CF080023C316 /* ShareActivityView.swift */; };
+		9009B6792721FB640023C316 /* AuthorMergeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9009B6782721FB640023C316 /* AuthorMergeView.swift */; };
 		90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62040271E06BE005D0FEA /* RISReferenceType.swift */; };
 		90B62044271E06BE005D0FEA /* RISTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62041271E06BE005D0FEA /* RISTag.swift */; };
 		90B62045271E06BE005D0FEA /* RISRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62042271E06BE005D0FEA /* RISRecord.swift */; };
@@ -54,6 +55,7 @@
 		9009B6722720B31A0023C316 /* PDFKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFKitView.swift; sourceTree = "<group>"; };
 		9009B6742720B8220023C316 /* AddAbstractView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAbstractView.swift; sourceTree = "<group>"; };
 		9009B6762720CF080023C316 /* ShareActivityView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareActivityView.swift; sourceTree = "<group>"; };
+		9009B6782721FB640023C316 /* AuthorMergeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorMergeView.swift; sourceTree = "<group>"; };
 		90B62040271E06BE005D0FEA /* RISReferenceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RISReferenceType.swift; sourceTree = "<group>"; };
 		90B62041271E06BE005D0FEA /* RISTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RISTag.swift; sourceTree = "<group>"; };
 		90B62042271E06BE005D0FEA /* RISRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RISRecord.swift; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 				9009B6702720B19F0023C316 /* PDFFilePickerViewController.swift */,
 				9009B6722720B31A0023C316 /* PDFKitView.swift */,
 				9009B6762720CF080023C316 /* ShareActivityView.swift */,
+				9009B6782721FB640023C316 /* AuthorMergeView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -341,6 +344,7 @@
 				90B62049271E07BE005D0FEA /* AddRISView.swift in Sources */,
 				90FE9773271F7E62002A75C3 /* AuthorDetailView.swift in Sources */,
 				90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */,
+				9009B6792721FB640023C316 /* AuthorMergeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
