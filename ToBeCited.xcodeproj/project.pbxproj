@@ -118,6 +118,29 @@
 			path = RISParser;
 			sourceTree = "<group>";
 		};
+		90D89A602724C6280079EBD2 /* Article */ = {
+			isa = PBXGroup;
+			children = (
+				90EDF34F271CA3110097F0E0 /* AddArticleView.swift */,
+				90B62048271E07BE005D0FEA /* AddRISView.swift */,
+				9009B6742720B8220023C316 /* AddAbstractView.swift */,
+				90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */,
+				90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */,
+				9009B6702720B19F0023C316 /* PDFFilePickerViewController.swift */,
+				9009B6722720B31A0023C316 /* PDFKitView.swift */,
+			);
+			path = Article;
+			sourceTree = "<group>";
+		};
+		90D89A612724C6420079EBD2 /* Author */ = {
+			isa = PBXGroup;
+			children = (
+				90FE9772271F7E62002A75C3 /* AuthorDetailView.swift */,
+				9009B6782721FB640023C316 /* AuthorMergeView.swift */,
+			);
+			path = Author;
+			sourceTree = "<group>";
+		};
 		90EDF314271C85BD0097F0E0 = {
 			isa = PBXGroup;
 			children = (
@@ -182,16 +205,9 @@
 		90EDF351271CA3160097F0E0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				9009B6742720B8220023C316 /* AddAbstractView.swift */,
-				90EDF34F271CA3110097F0E0 /* AddArticleView.swift */,
-				90B62048271E07BE005D0FEA /* AddRISView.swift */,
-				90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */,
-				90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */,
-				90FE9772271F7E62002A75C3 /* AuthorDetailView.swift */,
-				9009B6702720B19F0023C316 /* PDFFilePickerViewController.swift */,
-				9009B6722720B31A0023C316 /* PDFKitView.swift */,
+				90D89A612724C6420079EBD2 /* Author */,
+				90D89A602724C6280079EBD2 /* Article */,
 				9009B6762720CF080023C316 /* ShareActivityView.swift */,
-				9009B6782721FB640023C316 /* AuthorMergeView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
