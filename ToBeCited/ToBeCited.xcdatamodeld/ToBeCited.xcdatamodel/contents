@@ -13,6 +13,7 @@
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="volume" optional="YES" attributeType="String"/>
         <relationship name="authors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Author" inverseName="articles" inverseEntity="Author"/>
+        <relationship name="collections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Collection" inverseName="articles" inverseEntity="Collection"/>
         <relationship name="ris" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RIS" inverseName="article" inverseEntity="RIS"/>
     </entity>
     <entity name="Author" representedClassName="Author" syncable="YES" codeGenerationType="class">
@@ -21,16 +22,28 @@
         <attribute name="lastName" optional="YES" attributeType="String"/>
         <attribute name="middleName" optional="YES" attributeType="String"/>
         <attribute name="nameSuffix" optional="YES" attributeType="String"/>
+        <attribute name="orcid" optional="YES" attributeType="String"/>
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="articles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Article" inverseName="authors" inverseEntity="Article"/>
+        <relationship name="contacts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AuthorContact" inverseName="author" inverseEntity="AuthorContact"/>
+    </entity>
+    <entity name="AuthorContact" representedClassName="AuthorContact" syncable="YES" codeGenerationType="class">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="institution" optional="YES" attributeType="String"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="author" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Author" inverseName="contacts" inverseEntity="Author"/>
     </entity>
     <entity name="Citation" representedClassName="Citation" syncable="YES" codeGenerationType="class">
         <attribute name="cited" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="citing" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
-    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
-        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    <entity name="Collection" representedClassName="Collection" syncable="YES" codeGenerationType="class">
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastupd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="articles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Article" inverseName="collections" inverseEntity="Article"/>
     </entity>
     <entity name="RIS" representedClassName="RIS" syncable="YES" codeGenerationType="class">
         <attribute name="content" optional="YES" attributeType="String"/>
@@ -38,10 +51,11 @@
         <relationship name="article" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Article" inverseName="ris" inverseEntity="Article"/>
     </entity>
     <elements>
-        <element name="Article" positionX="-36" positionY="18" width="128" height="224"/>
-        <element name="Author" positionX="-54" positionY="45" width="128" height="134"/>
+        <element name="Article" positionX="-36" positionY="18" width="128" height="239"/>
+        <element name="Author" positionX="-54" positionY="45" width="128" height="164"/>
         <element name="Citation" positionX="-18" positionY="117" width="128" height="74"/>
-        <element name="Item" positionX="-63" positionY="-18" width="128" height="44"/>
         <element name="RIS" positionX="-36" positionY="90" width="128" height="74"/>
+        <element name="AuthorContact" positionX="-36" positionY="108" width="128" height="104"/>
+        <element name="Collection" positionX="-27" positionY="135" width="128" height="89"/>
     </elements>
 </model>
