@@ -91,6 +91,9 @@ struct AddRISView: View {
             newArticle.issueNumber = record.issueNumber
             newArticle.page = record.startPage
             
+            // Need to parse DA or PY, Y1
+            //newArticle.published = Date(from: <#T##Decoder#>record.date
+            
             if let primaryAuthor = record.primaryAuthor {
                 createAuthorEntity(primaryAuthor, article: newArticle)
             }

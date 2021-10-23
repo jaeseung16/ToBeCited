@@ -12,7 +12,7 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Article.created, ascending: false)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false)],
         animation: .default)
     private var articles: FetchedResults<Article>
     
@@ -29,7 +29,17 @@ struct ContentView: View {
                 List {
                     ForEach(articles) { article in
                         NavigationLink(destination: ArticleDetailView(article: article)) {
-                            Text(article.title ?? "")
+                            VStack {
+                                HStack {
+                                    Text(article.title ?? "")
+                                    Spacer()
+                                }
+                                
+                                HStack {
+                                    Spacer()
+                                    Text(article.published ?? Date(), style: .date)
+                                }
+                            }
                         }
                     }
                     .onDelete(perform: deleteItems)
