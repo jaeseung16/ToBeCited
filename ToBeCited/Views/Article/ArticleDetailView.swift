@@ -16,7 +16,7 @@ struct ArticleDetailView: View {
     @State private var presentAddAbstractView = false
     @State private var sharePDF = false
     @State private var pdfData = Data()
-    @State private var abstract = ""
+    @State private var abstract = "Abstract is not available"
     @State private var pdfURL: URL?
     
     var article: Article
@@ -48,61 +48,45 @@ struct ArticleDetailView: View {
     }
     
     var body: some View {
-        VStack {
-            header()
-            
-            Divider()
-            
-            Text(article.title ?? "title")
-            
-            Text(article.journal ?? "journal")
-            
-            if abstractExists {
-                Text(article.abstract!)
-            } else {
-                Text(abstract)
-            }
-            
-            if article.doi != nil, let url = URL(string: "https://dx.doi.org/\(article.doi!)") {
-                Link(article.doi!, destination: url)
-            }
-            
-            List {
-                ForEach(authors, id: \.uuid) { author in
-                    HStack {
-                        Text(author.lastName ?? "last name")
-                        Spacer()
-                        Text(author.firstName ?? "first name")
-                        Spacer()
-                        Text(author.middleName ?? "middle name")
-                    }
+        ScrollView {
+            VStack {
+                header()
+                
+                Divider()
+                
+                title()
+                
+                citation()
+                
+                authorList()
+                
+                Divider()
+                
+                abstractView()
+                
+                Divider()
+                
+                if article.pdf != nil {
+                    PDFKitView(pdfData: article.pdf!)
+                        .scaledToFit()
+                    /*
+                     Button {
+                     presentPdfView = true
+                     } label: {
+                     
+                     }
+                     */
+                } else if !pdfData.isEmpty {
+                    PDFKitView(pdfData: pdfData)
+                        .scaledToFit()
                 }
+                
+                //ScrollView {
+                    Text(article.ris?.content ?? "")
+                //}
             }
-            
-            Divider()
-            
-            if article.pdf != nil {
-                PDFKitView(pdfData: article.pdf!)
-                    .scaledToFit()
-                /*
-                 Button {
-                 presentPdfView = true
-                 } label: {
-                 
-                 }
-                 */
-            } else if !pdfData.isEmpty {
-                PDFKitView(pdfData: pdfData)
-                    .scaledToFit()
-            }
-            
-            /*
-             ScrollView {
-             Text(article.ris?.content ?? "")
-             }
-             */
-            
         }
+        .navigationTitle(article.title ?? "Title is not available")
         .padding()
         .sheet(isPresented: $presentAddPdfView) {
             PDFFilePickerViewController(pdfData: $pdfData)
@@ -160,7 +144,7 @@ struct ArticleDetailView: View {
                         pdfURL = fileURL
                     }
                 }
-                print("pdfURL = \(pdfURL)")
+                print("pdfURL = \(String(describing: pdfURL))")
                 sharePDF = true
             } label: {
                 Text("Share pdf")
@@ -199,6 +183,104 @@ struct ArticleDetailView: View {
         }
         
         self.abstract = ""
+    }
+    
+    private func title() -> some View {
+        VStack {
+            HStack {
+                Text("TITLE")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                Spacer()
+            }
+            
+            Text(article.title ?? "Title is not available")
+                .font(.title)
+                .multilineTextAlignment(.center)
+                .padding()
+        }
+    }
+    
+    private func citation() -> some View {
+        VStack {
+            Text(journalString)
+            
+            if article.published != nil {
+                Text(publicationDate)
+            }
+            
+            if article.doi != nil, let url = URL(string: "https://dx.doi.org/\(article.doi!)") {
+                Link(article.doi!, destination: url)
+                    .foregroundColor(.blue)
+            }
+        }
+        .padding()
+    }
+
+    private var journalString: String {
+        guard let journalTitle = article.journal else {
+            return "Journal title is not available"
+        }
+        
+        return journalTitle + " " + (article.volume ?? "") + ", " + (article.page ?? "")
+    }
+    
+    private var publicationDate: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .none
+        return dateFormatter.string(from: article.published!)
+    }
+    
+    private func authorList() -> some View {
+        VStack {
+            HStack {
+                Text("AUTHORS (unordered)")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            
+            ForEach(authors, id: \.uuid) { author in
+                HStack {
+                    Spacer()
+                    Text(name(of: author))
+                    Spacer()
+                }
+            }
+        }
+    }
+    
+    private func name(of author: Author) -> String {
+        guard let lastName = author.lastName, let firstName = author.firstName else {
+            return "The name of an author is not available"
+        }
+        
+        let middleName = author.middleName == nil ? " " : " \(author.middleName!) "
+        
+        return firstName + middleName + lastName
+    }
+    
+    private func abstractView() -> some View {
+        VStack {
+            HStack {
+                Text("ABSTRACT")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            
+            if abstractExists {
+                Text(article.abstract!)
+                    .padding()
+            } else {
+                Text(abstract)
+                    .foregroundColor(.secondary)
+                    .padding()
+            }
+        }
     }
 }
 
