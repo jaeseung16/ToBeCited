@@ -12,8 +12,10 @@ struct AuthorDetailView: View {
     @Environment(\.presentationMode) private var presentationMode
     
     var author: Author
+    var contacts: [AuthorContact]
     
     @State private var presentAuthorMergeView = false
+    @State private var presentAddContactView = false
     @State private var editLastName = false
     @State private var editFirstName = false
     @State private var editMiddleName = false
@@ -65,6 +67,9 @@ struct AuthorDetailView: View {
             
             name(author: author)
             
+            contactView()
+                .padding()
+            
             Divider()
             
             HStack {
@@ -81,12 +86,15 @@ struct AuthorDetailView: View {
                 }
             }
         }
+        .navigationTitle(name(of: author))
         .frame(maxHeight: .infinity, alignment: .top)
         .padding()
         .sheet(isPresented: $presentAuthorMergeView) {
             AuthorMergeView(authors: authors)
         }
-
+        .sheet(isPresented: $presentAddContactView) {
+            AddContactView(author: author)
+        }
     }
     
     private func header() -> some View {
@@ -94,11 +102,16 @@ struct AuthorDetailView: View {
             Spacer()
             
             Button {
+                presentAddContactView = true
+            } label: {
+                Label("ADD CONTACT", systemImage: "plus")
+            }
+            
+            Button {
                 presentAuthorMergeView = true
             } label: {
                 Label("MERGE AUTHORS", systemImage: "arrow.triangle.merge")
             }
-
         }
     }
     
@@ -165,7 +178,7 @@ struct AuthorDetailView: View {
         .sheet(isPresented: $editLastName) {
             if !cancelled {
                 author.lastName = lastName
-                save()
+                saveViewContext()
             }
         } content: {
             UpdateTextView(title: "Edit the author's last name", textToUpdate: $lastName, cancelled: $cancelled)
@@ -173,7 +186,7 @@ struct AuthorDetailView: View {
         .sheet(isPresented: $editFirstName) {
             if !cancelled {
                 author.firstName = firstName
-                save()
+                saveViewContext()
             }
         } content: {
             UpdateTextView(title: "Edit the author's first name", textToUpdate: $firstName, cancelled: $cancelled)
@@ -181,15 +194,14 @@ struct AuthorDetailView: View {
         .sheet(isPresented: $editMiddleName) {
             if !cancelled {
                 author.middleName = middleName
-                save()
+                saveViewContext()
             }
         } content: {
             UpdateTextView(title: "Edit the author's middle name", textToUpdate: $middleName, cancelled: $cancelled)
         }
-
     }
     
-    func save() -> Void {
+    func saveViewContext() -> Void {
         do {
             try viewContext.save()
         } catch {
@@ -200,4 +212,57 @@ struct AuthorDetailView: View {
         }
     }
     
+    private func contactView() -> some View {
+        ForEach(contacts) { contact in
+            VStack {
+                HStack {
+                    Text("CONTACT INFORMATION")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                    
+                    Button {
+                        delete(contact)
+                    } label: {
+                        Label("Delete", systemImage: "minus.circle")
+                    }
+                    
+                }
+                
+                Text(contact.email ?? "")
+                Text(contact.institution ?? "")
+                Text(contact.address ?? "")
+                Text("Added on \(dateFormatter.string(from: contact.created ?? Date()))")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+    
+    private func name(of author: Author) -> String {
+        guard let lastName = author.lastName, let firstName = author.firstName else {
+            return "The name of an author is not available"
+        }
+        
+        let middleName = author.middleName == nil ? " " : " \(author.middleName!) "
+        
+        return firstName + middleName + lastName
+    }
+    
+    private var dateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .none
+        return dateFormatter
+    }
+    
+    private func delete(_ contact: AuthorContact) {
+        withAnimation {
+            author.removeFromContacts(contact)
+            viewContext.delete(contact)
+            
+            saveViewContext()
+        }
+    }
 }

@@ -29,6 +29,7 @@
     </entity>
     <entity name="AuthorContact" representedClassName="AuthorContact" syncable="YES" codeGenerationType="class">
         <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="email" optional="YES" attributeType="String"/>
         <attribute name="institution" optional="YES" attributeType="String"/>
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -53,9 +54,9 @@
     <elements>
         <element name="Article" positionX="-36" positionY="18" width="128" height="239"/>
         <element name="Author" positionX="-54" positionY="45" width="128" height="164"/>
+        <element name="AuthorContact" positionX="-36" positionY="108" width="128" height="119"/>
         <element name="Citation" positionX="-18" positionY="117" width="128" height="74"/>
-        <element name="RIS" positionX="-36" positionY="90" width="128" height="74"/>
-        <element name="AuthorContact" positionX="-36" positionY="108" width="128" height="104"/>
         <element name="Collection" positionX="-27" positionY="135" width="128" height="89"/>
+        <element name="RIS" positionX="-36" positionY="90" width="128" height="74"/>
     </elements>
 </model>

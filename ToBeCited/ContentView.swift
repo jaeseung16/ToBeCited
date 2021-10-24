@@ -23,6 +23,25 @@ struct ContentView: View {
 
     @State private var presentAddArticleView = false
     
+    private func getContacts(of author: Author) -> [AuthorContact] {
+        let predicate = NSPredicate(format: "author == %@", argumentArray: [author])
+        let sortDescriptor = NSSortDescriptor(keyPath: \AuthorContact.created, ascending: false)
+        
+        let fetchRequest = NSFetchRequest<AuthorContact>(entityName: "AuthorContact")
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.predicate = predicate
+        
+        let fc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        do {
+            try fc.performFetch()
+        } catch {
+            NSLog("Failed fetch contacts with author = \(author)")
+        }
+        
+        return fc.fetchedObjects ?? [AuthorContact]()
+    }
+    
     var body: some View {
         TabView {
             NavigationView {
@@ -46,9 +65,6 @@ struct ContentView: View {
                 }
                 .navigationTitle("Articles")
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        EditButton()
-                    }
                     ToolbarItem {
                         Button(action: {
                             presentAddArticleView = true
@@ -65,7 +81,7 @@ struct ContentView: View {
             NavigationView {
                 List {
                     ForEach(authors) { author in
-                        NavigationLink(destination: AuthorDetailView(author: author)) {
+                        NavigationLink(destination: AuthorDetailView(author: author, contacts: getContacts(of: author))) {
                             HStack {
                                 Text(author.lastName ?? "")
                                 Text(author.firstName ?? "")
