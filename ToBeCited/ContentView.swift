@@ -102,7 +102,11 @@ struct ContentView: View {
         withAnimation {
             offsets.map { authors[$0] }
             .forEach { author in
-                viewContext.delete(author)
+                if author.articles == nil || author.articles!.count == 0 {
+                    viewContext.delete(author)
+                } else {
+                    // TODO: show alert
+                }
             }
             
             saveViewContext()
@@ -121,13 +125,6 @@ struct ContentView: View {
     }
 
 }
-
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
