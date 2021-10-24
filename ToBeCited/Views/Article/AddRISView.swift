@@ -94,6 +94,23 @@ struct AddRISView: View {
             // Need to parse DA or PY, Y1
             //newArticle.published = Date(from: <#T##Decoder#>record.date
             
+            if let date = record.date {
+                let splitDate = date.split(separator: "/")
+                if splitDate.count > 2 {
+                    newArticle.published = getDate(from: splitDate)
+                }
+            } else if let pulbicationYear = record.pulbicationYear {
+                let splitPY = pulbicationYear.split(separator: "/")
+                if splitPY.count > 2 {
+                    newArticle.published = getDate(from: splitPY)
+                }
+            } else if let primaryDate = record.primaryDate {
+                let splitPrimaryDate = primaryDate.split(separator: "/")
+                if splitPrimaryDate.count > 2 {
+                    newArticle.published = getDate(from: splitPrimaryDate)
+                }
+            }
+            
             if let primaryAuthor = record.primaryAuthor {
                 createAuthorEntity(primaryAuthor, article: newArticle)
             }
@@ -131,6 +148,14 @@ struct AddRISView: View {
         }
         
         risRecords.removeAll()
+    }
+    
+    private func getDate(from yearMonthDate: [String.SubSequence]) -> Date? {
+        var date: Date? = nil
+        if let year = Int(yearMonthDate[0]), let month = Int(yearMonthDate[1]), let day = Int(yearMonthDate[2]) {
+            date = DateComponents(calendar: Calendar(identifier: .iso8601), year: year, month: month, day: day).date
+        }
+        return date
     }
     
     private func createAuthorEntity(_ authorName: String, article: Article) -> Void {
