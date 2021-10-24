@@ -14,6 +14,15 @@ struct AuthorDetailView: View {
     var author: Author
     
     @State private var presentAuthorMergeView = false
+    @State private var editLastName = false
+    @State private var editFirstName = false
+    @State private var editMiddleName = false
+    
+    @State private var lastName = ""
+    @State private var firstName = ""
+    @State private var middleName = ""
+    
+    @State private var cancelled = false
     
     private var articles: [Article] {
         var articles = [Article]()
@@ -56,8 +65,15 @@ struct AuthorDetailView: View {
             
             name(author: author)
             
-            Text("NUMBER OF ARTICLES")
-            Text("\(author.articles?.count ?? 0)")
+            Divider()
+            
+            HStack {
+                Text("\(author.articles?.count ?? 0) ARTICLES")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
             
             List {
                 ForEach(articles) { article in
@@ -80,7 +96,7 @@ struct AuthorDetailView: View {
             Button {
                 presentAuthorMergeView = true
             } label: {
-                Text("Merge")
+                Label("MERGE AUTHORS", systemImage: "arrow.triangle.merge")
             }
 
         }
@@ -88,16 +104,100 @@ struct AuthorDetailView: View {
     
     private func name(author: Author) -> some View {
         VStack {
-            Text("LAST NAME")
-            Text(author.lastName ?? "")
+            HStack {
+                Text("LAST NAME")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                Text(author.lastName ?? "")
+                
+                Spacer()
+                
+                Button {
+                    lastName = author.lastName ?? ""
+                    editLastName = true
+                } label: {
+                    Label("Edit", systemImage: "pencil.circle")
+                }
+            }
             
-            Text("FIRST NAME")
-            Text(author.firstName ?? "")
+            HStack {
+                Text("FIRST NAME")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                Text(author.firstName ?? "")
+                
+                Spacer()
+                
+                Button {
+                    firstName = author.firstName ?? ""
+                    editFirstName = true
+                } label: {
+                    Label("Edit", systemImage: "pencil.circle")
+                }
+            }
             
-            Text("MIDDLE NAME")
-            Text(author.middleName ?? "")
+            HStack {
+                Text("MIDDLE NAME")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                Text(author.middleName ?? "")
+                
+                Spacer()
+                
+                Button {
+                    middleName = author.middleName ?? ""
+                    editMiddleName = true
+                } label: {
+                    Label("Edit", systemImage: "pencil.circle")
+                }
+            }
+            
         }
+        .sheet(isPresented: $editLastName) {
+            if !cancelled {
+                author.lastName = lastName
+                save()
+            }
+        } content: {
+            UpdateTextView(title: "Edit the author's last name", textToUpdate: $lastName, cancelled: $cancelled)
+        }
+        .sheet(isPresented: $editFirstName) {
+            if !cancelled {
+                author.firstName = firstName
+                save()
+            }
+        } content: {
+            UpdateTextView(title: "Edit the author's first name", textToUpdate: $firstName, cancelled: $cancelled)
+        }
+        .sheet(isPresented: $editMiddleName) {
+            if !cancelled {
+                author.middleName = middleName
+                save()
+            }
+        } content: {
+            UpdateTextView(title: "Edit the author's middle name", textToUpdate: $middleName, cancelled: $cancelled)
+        }
+
     }
     
+    func save() -> Void {
+        do {
+            try viewContext.save()
+        } catch {
+            // Replace this implementation with code to handle the error appropriately.
+            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
+    }
     
 }
