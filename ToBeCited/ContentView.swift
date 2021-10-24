@@ -44,6 +44,7 @@ struct ContentView: View {
                     }
                     .onDelete(perform: deleteArticles)
                 }
+                .navigationTitle("Articles")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         EditButton()
@@ -74,6 +75,7 @@ struct ContentView: View {
                     }
                     .onDelete(perform: deleteAuthors)
                 }
+                .navigationTitle("Authors")
             }
             .tabItem {
                 Text("Authors")
