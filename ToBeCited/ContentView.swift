@@ -75,7 +75,7 @@ struct ContentView: View {
                 }
             }
             .tabItem {
-                Text("Articles")
+                Label("Articles", systemImage: "doc.on.doc")
             }
             
             NavigationView {
@@ -94,7 +94,7 @@ struct ContentView: View {
                 .navigationTitle("Authors")
             }
             .tabItem {
-                Text("Authors")
+                Label("Authors", systemImage: "person.3")
             }
         }
         .sheet(isPresented: $presentAddArticleView) {
