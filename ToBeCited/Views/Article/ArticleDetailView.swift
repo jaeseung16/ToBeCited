@@ -16,7 +16,7 @@ struct ArticleDetailView: View {
     @State private var presentAddAbstractView = false
     @State private var sharePDF = false
     @State private var pdfData = Data()
-    @State private var abstract = "Abstract is not available"
+    @State private var abstract = ""
     @State private var pdfURL: URL?
     
     var article: Article
@@ -274,6 +274,10 @@ struct ArticleDetailView: View {
             
             if abstractExists {
                 Text(article.abstract!)
+                    .padding()
+            } else if abstract.isEmpty {
+                Text("No Abstract")
+                    .foregroundColor(.secondary)
                     .padding()
             } else {
                 Text(abstract)
