@@ -13,7 +13,7 @@ struct ArticleDetailView: View {
     
     @State private var presentAddPdfView = false
     @State private var presentPdfView = false
-    @State private var presentAddAbstractView = false
+    @State private var presentEditAbstractView = false
     @State private var sharePDF = false
     @State private var pdfData = Data()
     @State private var abstract = ""
@@ -90,9 +90,6 @@ struct ArticleDetailView: View {
         .padding()
         .sheet(isPresented: $presentAddPdfView) {
             PDFFilePickerViewController(pdfData: $pdfData)
-        }
-        .sheet(isPresented: $presentAddAbstractView) {
-            AddAbstractView(abstract: $abstract)
         }
         .sheet(isPresented: $sharePDF) {
             if let url = pdfURL {
@@ -270,17 +267,19 @@ struct ArticleDetailView: View {
                     .foregroundColor(.secondary)
                 
                 Spacer()
+                
+                NavigationLink {
+                    EditAbstractView(article: article, abstract: article.abstract ?? "")
+                } label: {
+                    Label("edit", systemImage: "pencil.circle")
+                }
             }
             
             if abstractExists {
                 Text(article.abstract!)
                     .padding()
-            } else if abstract.isEmpty {
-                Text("No Abstract")
-                    .foregroundColor(.secondary)
-                    .padding()
             } else {
-                Text(abstract)
+                Text("No Abstract")
                     .foregroundColor(.secondary)
                     .padding()
             }
