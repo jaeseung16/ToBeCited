@@ -52,6 +52,27 @@ struct ArticleDetailView: View {
             VStack {
                 header()
                 
+                if presentPdfView {
+                    VStack {
+                        HStack {
+                            Button {
+                                presentPdfView = false
+                            } label: {
+                                Text("Dismiss")
+                            }
+                        }
+                        
+                        if let url = pdfURL {
+                            NavigationLink {
+                                PreviewController(url: url)
+                            } label: {
+                                Text("Open")
+                            }
+                        }
+                    }
+                }
+                
+                
                 Divider()
                 
                 title()
@@ -65,7 +86,7 @@ struct ArticleDetailView: View {
                 abstractView()
                 
                 Divider()
-                
+                /*
                 if article.pdf != nil {
                     PDFKitView(pdfData: article.pdf!)
                         .scaledToFit()
@@ -80,7 +101,7 @@ struct ArticleDetailView: View {
                     PDFKitView(pdfData: pdfData)
                         .scaledToFit()
                 }
-                
+                */
                 //ScrollView {
                     Text(article.ris?.content ?? "")
                 //}
@@ -101,14 +122,29 @@ struct ArticleDetailView: View {
             }
         }
         /*
-         .sheet(isPresented: $presentPdfView) {
-         PDFKitView(pdfData: article.pdf!)
-         }
+        .sheet(isPresented: $presentPdfView) {
+            VStack {
+                HStack {
+                    Button {
+                        presentPdfView = false
+                    } label: {
+                        Text("Dismiss")
+                    }
+                }
+                
+                //PDFKitView(pdfData: article.pdf!)
+                if let url = pdfURL {
+                    PreviewController(url: url)
+                }
+            }
+        }
          */
     }
     
     private func header() -> some View {
         HStack {
+            Spacer()
+            
             Button {
                 presentAddPdfView = true
             } label: {
@@ -116,16 +152,26 @@ struct ArticleDetailView: View {
             }
             .disabled(pdfExists)
             
-            Spacer()
-            
             Button {
-                presentAddAbstractView = true
+                if let title = article.title, let pdfData = article.pdf {
+                    if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                        let fileURL = url.appendingPathComponent("\(title).pdf", isDirectory: false)
+                        
+                        do {
+                            try pdfData.write(to: fileURL)
+                        } catch {
+                            print("Failed to save the csv file")
+                        }
+                        
+                        pdfURL = fileURL
+                        print("pdfURL = \(String(describing: pdfURL))")
+                    }
+                }
+                presentPdfView = true
             } label : {
-                Text("Add abstract")
+                Text("Open pdf")
             }
-            .disabled(abstractExists)
-            
-            Spacer()
+            .disabled(!pdfExists)
             
             Button {
                 if let title = article.title, let pdfData = article.pdf {
@@ -135,7 +181,7 @@ struct ArticleDetailView: View {
                         do {
                             try pdfData.write(to: fileURL)
                         } catch {
-                            print("Failed to save the csv file")
+                            print("Failed to save the pdf file")
                         }
                         
                         pdfURL = fileURL
@@ -148,7 +194,6 @@ struct ArticleDetailView: View {
             }
             .disabled(!pdfExists)
             
-            
             Spacer()
             
             Button {
@@ -157,6 +202,8 @@ struct ArticleDetailView: View {
                 Text("Save")
             }
             .disabled(self.abstract.isEmpty && pdfData.isEmpty)
+            
+            Spacer()
         }
         .fixedSize(horizontal: false, vertical: true)
     }
