@@ -15,7 +15,8 @@ struct RISFilePickerViewController: UIViewControllerRepresentable {
     let risParser = RISParser()
     
     func makeUIViewController(context: Context) -> some UIViewController {
-        let documentPickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.text])
+        let risUTType = UTType("com.resonance.jlee.ToBeCited.ris")!
+        let documentPickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.text, risUTType])
         
         documentPickerViewController.allowsMultipleSelection = false
         documentPickerViewController.delegate = context.coordinator
