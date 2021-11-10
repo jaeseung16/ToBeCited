@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19206" systemVersion="20G165" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19461" systemVersion="21A559" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="Article" representedClassName="Article" syncable="YES" codeGenerationType="class">
         <attribute name="abstract" optional="YES" attributeType="String"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -13,7 +13,9 @@
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="volume" optional="YES" attributeType="String"/>
         <relationship name="authors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Author" inverseName="articles" inverseEntity="Author"/>
+        <relationship name="cited" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Article" inverseName="references" inverseEntity="Article"/>
         <relationship name="collections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Collection" inverseName="articles" inverseEntity="Collection"/>
+        <relationship name="references" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Article" inverseName="cited" inverseEntity="Article"/>
         <relationship name="ris" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RIS" inverseName="article" inverseEntity="RIS"/>
     </entity>
     <entity name="Author" representedClassName="Author" syncable="YES" codeGenerationType="class">
@@ -52,7 +54,7 @@
         <relationship name="article" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Article" inverseName="ris" inverseEntity="Article"/>
     </entity>
     <elements>
-        <element name="Article" positionX="-36" positionY="18" width="128" height="239"/>
+        <element name="Article" positionX="-36" positionY="18" width="128" height="269"/>
         <element name="Author" positionX="-54" positionY="45" width="128" height="164"/>
         <element name="AuthorContact" positionX="-36" positionY="108" width="128" height="119"/>
         <element name="Citation" positionX="-18" positionY="117" width="128" height="74"/>

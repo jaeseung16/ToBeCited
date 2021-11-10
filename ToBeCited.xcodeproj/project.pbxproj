@@ -32,6 +32,7 @@
 		90EDF341271C85BF0097F0E0 /* ToBeCitedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF340271C85BF0097F0E0 /* ToBeCitedUITests.swift */; };
 		90EDF343271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF342271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift */; };
 		90EDF350271CA3110097F0E0 /* AddArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF34F271CA3110097F0E0 /* AddArticleView.swift */; };
+		90FD8419273C5F6B00929EF7 /* SelectReferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FD8418273C5F6B00929EF7 /* SelectReferencesView.swift */; };
 		90FE9771271F68A1002A75C3 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */; };
 		90FE9773271F7E62002A75C3 /* AuthorDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE9772271F7E62002A75C3 /* AuthorDetailView.swift */; };
 /* End PBXBuildFile section */
@@ -85,6 +86,7 @@
 		90EDF342271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		90EDF34F271CA3110097F0E0 /* AddArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddArticleView.swift; sourceTree = "<group>"; };
 		90EDF352271CFC0B0097F0E0 /* ToBeCited.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ToBeCited.entitlements; sourceTree = "<group>"; };
+		90FD8418273C5F6B00929EF7 /* SelectReferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectReferencesView.swift; sourceTree = "<group>"; };
 		90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
 		90FE9772271F7E62002A75C3 /* AuthorDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -136,6 +138,7 @@
 				90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */,
 				9009B6702720B19F0023C316 /* PDFFilePickerViewController.swift */,
 				9009B6722720B31A0023C316 /* PDFKitView.swift */,
+				90FD8418273C5F6B00929EF7 /* SelectReferencesView.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -365,6 +368,7 @@
 				90EDF323271C85BD0097F0E0 /* ContentView.swift in Sources */,
 				90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */,
 				9009B6732720B31A0023C316 /* PDFKitView.swift in Sources */,
+				90FD8419273C5F6B00929EF7 /* SelectReferencesView.swift in Sources */,
 				90D89A632725A9440079EBD2 /* UpdateTextView.swift in Sources */,
 				90EDF321271C85BD0097F0E0 /* ToBeCitedApp.swift in Sources */,
 				90D89A652725F18E0079EBD2 /* AddContactView.swift in Sources */,

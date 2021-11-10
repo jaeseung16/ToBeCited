@@ -47,11 +47,34 @@ struct ArticleDetailView: View {
         }
     }
     
+    private var references: [Article] {
+        var references = [Article]()
+        article.references?.forEach { reference in
+            if let reference = reference as? Article {
+                references.append(reference)
+            }
+        }
+        print("references.count = \(references.count)")
+        return references
+    }
+    
+    private var cited: [Article] {
+        var cited = [Article]()
+        article.cited?.forEach { article in
+            if let article = article as? Article {
+                cited.append(article)
+            }
+        }
+        print("cited.count = \(cited.count)")
+        return cited
+    }
+    
     var body: some View {
         ScrollView {
             VStack {
                 header()
                 
+                /*
                 if presentPdfView {
                     VStack {
                         HStack {
@@ -71,7 +94,7 @@ struct ArticleDetailView: View {
                         }
                     }
                 }
-                
+                */
                 
                 Divider()
                 
@@ -86,6 +109,10 @@ struct ArticleDetailView: View {
                 abstractView()
                 
                 Divider()
+                
+                referencesView()
+                
+                citedView()
                 /*
                 if article.pdf != nil {
                     PDFKitView(pdfData: article.pdf!)
@@ -103,7 +130,7 @@ struct ArticleDetailView: View {
                 }
                 */
                 //ScrollView {
-                    Text(article.ris?.content ?? "")
+                //    Text(article.ris?.content ?? "")
                 //}
             }
         }
@@ -193,6 +220,14 @@ struct ArticleDetailView: View {
                 Text("Share pdf")
             }
             .disabled(!pdfExists)
+            
+            Spacer()
+            
+            NavigationLink {
+                SelectReferencesView(article: article)
+            } label: {
+                Text("Edit references")
+            }
             
             Spacer()
             
@@ -331,6 +366,44 @@ struct ArticleDetailView: View {
                     .padding()
             }
         }
+    }
+    
+    private func referencesView() -> some View {
+        VStack {
+            HStack {
+                Text("REFERENCES IMPORTED IN TOBECITED")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            
+            List {
+                ForEach(references) { reference in
+                    Text(reference.title ?? "No title")
+                }
+            }
+        }
+        .frame(height: 200.0)
+    }
+    
+    private func citedView() -> some View {
+        VStack {
+            HStack {
+                Text("ARTICLES CITING THIS ARTICLE IMPORTED IN TOBECITED")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            
+            List {
+                ForEach(cited) { cited in
+                    Text(cited.title ?? "No title")
+                }
+            }
+        }
+        .frame(height: 200.0)
     }
 }
 
