@@ -33,6 +33,8 @@
 		90EDF343271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF342271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift */; };
 		90EDF350271CA3110097F0E0 /* AddArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF34F271CA3110097F0E0 /* AddArticleView.swift */; };
 		90FD8419273C5F6B00929EF7 /* SelectReferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FD8418273C5F6B00929EF7 /* SelectReferencesView.swift */; };
+		90FD841C273C8B9200929EF7 /* CollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FD841B273C8B9200929EF7 /* CollectionDetailView.swift */; };
+		90FD841E273C917E00929EF7 /* AddCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FD841D273C917E00929EF7 /* AddCollectionView.swift */; };
 		90FE9771271F68A1002A75C3 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */; };
 		90FE9773271F7E62002A75C3 /* AuthorDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE9772271F7E62002A75C3 /* AuthorDetailView.swift */; };
 /* End PBXBuildFile section */
@@ -87,6 +89,8 @@
 		90EDF34F271CA3110097F0E0 /* AddArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddArticleView.swift; sourceTree = "<group>"; };
 		90EDF352271CFC0B0097F0E0 /* ToBeCited.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ToBeCited.entitlements; sourceTree = "<group>"; };
 		90FD8418273C5F6B00929EF7 /* SelectReferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectReferencesView.swift; sourceTree = "<group>"; };
+		90FD841B273C8B9200929EF7 /* CollectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailView.swift; sourceTree = "<group>"; };
+		90FD841D273C917E00929EF7 /* AddCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCollectionView.swift; sourceTree = "<group>"; };
 		90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
 		90FE9772271F7E62002A75C3 /* AuthorDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -220,12 +224,22 @@
 		90EDF351271CA3160097F0E0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				90FD841A273C8B1300929EF7 /* Collection */,
 				90D89A612724C6420079EBD2 /* Author */,
 				90D89A602724C6280079EBD2 /* Article */,
 				9009B6762720CF080023C316 /* ShareActivityView.swift */,
 				90D89A622725A9440079EBD2 /* UpdateTextView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		90FD841A273C8B1300929EF7 /* Collection */ = {
+			isa = PBXGroup;
+			children = (
+				90FD841B273C8B9200929EF7 /* CollectionDetailView.swift */,
+				90FD841D273C917E00929EF7 /* AddCollectionView.swift */,
+			);
+			path = Collection;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -358,6 +372,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90FD841E273C917E00929EF7 /* AddCollectionView.swift in Sources */,
 				90EDF32A271C85BF0097F0E0 /* Persistence.swift in Sources */,
 				90FE9771271F68A1002A75C3 /* ArticleDetailView.swift in Sources */,
 				90EDF32D271C85BF0097F0E0 /* ToBeCited.xcdatamodeld in Sources */,
@@ -373,6 +388,7 @@
 				90EDF321271C85BD0097F0E0 /* ToBeCitedApp.swift in Sources */,
 				90D89A652725F18E0079EBD2 /* AddContactView.swift in Sources */,
 				90B62044271E06BE005D0FEA /* RISTag.swift in Sources */,
+				90FD841C273C8B9200929EF7 /* CollectionDetailView.swift in Sources */,
 				902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */,
 				9009B6752720B8220023C316 /* EditAbstractView.swift in Sources */,
 				90B62045271E06BE005D0FEA /* RISRecord.swift in Sources */,
@@ -551,7 +567,8 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -584,7 +601,8 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

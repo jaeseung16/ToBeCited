@@ -20,8 +20,14 @@ struct ContentView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true)],
         animation: .default)
     private var authors: FetchedResults<Author>
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Collection.name, ascending: true)],
+        animation: .default)
+    private var collections: FetchedResults<Collection>
 
     @State private var presentAddArticleView = false
+    @State private var presentAddCollectionView = false
     
     private func getContacts(of author: Author) -> [AuthorContact] {
         let predicate = NSPredicate(format: "author == %@", argumentArray: [author])
@@ -96,9 +102,40 @@ struct ContentView: View {
             .tabItem {
                 Label("Authors", systemImage: "person.3")
             }
+            
+            NavigationView {
+                List {
+                    ForEach(collections) { collection in
+                        NavigationLink(destination: CollectionDetailView(collection: collection)) {
+                            HStack {
+                                Text(collection.name ?? "")
+                                Text(collection.lastupd ?? Date(), style: .date)
+                            }
+                        }
+                    }
+                    .onDelete(perform: deleteCollections)
+                }
+                .navigationTitle("Collections")
+                .toolbar {
+                    ToolbarItem {
+                        Button(action: {
+                            presentAddCollectionView = true
+                        }) {
+                            Label("Add Collection", systemImage: "plus")
+                        }
+                    }
+                }
+            }
+            .tabItem {
+                Label("Collections", systemImage: "square.stack.3d.up")
+            }
         }
         .sheet(isPresented: $presentAddArticleView) {
             AddRISView()
+                .environment(\.managedObjectContext, viewContext)
+        }
+        .sheet(isPresented: $presentAddCollectionView) {
+            AddCollectionView()
                 .environment(\.managedObjectContext, viewContext)
         }
     }
@@ -123,6 +160,23 @@ struct ContentView: View {
                 } else {
                     // TODO: show alert
                 }
+            }
+            
+            saveViewContext()
+        }
+    }
+    
+    private func deleteCollections(offsets: IndexSet) {
+        withAnimation {
+            offsets.map { collections[$0] }
+            .forEach { collection in
+                collection.articles?.forEach { article in
+                    if let article = article as? Article {
+                        collection.removeFromArticles(article)
+                    }
+                }
+                
+                viewContext.delete(collection)
             }
             
             saveViewContext()
