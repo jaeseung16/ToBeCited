@@ -15,6 +15,7 @@
         <relationship name="authors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Author" inverseName="articles" inverseEntity="Author"/>
         <relationship name="cited" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Article" inverseName="references" inverseEntity="Article"/>
         <relationship name="collections" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Collection" inverseName="articles" inverseEntity="Collection"/>
+        <relationship name="orders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OrderInCollection" inverseName="article" inverseEntity="OrderInCollection"/>
         <relationship name="references" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Article" inverseName="cited" inverseEntity="Article"/>
         <relationship name="ris" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RIS" inverseName="article" inverseEntity="RIS"/>
     </entity>
@@ -46,7 +47,16 @@
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastupd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="articles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Article" inverseName="collections" inverseEntity="Article"/>
+        <relationship name="orders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OrderInCollection" inverseName="collection" inverseEntity="OrderInCollection"/>
+    </entity>
+    <entity name="OrderInCollection" representedClassName="OrderInCollection" syncable="YES" codeGenerationType="class">
+        <attribute name="articleId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="collectionId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="order" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="article" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Article" inverseName="orders" inverseEntity="Article"/>
+        <relationship name="collection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Collection" inverseName="orders" inverseEntity="Collection"/>
     </entity>
     <entity name="RIS" representedClassName="RIS" syncable="YES" codeGenerationType="class">
         <attribute name="content" optional="YES" attributeType="String"/>
@@ -54,11 +64,12 @@
         <relationship name="article" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Article" inverseName="ris" inverseEntity="Article"/>
     </entity>
     <elements>
-        <element name="Article" positionX="-36" positionY="18" width="128" height="269"/>
+        <element name="Article" positionX="-36" positionY="18" width="128" height="284"/>
         <element name="Author" positionX="-54" positionY="45" width="128" height="164"/>
         <element name="AuthorContact" positionX="-36" positionY="108" width="128" height="119"/>
         <element name="Citation" positionX="-18" positionY="117" width="128" height="74"/>
-        <element name="Collection" positionX="-27" positionY="135" width="128" height="89"/>
+        <element name="Collection" positionX="-27" positionY="135" width="128" height="119"/>
+        <element name="OrderInCollection" positionX="-36" positionY="153" width="128" height="104"/>
         <element name="RIS" positionX="-36" positionY="90" width="128" height="74"/>
     </elements>
 </model>

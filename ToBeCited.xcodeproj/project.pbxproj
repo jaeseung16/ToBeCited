@@ -12,6 +12,7 @@
 		9009B6752720B8220023C316 /* EditAbstractView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9009B6742720B8220023C316 /* EditAbstractView.swift */; };
 		9009B6772720CF080023C316 /* ShareActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9009B6762720CF080023C316 /* ShareActivityView.swift */; };
 		9009B6792721FB640023C316 /* AuthorMergeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9009B6782721FB640023C316 /* AuthorMergeView.swift */; };
+		900B8F39274071B300D40347 /* EditOrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B8F38274071B300D40347 /* EditOrderView.swift */; };
 		902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902978712739A0AD00D82FE7 /* PreviewController.swift */; };
 		90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62040271E06BE005D0FEA /* RISReferenceType.swift */; };
 		90B62044271E06BE005D0FEA /* RISTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62041271E06BE005D0FEA /* RISTag.swift */; };
@@ -62,6 +63,7 @@
 		9009B6742720B8220023C316 /* EditAbstractView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAbstractView.swift; sourceTree = "<group>"; };
 		9009B6762720CF080023C316 /* ShareActivityView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareActivityView.swift; sourceTree = "<group>"; };
 		9009B6782721FB640023C316 /* AuthorMergeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorMergeView.swift; sourceTree = "<group>"; };
+		900B8F38274071B300D40347 /* EditOrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditOrderView.swift; sourceTree = "<group>"; };
 		902978712739A0AD00D82FE7 /* PreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewController.swift; sourceTree = "<group>"; };
 		902978732739A44200D82FE7 /* PreviewPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewPanel.swift; sourceTree = "<group>"; };
 		902978752739BEE700D82FE7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -236,8 +238,9 @@
 		90FD841A273C8B1300929EF7 /* Collection */ = {
 			isa = PBXGroup;
 			children = (
-				90FD841B273C8B9200929EF7 /* CollectionDetailView.swift */,
 				90FD841D273C917E00929EF7 /* AddCollectionView.swift */,
+				90FD841B273C8B9200929EF7 /* CollectionDetailView.swift */,
+				900B8F38274071B300D40347 /* EditOrderView.swift */,
 			);
 			path = Collection;
 			sourceTree = "<group>";
@@ -380,6 +383,7 @@
 				90B62047271E06D4005D0FEA /* RISParser.swift in Sources */,
 				9009B6772720CF080023C316 /* ShareActivityView.swift in Sources */,
 				9009B6712720B19F0023C316 /* PDFFilePickerViewController.swift in Sources */,
+				900B8F39274071B300D40347 /* EditOrderView.swift in Sources */,
 				90EDF323271C85BD0097F0E0 /* ContentView.swift in Sources */,
 				90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */,
 				9009B6732720B31A0023C316 /* PDFKitView.swift in Sources */,

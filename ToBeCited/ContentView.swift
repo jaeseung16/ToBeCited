@@ -144,6 +144,18 @@ struct ContentView: View {
         withAnimation {
             offsets.map { articles[$0] }
             .forEach { article in
+                article.collections?.forEach { collection in
+                    if let collection = collection as? Collection {
+                        article.removeFromCollections(collection)
+                    }
+                }
+                
+                article.orders?.forEach { order in
+                    if let order = order as? OrderInCollection {
+                        article.removeFromOrders(order)
+                    }
+                }
+                
                 viewContext.delete(article)
             }
 
@@ -172,7 +184,13 @@ struct ContentView: View {
             .forEach { collection in
                 collection.articles?.forEach { article in
                     if let article = article as? Article {
-                        collection.removeFromArticles(article)
+                        article.removeFromCollections(collection)
+                    }
+                }
+                
+                collection.orders?.forEach { order in
+                    if let order = order as? OrderInCollection {
+                        viewContext.delete(order)
                     }
                 }
                 

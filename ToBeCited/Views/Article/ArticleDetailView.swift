@@ -69,6 +69,17 @@ struct ArticleDetailView: View {
         return cited
     }
     
+    private var collections: [Collection] {
+        var collections = [Collection]()
+        article.collections?.forEach { collection in
+            if let collection = collection as? Collection {
+                collections.append(collection)
+            }
+        }
+        print("collections.count = \(collections.count)")
+        return collections
+    }
+    
     var body: some View {
         ScrollView {
             VStack {
@@ -98,11 +109,7 @@ struct ArticleDetailView: View {
                 
                 Divider()
                 
-                title()
-                
                 citation()
-                
-                authorList()
                 
                 Divider()
                 
@@ -113,6 +120,8 @@ struct ArticleDetailView: View {
                 referencesView()
                 
                 citedView()
+                
+                collectionsView()
                 /*
                 if article.pdf != nil {
                     PDFKitView(pdfData: article.pdf!)
@@ -282,6 +291,8 @@ struct ArticleDetailView: View {
     
     private func citation() -> some View {
         VStack {
+            title()
+            
             Text(journalString)
             
             if article.published != nil {
@@ -292,6 +303,8 @@ struct ArticleDetailView: View {
                 Link(article.doi!, destination: url)
                     .foregroundColor(.blue)
             }
+            
+            authorList()
         }
         .padding()
     }
@@ -400,6 +413,25 @@ struct ArticleDetailView: View {
             List {
                 ForEach(cited) { cited in
                     Text(cited.title ?? "No title")
+                }
+            }
+        }
+        .frame(height: 200.0)
+    }
+    
+    private func collectionsView() -> some View {
+        VStack {
+            HStack {
+                Text("COLLECTIONS")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            
+            List {
+                ForEach(collections) { collection in
+                    Text(collection.name ?? "No title")
                 }
             }
         }

@@ -90,6 +90,7 @@ struct AddRISView: View {
             newArticle.volume = record.volumeNumber
             newArticle.issueNumber = record.issueNumber
             newArticle.page = record.startPage
+            newArticle.uuid = UUID()
             
             // Need to parse DA or PY, Y1
             //newArticle.published = Date(from: <#T##Decoder#>record.date

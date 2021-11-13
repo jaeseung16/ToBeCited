@@ -37,6 +37,7 @@ struct AddCollectionView: View {
                         Text(article.title ?? "")
                     }
                 }
+                .onMove(perform: move)
             }
             
             Divider()
@@ -93,11 +94,21 @@ struct AddCollectionView: View {
         
         let collection = Collection(context: viewContext)
         collection.name = name
+        collection.uuid = UUID()
         collection.created = date
         collection.lastupd = date
         
-        articlesToAdd.forEach { article in
-            collection.addToArticles(article)
+        for index in 0..<articlesToAdd.count {
+            collection.addToArticles(articlesToAdd[index])
+            
+            let orderInCollection = OrderInCollection(context: viewContext)
+            orderInCollection.collectionId = collection.uuid
+            orderInCollection.articleId = articlesToAdd[index].uuid
+            orderInCollection.order = Int64(index)
+            orderInCollection.collection = collection
+            orderInCollection.article = articlesToAdd[index]
+            
+            //collection.addToOrders(orderInCollection)
         }
         
         do {
@@ -108,5 +119,9 @@ struct AddCollectionView: View {
             let nsError = error as NSError
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
+    }
+    
+    private func move(from source: IndexSet, to destination: Int) {
+        articlesToAdd.move(fromOffsets: source, toOffset: destination)
     }
 }

@@ -50,8 +50,6 @@ struct SelectReferencesView: View {
                             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
                         }
                         
-                        print("selected \(article.references)")
-                        
                     } label: {
                         Text(reference.title ?? "")
                     }
@@ -75,8 +73,6 @@ struct SelectReferencesView: View {
                             let nsError = error as NSError
                             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
                         }
-                        
-                        print("selected \(article.references)")
                         
                     } label: {
                         Text(reference.title ?? "")
