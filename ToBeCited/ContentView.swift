@@ -10,6 +10,7 @@ import CoreData
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @EnvironmentObject private var viewModel: ToBeCitedViewModel
 
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false)],
@@ -142,8 +143,7 @@ struct ContentView: View {
     
     private func deleteArticles(offsets: IndexSet) {
         withAnimation {
-            offsets.map { articles[$0] }
-            .forEach { article in
+            offsets.map { articles[$0] }.forEach { article in
                 article.collections?.forEach { collection in
                     if let collection = collection as? Collection {
                         article.removeFromCollections(collection)
@@ -158,30 +158,24 @@ struct ContentView: View {
                 
                 viewContext.delete(article)
             }
-
-            saveViewContext()
+            viewModel.save(viewContext: viewContext)
         }
     }
     
     private func deleteAuthors(offsets: IndexSet) {
         withAnimation {
-            offsets.map { authors[$0] }
-            .forEach { author in
+            offsets.map { authors[$0] }.forEach { author in
                 if author.articles == nil || author.articles!.count == 0 {
                     viewContext.delete(author)
-                } else {
-                    // TODO: show alert
                 }
             }
-            
-            saveViewContext()
+            viewModel.save(viewContext: viewContext)
         }
     }
     
     private func deleteCollections(offsets: IndexSet) {
         withAnimation {
-            offsets.map { collections[$0] }
-            .forEach { collection in
+            offsets.map { collections[$0] }.forEach { collection in
                 collection.articles?.forEach { article in
                     if let article = article as? Article {
                         article.removeFromCollections(collection)
@@ -196,19 +190,7 @@ struct ContentView: View {
                 
                 viewContext.delete(collection)
             }
-            
-            saveViewContext()
-        }
-    }
-    
-    private func saveViewContext() -> Void {
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            viewModel.save(viewContext: viewContext)
         }
     }
 
@@ -216,6 +198,8 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ContentView()
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .environmentObject(ToBeCitedViewModel.shared)
     }
 }

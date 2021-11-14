@@ -13,6 +13,7 @@
 		9009B6772720CF080023C316 /* ShareActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9009B6762720CF080023C316 /* ShareActivityView.swift */; };
 		9009B6792721FB640023C316 /* AuthorMergeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9009B6782721FB640023C316 /* AuthorMergeView.swift */; };
 		900B8F39274071B300D40347 /* EditOrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B8F38274071B300D40347 /* EditOrderView.swift */; };
+		900B8F3C2741AE3500D40347 /* ToBeCitedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B8F3B2741AE3500D40347 /* ToBeCitedViewModel.swift */; };
 		902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902978712739A0AD00D82FE7 /* PreviewController.swift */; };
 		90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62040271E06BE005D0FEA /* RISReferenceType.swift */; };
 		90B62044271E06BE005D0FEA /* RISTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62041271E06BE005D0FEA /* RISTag.swift */; };
@@ -64,6 +65,7 @@
 		9009B6762720CF080023C316 /* ShareActivityView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareActivityView.swift; sourceTree = "<group>"; };
 		9009B6782721FB640023C316 /* AuthorMergeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorMergeView.swift; sourceTree = "<group>"; };
 		900B8F38274071B300D40347 /* EditOrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditOrderView.swift; sourceTree = "<group>"; };
+		900B8F3B2741AE3500D40347 /* ToBeCitedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedViewModel.swift; sourceTree = "<group>"; };
 		902978712739A0AD00D82FE7 /* PreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewController.swift; sourceTree = "<group>"; };
 		902978732739A44200D82FE7 /* PreviewPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewPanel.swift; sourceTree = "<group>"; };
 		902978752739BEE700D82FE7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -122,6 +124,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		900B8F3A2741AE1E00D40347 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				900B8F3B2741AE3500D40347 /* ToBeCitedViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		90B6203F271E06AB005D0FEA /* RISParser */ = {
 			isa = PBXGroup;
 			children = (
@@ -182,6 +192,7 @@
 		90EDF31F271C85BD0097F0E0 /* ToBeCited */ = {
 			isa = PBXGroup;
 			children = (
+				900B8F3A2741AE1E00D40347 /* ViewModel */,
 				902978752739BEE700D82FE7 /* Info.plist */,
 				90B6203F271E06AB005D0FEA /* RISParser */,
 				90EDF352271CFC0B0097F0E0 /* ToBeCited.entitlements */,
@@ -398,6 +409,7 @@
 				90B62045271E06BE005D0FEA /* RISRecord.swift in Sources */,
 				90B6204D271E2C96005D0FEA /* RISWriter.swift in Sources */,
 				90B62049271E07BE005D0FEA /* AddRISView.swift in Sources */,
+				900B8F3C2741AE3500D40347 /* ToBeCitedViewModel.swift in Sources */,
 				90FE9773271F7E62002A75C3 /* AuthorDetailView.swift in Sources */,
 				90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */,
 				9009B6792721FB640023C316 /* AuthorMergeView.swift in Sources */,
