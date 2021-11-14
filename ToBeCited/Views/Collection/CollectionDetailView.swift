@@ -44,6 +44,7 @@ struct CollectionDetailView: View {
                         Text("\(order.order + 1)")
                     }
                 }
+                .onDelete(perform: delete)
             }
         }
         .navigationTitle(collection.name ?? "")
@@ -85,7 +86,7 @@ struct CollectionDetailView: View {
             Spacer()
             
             Button {
-                update()
+                saveViewContext()
                 
                 edited = false
             } label: {
@@ -97,7 +98,30 @@ struct CollectionDetailView: View {
         }
     }
     
-    private func update() -> Void {
+    private func delete(offsets: IndexSet) {
+        withAnimation {
+            offsets.map { ordersInCollection[$0] }
+            .forEach { order in
+                order.article?.removeFromCollections(collection)
+                viewContext.delete(order)
+            }
+            
+            if let offset = offsets.first {
+                collection.orders?.forEach({ order in
+                    if let order = order as? OrderInCollection {
+                        if order.order > offset {
+                            order.order -= 1
+                        }
+                    }
+                })
+            }
+            print("saveViewContext")
+            
+            saveViewContext()
+        }
+    }
+    
+    private func saveViewContext() -> Void {
         do {
             try viewContext.save()
         } catch {
