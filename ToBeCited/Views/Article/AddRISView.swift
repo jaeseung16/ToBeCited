@@ -112,23 +112,26 @@ struct AddRISView: View {
                 }
             }
             
-            if let primaryAuthor = record.primaryAuthor {
-                createAuthorEntity(primaryAuthor, article: newArticle)
+            let parseStrategy = PersonNameComponents.ParseStrategy()
+            if let primaryAuthor = record.primaryAuthor, let name = try? parseStrategy.parse(primaryAuthor) {
+                createAuthorEntity(name, article: newArticle)
             }
             
-            if let secondaryAuthor = record.secondaryAuthor {
-                createAuthorEntity(secondaryAuthor, article: newArticle)
+            if let secondaryAuthor = record.secondaryAuthor, let name = try? parseStrategy.parse(secondaryAuthor) {
+                createAuthorEntity(name, article: newArticle)
             }
             
-            if let tertiaryAuthor = record.tertiaryAuthor {
-                createAuthorEntity(tertiaryAuthor, article: newArticle)
+            if let tertiaryAuthor = record.tertiaryAuthor, let name = try? parseStrategy.parse(tertiaryAuthor) {
+                createAuthorEntity(name, article: newArticle)
             }
-            if let subsidiaryAuthor = record.subsidiaryAuthor {
-                createAuthorEntity(subsidiaryAuthor, article: newArticle)
+            if let subsidiaryAuthor = record.subsidiaryAuthor, let name = try? parseStrategy.parse(subsidiaryAuthor) {
+                createAuthorEntity(name, article: newArticle)
             }
             
             for author in record.authors {
-                createAuthorEntity(author, article: newArticle)
+                if let name = try? parseStrategy.parse(author) {
+                    createAuthorEntity(name, article: newArticle)
+                }
             }
             
             let writer = RISWriter(record: record)
@@ -159,23 +162,15 @@ struct AddRISView: View {
         return date
     }
     
-    private func createAuthorEntity(_ authorName: String, article: Article) -> Void {
+    private func createAuthorEntity(_ authorName: PersonNameComponents, article: Article) -> Void {
         let authorEntity = Author(context: viewContext)
         authorEntity.created = Date()
         authorEntity.uuid = UUID()
         
-        let name = authorName.split(separator: ",")
-        
-        authorEntity.lastName = String(name[0])
-        
-        if name.count > 1 {
-            let firstMiddleName = String(name[1]).split(separator: " ")
-            
-            authorEntity.firstName = String(firstMiddleName[0])
-            if firstMiddleName.count > 1 {
-                authorEntity.middleName = String(firstMiddleName[1])
-            }
-        }
+        authorEntity.lastName = authorName.familyName
+        authorEntity.firstName = authorName.givenName
+        authorEntity.middleName = authorName.middleName
+        authorEntity.nameSuffix = authorName.nameSuffix
         
         authorEntity.addToArticles(article)
     }
