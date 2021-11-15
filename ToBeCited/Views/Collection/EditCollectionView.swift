@@ -17,9 +17,26 @@ struct EditCollectionView: View {
         animation: .default)
     private var articles: FetchedResults<Article>
     
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true)],
+        animation: .default)
+    private var authors: FetchedResults<Author>
+    
     var collection: Collection
     
     @State var articlesInCollection: [Article]
+    
+    @State var publishedYear = Date()
+    @State var selectedAuthor: Author?
+    
+    private var filteredArticles: Array<Article> {
+        articles.filter { article in
+            if let authors = article.authors as? Set<Author>, let author = selectedAuthor {
+                return authors.contains(author)
+            }
+            return false
+        }
+    }
     
     var body: some View {
         VStack {
@@ -43,8 +60,10 @@ struct EditCollectionView: View {
             
             Divider()
             
+            authorsView()
+            
             List {
-                ForEach(articles) { article in
+                ForEach(filteredArticles) { article in
                     Button {
                         if articlesInCollection.contains(article) {
                             if let index = articlesInCollection.firstIndex(of: article) {
@@ -116,5 +135,29 @@ struct EditCollectionView: View {
         }
     }
 
+    private func authorsView() -> some View {
+        VStack {
+            Text("\(selectedAuthor?.lastName ?? "N/A")")
+            
+            List {
+                ForEach(authors) { author in
+                    Button {
+                        selectedAuthor = author
+                    } label: {
+                        HStack {
+                            Text(author.lastName ?? "")
+                            
+                            Text(author.firstName ?? "")
+                            
+                            Spacer()
+                            
+                            Text("\(author.articles?.count ?? 0)")
+                        }
+                    }
+                    .foregroundColor(author == selectedAuthor ? .primary : .secondary)
+                }
+            }
+        }
+    }
 }
 
