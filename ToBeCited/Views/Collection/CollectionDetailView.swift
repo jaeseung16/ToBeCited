@@ -10,11 +10,13 @@ import SwiftUI
 struct CollectionDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) private var presentationMode
+    @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var collection: Collection
     
     @State var edited = false
     @State private var presentEditOrderView = false
+    @State private var presentEditCollectionView = false
     
     private var ordersInCollection: [OrderInCollection] {
         var orders = [OrderInCollection]()
@@ -26,6 +28,10 @@ struct CollectionDetailView: View {
         }
         
         return orders.sorted { $0.order < $1.order }
+    }
+    
+    private var articlesInCollection: [Article] {
+        ordersInCollection.filter { $0.article != nil} .map { $0.article! }
     }
     
     var body: some View {
@@ -56,11 +62,14 @@ struct CollectionDetailView: View {
         }
         .padding()
         .sheet(isPresented: $presentEditOrderView) {
-            
-        } content: {
             EditOrderView(orders: ordersInCollection)
+                .environment(\.managedObjectContext, viewContext)
         }
-
+        .sheet(isPresented: $presentEditCollectionView) {
+            EditCollectionView(collection: collection, articlesInCollection: articlesInCollection)
+                .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
+        }
     }
     
     private func header() -> some View {
@@ -86,7 +95,15 @@ struct CollectionDetailView: View {
             Spacer()
             
             Button {
-                saveViewContext()
+                presentEditCollectionView = true
+            } label: {
+                Text("Edit")
+            }
+            
+            Spacer()
+            
+            Button {
+                viewModel.save(viewContext: viewContext)
                 
                 edited = false
             } label: {
@@ -100,8 +117,7 @@ struct CollectionDetailView: View {
     
     private func delete(offsets: IndexSet) {
         withAnimation {
-            offsets.map { ordersInCollection[$0] }
-            .forEach { order in
+            offsets.map { ordersInCollection[$0] }.forEach { order in
                 order.article?.removeFromCollections(collection)
                 viewContext.delete(order)
             }
@@ -115,20 +131,8 @@ struct CollectionDetailView: View {
                     }
                 })
             }
-            print("saveViewContext")
-            
-            saveViewContext()
-        }
-    }
-    
-    private func saveViewContext() -> Void {
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+
+            viewModel.save(viewContext: viewContext)
         }
     }
 }
