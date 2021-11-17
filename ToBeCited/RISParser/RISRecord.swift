@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct RISRecord {
+public struct RISRecord: CustomStringConvertible {
     var referenceType: RISReferenceType
     var primaryAuthor: String?
     var secondaryAuthor: String?
@@ -86,5 +86,115 @@ public struct RISRecord {
     var publishedStandardNumber: String?
     var primaryDate: String?
     var accessDate: String?
-
+    
+    public var description: String {
+        authorsDescription
+        + titleDescription
+        + journalDescription
+        + volumnIssuePagesDescription
+        + dateDescription
+        + doiDescription
+    }
+    
+    public var dateFirstDescription: String {
+        authorsDescription
+        + dateDescription
+        + titleDescription
+        + journalDescription
+        + volumnIssuePagesDescription
+        + doiDescription
+    }
+    
+    public var dateMiddleDescription: String {
+        authorsDescription
+        + titleDescription
+        + journalDescription
+        + dateDescription
+        + volumnIssuePagesDescription
+        + doiDescription
+    }
+    
+    private var authorsDescription: String {
+        var description = ""
+        
+        if let primaryAuthor = primaryAuthor {
+            description += "\(primaryAuthor);"
+        }
+        
+        if let secondaryAuthor = secondaryAuthor {
+            description += "\(secondaryAuthor);"
+        }
+        
+        if let tertiaryAuthor = tertiaryAuthor {
+            description += "\(tertiaryAuthor);"
+        }
+        
+        if let subsidiaryAuthor = subsidiaryAuthor {
+            description += "\(subsidiaryAuthor);"
+        }
+        
+        authors.forEach { description += "\($0);" }
+        
+        return description
+    }
+    
+    private var titleDescription: String {
+        var description = ""
+        if let primaryTitle = primaryTitle {
+            description += "\(primaryTitle);"
+        } else if let title = title {
+            description += "\(title);"
+        }
+        return description
+    }
+    
+    private var journalDescription: String {
+        var description = ""
+        if let periodicalNameFullFormat = periodicalNameFullFormat {
+            description += "\(periodicalNameFullFormat);"
+        }
+        return description
+    }
+    
+    private var volumnIssuePagesDescription: String {
+        var description = ""
+        
+        if let volumeNumber = volumeNumber {
+            description += "\(volumeNumber);"
+        }
+        
+        if let issueNumber = issueNumber {
+            description += "(\(issueNumber));"
+        }
+        
+        if let startPage = startPage {
+            description += "\(startPage);"
+        }
+        
+        if let endPage = endPage {
+            description += "\(endPage);"
+        }
+        
+        return description
+    }
+    
+    private var dateDescription: String {
+        var description = ""
+        if let pulbicationYear = pulbicationYear {
+            description += "(\(pulbicationYear));"
+        } else if let date = date {
+            description += "(\(date));"
+        } else if let primaryDate = primaryDate {
+            description += "(\(primaryDate));"
+        }
+        return description
+    }
+    
+    private var doiDescription: String {
+        var description = ""
+        if let doi = doi {
+            description += "doi: \(doi);"
+        }
+        return description
+    }
 }

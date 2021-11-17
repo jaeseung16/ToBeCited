@@ -17,6 +17,7 @@ struct CollectionDetailView: View {
     @State var edited = false
     @State private var presentEditOrderView = false
     @State private var presentEditCollectionView = false
+    @State private var presentExportCollectionView = false
     
     private var ordersInCollection: [OrderInCollection] {
         var orders = [OrderInCollection]()
@@ -70,12 +71,16 @@ struct CollectionDetailView: View {
                 .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
+        .sheet(isPresented: $presentExportCollectionView) {
+            ExportCollectionView(collection: collection)
+                .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
+        }
+
     }
     
     private func header() -> some View {
         HStack {
-            Spacer()
-            
             Button {
                 viewContext.rollback()
                 
@@ -98,6 +103,15 @@ struct CollectionDetailView: View {
                 presentEditCollectionView = true
             } label: {
                 Text("Edit")
+            }
+            
+            Spacer()
+            
+            Button {
+                viewModel.export(collection: collection)
+                presentExportCollectionView = true
+            } label: {
+                Text("Export")
             }
             
             Spacer()

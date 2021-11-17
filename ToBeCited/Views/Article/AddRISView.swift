@@ -10,6 +10,7 @@ import SwiftUI
 struct AddRISView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) private var presentationMode
+    @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var presentRISFilePicker = false
     @State private var risString: String = ""
@@ -166,12 +167,9 @@ struct AddRISView: View {
         let authorEntity = Author(context: viewContext)
         authorEntity.created = Date()
         authorEntity.uuid = UUID()
-        
-        authorEntity.lastName = authorName.familyName
-        authorEntity.firstName = authorName.givenName
-        authorEntity.middleName = authorName.middleName
-        authorEntity.nameSuffix = authorName.nameSuffix
-        
+
+        viewModel.populate(author: authorEntity, with: authorName)
+
         authorEntity.addToArticles(article)
     }
 }

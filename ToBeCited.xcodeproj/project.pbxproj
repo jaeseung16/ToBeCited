@@ -15,6 +15,7 @@
 		900B8F39274071B300D40347 /* EditOrderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B8F38274071B300D40347 /* EditOrderView.swift */; };
 		900B8F3C2741AE3500D40347 /* ToBeCitedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B8F3B2741AE3500D40347 /* ToBeCitedViewModel.swift */; };
 		900B8F3E2741B12700D40347 /* EditCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B8F3D2741B12600D40347 /* EditCollectionView.swift */; };
+		900D77042745BB0C00F0416C /* ExportOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900D77032745BB0C00F0416C /* ExportOrder.swift */; };
 		9012113E27431B43008A35F7 /* ExportCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9012113D27431B43008A35F7 /* ExportCollectionView.swift */; };
 		9012114027431E65008A35F7 /* NameFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9012113F27431E65008A35F7 /* NameFormat.swift */; };
 		902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902978712739A0AD00D82FE7 /* PreviewController.swift */; };
@@ -70,6 +71,7 @@
 		900B8F38274071B300D40347 /* EditOrderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditOrderView.swift; sourceTree = "<group>"; };
 		900B8F3B2741AE3500D40347 /* ToBeCitedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedViewModel.swift; sourceTree = "<group>"; };
 		900B8F3D2741B12600D40347 /* EditCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCollectionView.swift; sourceTree = "<group>"; };
+		900D77032745BB0C00F0416C /* ExportOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportOrder.swift; sourceTree = "<group>"; };
 		9012113D27431B43008A35F7 /* ExportCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportCollectionView.swift; sourceTree = "<group>"; };
 		9012113F27431E65008A35F7 /* NameFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameFormat.swift; sourceTree = "<group>"; };
 		902978712739A0AD00D82FE7 /* PreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewController.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 			children = (
 				900B8F3B2741AE3500D40347 /* ToBeCitedViewModel.swift */,
 				9012113F27431E65008A35F7 /* NameFormat.swift */,
+				900D77032745BB0C00F0416C /* ExportOrder.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -424,6 +427,7 @@
 				900B8F3C2741AE3500D40347 /* ToBeCitedViewModel.swift in Sources */,
 				90FE9773271F7E62002A75C3 /* AuthorDetailView.swift in Sources */,
 				90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */,
+				900D77042745BB0C00F0416C /* ExportOrder.swift in Sources */,
 				9009B6792721FB640023C316 /* AuthorMergeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -134,6 +134,7 @@ struct ContentView: View {
         .sheet(isPresented: $presentAddArticleView) {
             AddRISView()
                 .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentAddCollectionView) {
             AddCollectionView()
@@ -149,6 +150,9 @@ struct ContentView: View {
                         article.removeFromCollections(collection)
                     }
                 }
+                
+                // TODO: Reorder articles in collection
+                // TODO: Move these operations to viewModel
                 
                 article.orders?.forEach { order in
                     if let order = order as? OrderInCollection {

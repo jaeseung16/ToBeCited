@@ -10,6 +10,7 @@ import SwiftUI
 struct ArticleDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) private var presentationMode
+    @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var presentAddPdfView = false
     @State private var presentPdfView = false
@@ -54,7 +55,7 @@ struct ArticleDetailView: View {
                 references.append(reference)
             }
         }
-        print("references.count = \(references.count)")
+        //print("references.count = \(references.count)")
         return references
     }
     
@@ -65,7 +66,7 @@ struct ArticleDetailView: View {
                 cited.append(article)
             }
         }
-        print("cited.count = \(cited.count)")
+        //print("cited.count = \(cited.count)")
         return cited
     }
     
@@ -337,7 +338,7 @@ struct ArticleDetailView: View {
             ForEach(authors, id: \.uuid) { author in
                 HStack {
                     Spacer()
-                    Text(name(of: author))
+                    Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
                     Spacer()
                 }
             }
