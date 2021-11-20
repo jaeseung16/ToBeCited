@@ -15,6 +15,8 @@ struct ExportCollectionView: View {
     var collection: Collection
     
     @State private var exportOrder: ExportOrder = .dateEnd
+    @State private var showFileExporter = false
+    @State private var showErrorAlert = false
     
     private var articles: [Article] {
         collection.orders?
@@ -36,7 +38,23 @@ struct ExportCollectionView: View {
             TextEditor(text: $viewModel.stringToExport)
                 .frame(height: 300)
         }
+        .fileExporter(isPresented: $showFileExporter, documents: [TextFile(initialText: viewModel.stringToExport)], contentType: .plainText) { result in
+            switch result {
+            case .success(_):
+                dismiss.callAsFunction()
+            case .failure(let error):
+                showErrorAlert = true
+            }
+        }
+        .alert("ERROR", isPresented: $showErrorAlert) {
+            Button("OK") {
+                dismiss.callAsFunction()
+            }
+        } message: {
+            Text("Failed to export \(collection.name ?? "")")
+        }
         .padding()
+        
     }
     
     private func header() -> some View {
@@ -50,12 +68,11 @@ struct ExportCollectionView: View {
             Spacer()
             
             Button {
-                viewModel.export(collection: collection, with: exportOrder)
-                dismiss.callAsFunction()
+                showFileExporter = true
             } label: {
                 Text("Export")
             }
-            .disabled(true)
+            
         }
     }
     
@@ -77,7 +94,6 @@ struct ExportCollectionView: View {
             }
             .pickerStyle(InlinePickerStyle())
             .onChange(of: exportOrder) { _ in
-                print("exportOrder = \(exportOrder)")
                 viewModel.export(collection: collection, with: exportOrder)
             }
         }
