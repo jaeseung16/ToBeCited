@@ -53,10 +53,11 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
         
         var result = ""
-        
+        var count = 1
         for article in articles {
             if let risString = article.ris?.content {
                 if let ris = parse(risString: risString), !ris.isEmpty {
+                    result += "\(count);"
                     switch order {
                     case .dateFirst:
                         result += ris[0].dateFirstDescription
@@ -68,6 +69,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 }
             }
             result += "\n"
+            count += 1
         }
         
         stringToExport = result
