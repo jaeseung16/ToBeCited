@@ -51,6 +51,9 @@ struct AddRISView: View {
                 Spacer()
                 
                 Button {
+                    if !risRecords.isEmpty {
+                        risRecords.removeAll()
+                    }
                     presentRISFilePicker = true
                 } label: {
                     Text("Select a RIS file")
