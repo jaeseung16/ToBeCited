@@ -25,7 +25,13 @@ struct AddCollectionView: View {
             
             Divider()
             
-            TextField("Collection Name", text: $name, prompt: nil)
+            HStack {
+                Text("NAME")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                TextField("Collection Name", text: $name, prompt: nil)
+            }
             
             List {
                 ForEach(articlesToAdd) { article in

@@ -44,6 +44,8 @@ struct EditCollectionView: View {
             
             Divider()
             
+            Text("The collection contains \(articlesInCollection.count) \(articlesInCollection.count == 1 ? "article" : "articles")")
+            
             List {
                 ForEach(articlesInCollection) { article in
                     Button {
@@ -137,7 +139,7 @@ struct EditCollectionView: View {
 
     private func authorsView() -> some View {
         VStack {
-            Text("\(selectedAuthor?.lastName ?? "N/A")")
+            Text("\(selectedAuthor?.lastName ?? "Choose an author")")
             
             List {
                 ForEach(authors) { author in

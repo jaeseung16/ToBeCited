@@ -18,6 +18,7 @@ struct CollectionDetailView: View {
     @State private var presentEditOrderView = false
     @State private var presentEditCollectionView = false
     @State private var presentExportCollectionView = false
+    @State var collectionName = ""
     
     private var ordersInCollection: [OrderInCollection] {
         var orders = [OrderInCollection]()
@@ -40,6 +41,18 @@ struct CollectionDetailView: View {
             header()
             
             Divider()
+            
+            HStack {
+                Text("NAME")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                TextField("\(collection.name ?? "N/A")", text: $collectionName, prompt: nil)
+                    .onSubmit {
+                        collection.name = collectionName
+                        edited = true
+                    }
+            }
             
             List {
                 ForEach(ordersInCollection) { order in
@@ -88,21 +101,22 @@ struct CollectionDetailView: View {
             } label: {
                 Text("Cancel")
             }
-            
-            Spacer()
-            
-            Button {
-                presentEditOrderView = true
-            } label: {
-                Text("Edit the order")
-            }
+            .disabled(!edited)
             
             Spacer()
             
             Button {
                 presentEditCollectionView = true
             } label: {
-                Text("Edit")
+                Text("Update articles")
+            }
+            
+            Spacer()
+            
+            Button {
+                presentEditOrderView = true
+            } label: {
+                Text("Update the order")
             }
             
             Spacer()
@@ -124,8 +138,6 @@ struct CollectionDetailView: View {
                 Text("Save")
             }
             .disabled(!edited)
-
-            Spacer()
         }
     }
     

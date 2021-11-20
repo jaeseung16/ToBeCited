@@ -107,7 +107,7 @@ struct ContentView: View {
             NavigationView {
                 List {
                     ForEach(collections) { collection in
-                        NavigationLink(destination: CollectionDetailView(collection: collection)) {
+                        NavigationLink(destination: CollectionDetailView(collection: collection, collectionName: collection.name ?? "")) {
                             HStack {
                                 Text(collection.name ?? "")
                                 Text(collection.lastupd ?? Date(), style: .date)

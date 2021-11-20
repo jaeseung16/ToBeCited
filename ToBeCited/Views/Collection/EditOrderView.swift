@@ -20,6 +20,8 @@ struct EditOrderView: View {
             
             Divider()
             
+            Text("Select and move an article to update the order")
+            
             List {
                 ForEach(orders) { order in
                     HStack {
