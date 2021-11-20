@@ -12,13 +12,15 @@ struct ArticleDetailView: View {
     @Environment(\.presentationMode) private var presentationMode
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
-    @State private var presentAddPdfView = false
+    @State private var importPdf = false
     @State private var presentPdfView = false
     @State private var presentEditAbstractView = false
-    @State private var sharePDF = false
+    @State private var exportPDF = false
     @State private var pdfData = Data()
     @State private var abstract = ""
     @State private var pdfURL: URL?
+    @State private var showErrorAlert = false
+    @State private var errorMessage = ""
     
     var article: Article
     
@@ -77,7 +79,7 @@ struct ArticleDetailView: View {
                 collections.append(collection)
             }
         }
-        print("collections.count = \(collections.count)")
+        //print("collections.count = \(collections.count)")
         return collections
     }
     
@@ -146,17 +148,35 @@ struct ArticleDetailView: View {
         }
         .navigationTitle(article.title ?? "Title is not available")
         .padding()
-        .sheet(isPresented: $presentAddPdfView) {
-            PDFFilePickerViewController(pdfData: $pdfData)
-        }
-        .sheet(isPresented: $sharePDF) {
-            if let url = pdfURL {
-                ShareActivityView(activityItems: [url], applicationActivities: nil, excludedActivityTypes: nil, completionHandler: { _, completed, _, error in
-                    if completed {
-                        sharePDF = false
-                    }
-                })
+        .fileImporter(isPresented: $importPdf, allowedContentTypes: [.pdf]) { result in
+            switch result {
+            case .success(let url):
+                print("pdf url = \(url)")
+                if let data = try? Data(contentsOf: url) {
+                    self.pdfData = data
+                    print("data = \(data)")
+                }
+            case .failure(let error):
+                errorMessage = "Failed to import a pdf file: \(error.localizedDescription)"
+                showErrorAlert = true
             }
+        }
+        .fileExporter(isPresented: $exportPDF, documents: [PDFFile(pdfData: pdfData)], contentType: .pdf) { result in
+            switch result {
+            case .success(_):
+                print("success")
+                //dismiss.callAsFunction()
+            case .failure(let error):
+                errorMessage = "Failed to export the pdf file: \(error.localizedDescription)"
+                showErrorAlert = true
+            }
+        }
+        .alert("ERROR", isPresented: $showErrorAlert) {
+            Button("OK") {
+                
+            }
+        } message: {
+            Text(errorMessage)
         }
         /*
         .sheet(isPresented: $presentPdfView) {
@@ -183,11 +203,10 @@ struct ArticleDetailView: View {
             Spacer()
             
             Button {
-                presentAddPdfView = true
+                importPdf = true
             } label: {
-                Text("Add pdf")
+                Text("Import PDF")
             }
-            .disabled(pdfExists)
             
             Button {
                 if let title = article.title, let pdfData = article.pdf {
@@ -211,23 +230,13 @@ struct ArticleDetailView: View {
             .disabled(!pdfExists)
             
             Button {
-                if let title = article.title, let pdfData = article.pdf {
-                    if let url = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first {
-                        let fileURL = url.appendingPathComponent("\(title).pdf", isDirectory: false)
-                        
-                        do {
-                            try pdfData.write(to: fileURL)
-                        } catch {
-                            print("Failed to save the pdf file")
-                        }
-                        
-                        pdfURL = fileURL
-                    }
+                if let pdfData = article.pdf {
+                    self.pdfData = pdfData
                 }
-                print("pdfURL = \(String(describing: pdfURL))")
-                sharePDF = true
+                
+                exportPDF = true
             } label: {
-                Text("Share pdf")
+                Text("Export PDF")
             }
             .disabled(!pdfExists)
             
