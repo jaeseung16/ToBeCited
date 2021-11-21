@@ -21,6 +21,7 @@ struct ArticleListView: View {
     
     @State private var author: Author?
     @State private var publishedIn: Int?
+    @State private var titleToSearch = ""
     
     private var filteredArticles: [Article] {
         articles.filter { article in
@@ -38,6 +39,15 @@ struct ArticleListView: View {
             } else if let published = article.published {
                 let articlePublicationYear = Calendar.current.dateComponents([.year], from: published)
                 return articlePublicationYear.year == publishedIn
+            } else {
+                return false
+            }
+        }
+        .filter { article in
+            if titleToSearch == "" {
+                return true
+            } else if let title = article.title {
+                return title.contains(titleToSearch)
             } else {
                 return false
             }
@@ -82,7 +92,9 @@ struct ArticleListView: View {
                     }
                 }
             }
+            
         }
+        .searchable(text: $titleToSearch)
         .sheet(isPresented: $presentAddArticleView) {
             AddRISView()
                 .environment(\.managedObjectContext, viewContext)
