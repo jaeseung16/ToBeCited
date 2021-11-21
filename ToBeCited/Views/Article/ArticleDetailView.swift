@@ -125,6 +125,7 @@ struct ArticleDetailView: View {
                 citedView()
                 
                 collectionsView()
+                
                 /*
                 if article.pdf != nil {
                     PDFKitView(pdfData: article.pdf!)
@@ -178,7 +179,6 @@ struct ArticleDetailView: View {
         } message: {
             Text(errorMessage)
         }
-        /*
         .sheet(isPresented: $presentPdfView) {
             VStack {
                 HStack {
@@ -189,45 +189,27 @@ struct ArticleDetailView: View {
                     }
                 }
                 
-                //PDFKitView(pdfData: article.pdf!)
+                PDFKitView(pdfData: article.pdf!)
+                /*
                 if let url = pdfURL {
                     PreviewController(url: url)
                 }
+                */
             }
         }
-         */
     }
     
     private func header() -> some View {
         HStack {
             Spacer()
             
+            Text("PDF")
+            
             Button {
                 importPdf = true
             } label: {
-                Text("Import PDF")
+                Label("Import", systemImage: "square.and.arrow.down")
             }
-            
-            Button {
-                if let title = article.title, let pdfData = article.pdf {
-                    if let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-                        let fileURL = url.appendingPathComponent("\(title).pdf", isDirectory: false)
-                        
-                        do {
-                            try pdfData.write(to: fileURL)
-                        } catch {
-                            print("Failed to save the csv file")
-                        }
-                        
-                        pdfURL = fileURL
-                        print("pdfURL = \(String(describing: pdfURL))")
-                    }
-                }
-                presentPdfView = true
-            } label : {
-                Text("Open pdf")
-            }
-            .disabled(!pdfExists)
             
             Button {
                 if let pdfData = article.pdf {
@@ -236,7 +218,15 @@ struct ArticleDetailView: View {
                 
                 exportPDF = true
             } label: {
-                Text("Export PDF")
+                Label("Export", systemImage: "square.and.arrow.up")
+            }
+            .disabled(!pdfExists)
+            
+            NavigationLink {
+                PDFKitView(pdfData: article.pdf ?? Data())
+                    .navigationTitle(article.title ?? "")
+            } label: {
+                Label("Open", systemImage: "eye")
             }
             .disabled(!pdfExists)
             
