@@ -51,85 +51,20 @@ struct ContentView: View {
     
     var body: some View {
         TabView {
-            NavigationView {
-                List {
-                    ForEach(articles) { article in
-                        NavigationLink(destination: ArticleDetailView(article: article)) {
-                            VStack {
-                                HStack {
-                                    Text(article.title ?? "")
-                                    Spacer()
-                                }
-                                
-                                HStack {
-                                    Spacer()
-                                    Text(article.published ?? Date(), style: .date)
-                                }
-                            }
-                        }
-                    }
-                    .onDelete(perform: deleteArticles)
+            articlesTabView()
+                .tabItem {
+                    Label("Articles", systemImage: "doc.on.doc")
                 }
-                .navigationTitle("Articles")
-                .toolbar {
-                    ToolbarItem {
-                        Button(action: {
-                            presentAddArticleView = true
-                        }) {
-                            Label("Add Item", systemImage: "plus")
-                        }
-                    }
-                }
-            }
-            .tabItem {
-                Label("Articles", systemImage: "doc.on.doc")
-            }
             
-            NavigationView {
-                List {
-                    ForEach(authors) { author in
-                        NavigationLink(destination: AuthorDetailView(author: author, contacts: getContacts(of: author))) {
-                            HStack {
-                                Text(author.lastName ?? "")
-                                Text(author.firstName ?? "")
-                                Text(author.middleName ?? "")
-                            }
-                        }
-                    }
-                    .onDelete(perform: deleteAuthors)
+            authorsTabView()
+                .tabItem {
+                    Label("Authors", systemImage: "person.3")
                 }
-                .navigationTitle("Authors")
-            }
-            .tabItem {
-                Label("Authors", systemImage: "person.3")
-            }
             
-            NavigationView {
-                List {
-                    ForEach(collections) { collection in
-                        NavigationLink(destination: CollectionDetailView(collection: collection, collectionName: collection.name ?? "")) {
-                            HStack {
-                                Text(collection.name ?? "")
-                                Text(collection.lastupd ?? Date(), style: .date)
-                            }
-                        }
-                    }
-                    .onDelete(perform: deleteCollections)
+            collectionsTabView()
+                .tabItem {
+                    Label("Collections", systemImage: "square.stack.3d.up")
                 }
-                .navigationTitle("Collections")
-                .toolbar {
-                    ToolbarItem {
-                        Button(action: {
-                            presentAddCollectionView = true
-                        }) {
-                            Label("Add Collection", systemImage: "plus")
-                        }
-                    }
-                }
-            }
-            .tabItem {
-                Label("Collections", systemImage: "square.stack.3d.up")
-            }
         }
         .sheet(isPresented: $presentAddArticleView) {
             AddRISView()
@@ -139,6 +74,83 @@ struct ContentView: View {
         .sheet(isPresented: $presentAddCollectionView) {
             AddCollectionView()
                 .environment(\.managedObjectContext, viewContext)
+        }
+    }
+    
+    private func articlesTabView() -> some View {
+        NavigationView {
+            List {
+                ForEach(articles) { article in
+                    NavigationLink(destination: ArticleDetailView(article: article)) {
+                        VStack {
+                            HStack {
+                                Text(article.title ?? "")
+                                Spacer()
+                            }
+                            
+                            HStack {
+                                Spacer()
+                                Text(article.published ?? Date(), style: .date)
+                            }
+                        }
+                    }
+                }
+                .onDelete(perform: deleteArticles)
+            }
+            .navigationTitle("Articles")
+            .toolbar {
+                ToolbarItem {
+                    Button(action: {
+                        presentAddArticleView = true
+                    }) {
+                        Label("Add Item", systemImage: "plus")
+                    }
+                }
+            }
+        }
+    }
+    
+    private func authorsTabView() -> some View {
+        NavigationView {
+            List {
+                ForEach(authors) { author in
+                    NavigationLink(destination: AuthorDetailView(author: author, contacts: getContacts(of: author))) {
+                        HStack {
+                            Text(author.lastName ?? "")
+                            Text(author.firstName ?? "")
+                            Text(author.middleName ?? "")
+                        }
+                    }
+                }
+                .onDelete(perform: deleteAuthors)
+            }
+            .navigationTitle("Authors")
+        }
+    }
+    
+    private func collectionsTabView() -> some View {
+        NavigationView {
+            List {
+                ForEach(collections) { collection in
+                    NavigationLink(destination: CollectionDetailView(collection: collection, collectionName: collection.name ?? "")) {
+                        HStack {
+                            Text(collection.name ?? "")
+                            Text(collection.lastupd ?? Date(), style: .date)
+                        }
+                    }
+                }
+                .onDelete(perform: deleteCollections)
+            }
+            .navigationTitle("Collections")
+            .toolbar {
+                ToolbarItem {
+                    Button(action: {
+                        presentAddCollectionView = true
+                    }) {
+                        Label("Add Collection", systemImage: "plus")
+                    }
+                }
+            }
         }
     }
     
