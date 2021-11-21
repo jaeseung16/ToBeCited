@@ -155,6 +155,7 @@ struct ArticleDetailView: View {
                 print("pdf url = \(url)")
                 if let data = try? Data(contentsOf: url) {
                     self.pdfData = data
+                    update()
                     print("data = \(data)")
                 }
             case .failure(let error):
@@ -231,32 +232,11 @@ struct ArticleDetailView: View {
             .disabled(!pdfExists)
             
             Spacer()
-            
-            NavigationLink {
-                SelectReferencesView(article: article)
-            } label: {
-                Text("Edit references")
-            }
-            
-            Spacer()
-            
-            Button {
-                update()
-            } label: {
-                Text("Save")
-            }
-            .disabled(self.abstract.isEmpty && pdfData.isEmpty)
-            
-            Spacer()
         }
         .fixedSize(horizontal: false, vertical: true)
     }
     
     private func update() -> Void {
-        if !self.abstract.isEmpty {
-            self.article.abstract = self.abstract
-        }
-        
         if !self.pdfData.isEmpty {
             self.article.pdf = self.pdfData
         }
@@ -389,6 +369,12 @@ struct ArticleDetailView: View {
                     .foregroundColor(.secondary)
                 
                 Spacer()
+                
+                NavigationLink {
+                    SelectReferencesView(article: article)
+                } label: {
+                    Label("edit", systemImage: "pencil.circle")
+                }
             }
             
             List {
