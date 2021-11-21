@@ -42,7 +42,7 @@ struct ExportCollectionView: View {
             switch result {
             case .success(_):
                 dismiss.callAsFunction()
-            case .failure(let error):
+            case .failure(_):
                 showErrorAlert = true
             }
         }

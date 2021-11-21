@@ -26,8 +26,7 @@ struct ContentView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Collection.name, ascending: true)],
         animation: .default)
     private var collections: FetchedResults<Collection>
-
-    @State private var presentAddArticleView = false
+    
     @State private var presentAddCollectionView = false
     
     private func getContacts(of author: Author) -> [AuthorContact] {
@@ -51,7 +50,7 @@ struct ContentView: View {
     
     var body: some View {
         TabView {
-            articlesTabView()
+            ArticleListView()
                 .tabItem {
                     Label("Articles", systemImage: "doc.on.doc")
                 }
@@ -66,47 +65,9 @@ struct ContentView: View {
                     Label("Collections", systemImage: "square.stack.3d.up")
                 }
         }
-        .sheet(isPresented: $presentAddArticleView) {
-            AddRISView()
-                .environment(\.managedObjectContext, viewContext)
-                .environmentObject(viewModel)
-        }
         .sheet(isPresented: $presentAddCollectionView) {
             AddCollectionView()
                 .environment(\.managedObjectContext, viewContext)
-        }
-    }
-    
-    private func articlesTabView() -> some View {
-        NavigationView {
-            List {
-                ForEach(articles) { article in
-                    NavigationLink(destination: ArticleDetailView(article: article)) {
-                        VStack {
-                            HStack {
-                                Text(article.title ?? "")
-                                Spacer()
-                            }
-                            
-                            HStack {
-                                Spacer()
-                                Text(article.published ?? Date(), style: .date)
-                            }
-                        }
-                    }
-                }
-                .onDelete(perform: deleteArticles)
-            }
-            .navigationTitle("Articles")
-            .toolbar {
-                ToolbarItem {
-                    Button(action: {
-                        presentAddArticleView = true
-                    }) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
         }
     }
     
@@ -153,31 +114,7 @@ struct ContentView: View {
             }
         }
     }
-    
-    private func deleteArticles(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { articles[$0] }.forEach { article in
-                article.collections?.forEach { collection in
-                    if let collection = collection as? Collection {
-                        article.removeFromCollections(collection)
-                    }
-                }
-                
-                // TODO: Reorder articles in collection
-                // TODO: Move these operations to viewModel
-                
-                article.orders?.forEach { order in
-                    if let order = order as? OrderInCollection {
-                        article.removeFromOrders(order)
-                    }
-                }
-                
-                viewContext.delete(article)
-            }
-            viewModel.save(viewContext: viewContext)
-        }
-    }
-    
+  
     private func deleteAuthors(offsets: IndexSet) {
         withAnimation {
             offsets.map { authors[$0] }.forEach { author in
