@@ -17,11 +17,37 @@ struct ArticleListView: View {
     private var articles: FetchedResults<Article>
     
     @State private var presentAddArticleView = false
+    @State private var presentFilterArticleView = false
+    
+    @State private var author: Author?
+    @State private var publishedIn: Int?
+    
+    private var filteredArticles: [Article] {
+        articles.filter { article in
+            if author == nil {
+                return true
+            } else if let authors = article.authors as? Set<Author> {
+                return authors.contains(author!)
+            } else {
+                return false
+            }
+        }
+        .filter { article in
+            if publishedIn == nil {
+                return true
+            } else if let published = article.published {
+                let articlePublicationYear = Calendar.current.dateComponents([.year], from: published)
+                return articlePublicationYear.year == publishedIn
+            } else {
+                return false
+            }
+        }
+    }
     
     var body: some View {
         NavigationView {
             List {
-                ForEach(articles) { article in
+                ForEach(filteredArticles) { article in
                     NavigationLink(destination: ArticleDetailView(article: article)) {
                         VStack {
                             HStack {
@@ -40,17 +66,30 @@ struct ArticleListView: View {
             }
             .navigationTitle("Articles")
             .toolbar {
-                ToolbarItem {
-                    Button(action: {
-                        presentAddArticleView = true
-                    }) {
-                        Label("Add Item", systemImage: "plus")
+                ToolbarItemGroup {
+                    HStack {
+                        Button(action: {
+                            presentFilterArticleView = true
+                        }) {
+                            Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
+                        }
+                        
+                        Button(action: {
+                            presentAddArticleView = true
+                        }) {
+                            Label("Add Item", systemImage: "plus")
+                        }
                     }
                 }
             }
         }
         .sheet(isPresented: $presentAddArticleView) {
             AddRISView()
+                .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
+        }
+        .sheet(isPresented: $presentFilterArticleView) {
+            FilterArticleView(author: $author, publishedIn: $publishedIn)
                 .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
