@@ -27,8 +27,6 @@ struct ContentView: View {
         animation: .default)
     private var collections: FetchedResults<Collection>
     
-    @State private var presentAddCollectionView = false
-    
     private func getContacts(of author: Author) -> [AuthorContact] {
         let predicate = NSPredicate(format: "author == %@", argumentArray: [author])
         let sortDescriptor = NSSortDescriptor(keyPath: \AuthorContact.created, ascending: false)
@@ -60,14 +58,10 @@ struct ContentView: View {
                     Label("Authors", systemImage: "person.3")
                 }
             
-            collectionsTabView()
+            CollectionListView()
                 .tabItem {
                     Label("Collections", systemImage: "square.stack.3d.up")
                 }
-        }
-        .sheet(isPresented: $presentAddCollectionView) {
-            AddCollectionView()
-                .environment(\.managedObjectContext, viewContext)
         }
     }
     
@@ -88,32 +82,6 @@ struct ContentView: View {
             .navigationTitle("Authors")
         }
     }
-    
-    private func collectionsTabView() -> some View {
-        NavigationView {
-            List {
-                ForEach(collections) { collection in
-                    NavigationLink(destination: CollectionDetailView(collection: collection, collectionName: collection.name ?? "")) {
-                        HStack {
-                            Text(collection.name ?? "")
-                            Text(collection.lastupd ?? Date(), style: .date)
-                        }
-                    }
-                }
-                .onDelete(perform: deleteCollections)
-            }
-            .navigationTitle("Collections")
-            .toolbar {
-                ToolbarItem {
-                    Button(action: {
-                        presentAddCollectionView = true
-                    }) {
-                        Label("Add Collection", systemImage: "plus")
-                    }
-                }
-            }
-        }
-    }
   
     private func deleteAuthors(offsets: IndexSet) {
         withAnimation {
@@ -121,27 +89,6 @@ struct ContentView: View {
                 if author.articles == nil || author.articles!.count == 0 {
                     viewContext.delete(author)
                 }
-            }
-            viewModel.save(viewContext: viewContext)
-        }
-    }
-    
-    private func deleteCollections(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { collections[$0] }.forEach { collection in
-                collection.articles?.forEach { article in
-                    if let article = article as? Article {
-                        article.removeFromCollections(collection)
-                    }
-                }
-                
-                collection.orders?.forEach { order in
-                    if let order = order as? OrderInCollection {
-                        viewContext.delete(order)
-                    }
-                }
-                
-                viewContext.delete(collection)
             }
             viewModel.save(viewContext: viewContext)
         }

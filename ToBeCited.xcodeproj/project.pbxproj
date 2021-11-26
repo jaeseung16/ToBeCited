@@ -41,6 +41,7 @@
 		90EDF341271C85BF0097F0E0 /* ToBeCitedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF340271C85BF0097F0E0 /* ToBeCitedUITests.swift */; };
 		90EDF343271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF342271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift */; };
 		90EDF350271CA3110097F0E0 /* AddArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF34F271CA3110097F0E0 /* AddArticleView.swift */; };
+		90F27EE8275171F80072BAA1 /* CollectionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F27EE7275171F80072BAA1 /* CollectionListView.swift */; };
 		90F979402749A6A8008AD083 /* PDFDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F9793F2749A6A8008AD083 /* PDFDocument.swift */; };
 		90FD8419273C5F6B00929EF7 /* SelectReferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FD8418273C5F6B00929EF7 /* SelectReferencesView.swift */; };
 		90FD841C273C8B9200929EF7 /* CollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FD841B273C8B9200929EF7 /* CollectionDetailView.swift */; };
@@ -106,6 +107,7 @@
 		90EDF342271C85BF0097F0E0 /* ToBeCitedUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		90EDF34F271CA3110097F0E0 /* AddArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddArticleView.swift; sourceTree = "<group>"; };
 		90EDF352271CFC0B0097F0E0 /* ToBeCited.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ToBeCited.entitlements; sourceTree = "<group>"; };
+		90F27EE7275171F80072BAA1 /* CollectionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionListView.swift; sourceTree = "<group>"; };
 		90F9793F2749A6A8008AD083 /* PDFDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFDocument.swift; sourceTree = "<group>"; };
 		90FD8418273C5F6B00929EF7 /* SelectReferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectReferencesView.swift; sourceTree = "<group>"; };
 		90FD841B273C8B9200929EF7 /* CollectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailView.swift; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 				900B8F3D2741B12600D40347 /* EditCollectionView.swift */,
 				9012113D27431B43008A35F7 /* ExportCollectionView.swift */,
 				90EADA20274855D10001E150 /* TextDocument.swift */,
+				90F27EE7275171F80072BAA1 /* CollectionListView.swift */,
 			);
 			path = Collection;
 			sourceTree = "<group>";
@@ -445,6 +448,7 @@
 				9009B6752720B8220023C316 /* EditAbstractView.swift in Sources */,
 				90B62045271E06BE005D0FEA /* RISRecord.swift in Sources */,
 				90B6204D271E2C96005D0FEA /* RISWriter.swift in Sources */,
+				90F27EE8275171F80072BAA1 /* CollectionListView.swift in Sources */,
 				90B62049271E07BE005D0FEA /* AddRISView.swift in Sources */,
 				900B8F3C2741AE3500D40347 /* ToBeCitedViewModel.swift in Sources */,
 				90FE9773271F7E62002A75C3 /* AuthorDetailView.swift in Sources */,
