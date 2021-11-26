@@ -22,10 +22,12 @@ struct CollectionListView: View {
         NavigationView {
             List {
                 ForEach(collections) { collection in
-                    NavigationLink(destination: CollectionDetailView(collection: collection, collectionName: collection.name ?? "")) {
-                        HStack {
-                            Text(collection.name ?? "")
-                            Text(collection.lastupd ?? Date(), style: .date)
+                    if let name = collection.name, name != "" {
+                        NavigationLink(destination: CollectionDetailView(collection: collection, collectionName: name)) {
+                            HStack {
+                                Text(name)
+                                Text(collection.lastupd ?? Date(), style: .date)
+                            }
                         }
                     }
                 }

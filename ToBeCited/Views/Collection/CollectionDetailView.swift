@@ -73,7 +73,11 @@ struct CollectionDetailView: View {
                 
                 TextField("\(collection.name ?? "N/A")", text: $collectionName, prompt: nil)
                     .onSubmit {
-                        edited = true
+                        if collectionName == "" {
+                            collectionName = collection.name ?? "N/A"
+                        } else {
+                            edited = true
+                        }
                     }
             }
             
@@ -111,14 +115,6 @@ struct CollectionDetailView: View {
             }
         }
         .navigationTitle(collection.name ?? "")
-        /*
-        .onDisappear {
-            print("onDisappear")
-            if viewContext.hasChanges {
-                viewContext.rollback()
-            }
-        }
-         */
         .padding()
         .sheet(isPresented: $presentEditOrderView) {
             EditOrderView(orders: ordersInCollection)

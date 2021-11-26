@@ -95,11 +95,18 @@ struct AddCollectionView: View {
         }
     }
     
+    private var dateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .medium
+        return dateFormatter
+    }
+    
     private func addNewCollection() -> Void {
         let date = Date()
         
         let collection = Collection(context: viewContext)
-        collection.name = name
+        collection.name = name != "" ? name : dateFormatter.string(from: date)
         collection.uuid = UUID()
         collection.created = date
         collection.lastupd = date
