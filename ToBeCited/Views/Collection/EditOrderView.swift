@@ -41,33 +41,21 @@ struct EditOrderView: View {
                 
                 dismiss.callAsFunction()
             } label: {
-                Text("Cancel")
+                Text("Dismiss")
             }
         
             Spacer()
-            
-            Button {
-                update()
-                
-                dismiss.callAsFunction()
-            } label: {
-                Text("Save")
-            }
-            .disabled(!isEdited)
-
         }
     }
     
     private func move(from source: IndexSet, to destination: Int) {
-        
         orders.move(fromOffsets: source, toOffset: destination)
         
         for k in 0..<orders.count {
             orders[k].order = Int64(k)
         }
         
-        isEdited = true
-        
+        update()
     }
     
     private func update() -> Void {
