@@ -30,6 +30,7 @@ struct EditOrderView: View {
                 }
                 .onMove(perform: move)
             }
+            .environment(\.editMode, Binding.constant(EditMode.active))
         }
         .padding()
     }
