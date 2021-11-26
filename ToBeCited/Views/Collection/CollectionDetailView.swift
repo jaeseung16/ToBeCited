@@ -43,16 +43,59 @@ struct CollectionDetailView: View {
             Divider()
             
             HStack {
+                Button {
+                    collectionName = collection.name ?? ""
+                    
+                    edited = false
+                } label: {
+                    Label("CANCEL", systemImage: "gobackward")
+                }
+                .disabled(!edited)
+                
+                Button {
+                    collection.name = collectionName
+                    
+                    viewModel.save(viewContext: viewContext)
+                    
+                    edited = false
+                } label: {
+                    Label("SAVE", systemImage: "square.and.arrow.down")
+                }
+                .disabled(!edited)
+                
+                Spacer()
+            }
+            
+            HStack {
                 Text("NAME")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 
                 TextField("\(collection.name ?? "N/A")", text: $collectionName, prompt: nil)
                     .onSubmit {
-                        collection.name = collectionName
                         edited = true
                     }
             }
+            
+            Divider()
+            
+            HStack {
+                Spacer()
+                Text("EDIT")
+                
+                Button {
+                    presentEditCollectionView = true
+                } label: {
+                    Label("ARTICLES", systemImage: "pencil")
+                }
+                
+                Button {
+                    presentEditOrderView = true
+                } label: {
+                    Label("ORDER", systemImage: "123.rectangle")
+                }
+            }
+
             
             List {
                 ForEach(ordersInCollection) { order in
@@ -68,12 +111,14 @@ struct CollectionDetailView: View {
             }
         }
         .navigationTitle(collection.name ?? "")
+        /*
         .onDisappear {
             print("onDisappear")
             if viewContext.hasChanges {
                 viewContext.rollback()
             }
         }
+         */
         .padding()
         .sheet(isPresented: $presentEditOrderView) {
             EditOrderView(orders: ordersInCollection)
@@ -93,51 +138,17 @@ struct CollectionDetailView: View {
     }
     
     private func header() -> some View {
-        HStack {
-            Button {
-                viewContext.rollback()
+        VStack {
+            HStack {
+                Spacer()
                 
-                edited = false
-            } label: {
-                Text("Cancel")
+                Button {
+                    viewModel.export(collection: collection)
+                    presentExportCollectionView = true
+                } label: {
+                    Label("EXPORT", systemImage: "square.and.arrow.up")
+                }
             }
-            .disabled(!edited)
-            
-            Spacer()
-            
-            Button {
-                presentEditCollectionView = true
-            } label: {
-                Text("Update articles")
-            }
-            
-            Spacer()
-            
-            Button {
-                presentEditOrderView = true
-            } label: {
-                Text("Update the order")
-            }
-            
-            Spacer()
-            
-            Button {
-                viewModel.export(collection: collection)
-                presentExportCollectionView = true
-            } label: {
-                Text("Export")
-            }
-            
-            Spacer()
-            
-            Button {
-                viewModel.save(viewContext: viewContext)
-                
-                edited = false
-            } label: {
-                Text("Save")
-            }
-            .disabled(!edited)
         }
     }
     
