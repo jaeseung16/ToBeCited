@@ -64,4 +64,5 @@ public enum RISReferenceType: String {
     case UNBILL // "Unenacted Bill"
     case UNPB // "Unpublished work"
     case VIDEO // "Video recording"
+    case PREPRINT
 }

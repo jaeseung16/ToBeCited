@@ -63,7 +63,7 @@ class RISParser {
     }
     
     private func buildRecord() -> RISRecord {
-        let record = RISRecord(referenceType: RISReferenceType(rawValue: dict[.TY]!)!,
+        let record = RISRecord(referenceType: RISReferenceType(rawValue: dict[.TY]!.uppercased())!,
                                primaryAuthor: dict[.A1],
                                secondaryAuthor: dict[.A2],
                                tertiaryAuthor: dict[.A3],
