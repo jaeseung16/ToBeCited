@@ -39,30 +39,98 @@ struct EditCollectionView: View {
     }
     
     var body: some View {
+        GeometryReader { geometry in
+            VStack {
+                header()
+                
+                Divider()
+                
+                Text("The collection contains \(articlesInCollection.count) \(articlesInCollection.count == 1 ? "article" : "articles")")
+                    .foregroundColor(.secondary)
+                
+                List {
+                    ForEach(articlesInCollection) { article in
+                        Button {
+                            if let index = articlesInCollection.firstIndex(of: article) {
+                                articlesInCollection.remove(at: index)
+                                update()
+                            }
+                        } label: {
+                            HStack {
+                                Text(article.title ?? "")
+                            }
+                        }
+                    }
+                }
+                .listStyle(PlainListStyle())
+                
+                Divider()
+                
+                authorsView()
+                    .frame(height: 0.25 * geometry.size.height)
+                
+                Divider()
+                
+                filteredArticlesView()
+                    .frame(height: 0.3 * geometry.size.height)
+            }
+            .padding()
+        }
+    }
+    
+    private func header() -> some View {
+        HStack {
+            Button {
+                dismiss.callAsFunction()
+            } label: {
+                Text("Dismiss")
+            }
+
+            Spacer()
+        }
+    }
+
+    private func authorsView() -> some View {
         VStack {
-            header()
-            
-            Divider()
-            
-            Text("The collection contains \(articlesInCollection.count) \(articlesInCollection.count == 1 ? "article" : "articles")")
+            Text("CHOOSE AN AUTHOR")
+                .font(.callout)
             
             List {
-                ForEach(articlesInCollection) { article in
+                ForEach(authors) { author in
                     Button {
-                        if let index = articlesInCollection.firstIndex(of: article) {
-                            articlesInCollection.remove(at: index)
-                        }
+                        selectedAuthor = author
                     } label: {
                         HStack {
-                            Text(article.title ?? "")
+                            Text(author.firstName ?? "")
+                            
+                            Text(author.lastName ?? "")
+                            
+                            Spacer()
+                            
+                            Text("\(author.articles?.count ?? 0)")
                         }
-                    }                    
+                    }
+                    .foregroundColor(author == selectedAuthor ? .primary : .secondary)
                 }
             }
-            
-            Divider()
-            
-            authorsView()
+            .listStyle(PlainListStyle())
+        }
+    }
+    
+    private func filteredArticlesView() -> some View {
+        VStack {
+            if let author = selectedAuthor, let lastName = author.lastName {
+                HStack {
+                    Text("ARTICLES BY")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                        .frame(width: 50)
+                    Text(author.firstName ?? "")
+                    Text(lastName)
+                    Spacer()
+                }
+            }
             
             List {
                 ForEach(filteredArticles) { article in
@@ -74,6 +142,8 @@ struct EditCollectionView: View {
                         } else {
                             articlesInCollection.append(article)
                         }
+                        
+                        update()
                     } label: {
                         HStack {
                             Text(article.title ?? "")
@@ -81,85 +151,39 @@ struct EditCollectionView: View {
                     }
                 }
             }
+            .listStyle(PlainListStyle())
         }
-        .padding()
     }
     
-    private func header() -> some View {
-        HStack {
-            Spacer()
-            
-            Button {
-                viewContext.rollback()
-                
-                dismiss.callAsFunction()
-            } label: {
-                Text("Cancel")
-            }
-            
-            Spacer()
-            
-            Button {
-                collection.orders?.forEach { order in
-                    if let order = order as? OrderInCollection {
-                        //collection.removeFromOrders(order)
-                        //order.article = nil
-                        viewContext.delete(order)
-                    }
-                }
-                
-                collection.articles?.forEach { article in
-                    if let article = article as? Article {
-                        article.removeFromCollections(collection)
-                    }
-                }
-                
-                for index in 0..<articlesInCollection.count {
-                    let article = articlesInCollection[index]
-                    article.addToCollections(collection)
-                    
-                    let order = OrderInCollection(context: viewContext)
-                    order.collectionId = collection.uuid
-                    order.articleId = article.uuid
-                    order.order = Int64(index)
-                    collection.addToOrders(order)
-                    article.addToOrders(order)
-                }
-                
-                viewModel.save(viewContext: viewContext)
-                
-                dismiss.callAsFunction()
-            } label: {
-                Text("Save")
-            }
-
-            Spacer()
-        }
-    }
-
-    private func authorsView() -> some View {
-        VStack {
-            Text("\(selectedAuthor?.lastName ?? "Choose an author")")
-            
-            List {
-                ForEach(authors) { author in
-                    Button {
-                        selectedAuthor = author
-                    } label: {
-                        HStack {
-                            Text(author.lastName ?? "")
-                            
-                            Text(author.firstName ?? "")
-                            
-                            Spacer()
-                            
-                            Text("\(author.articles?.count ?? 0)")
-                        }
-                    }
-                    .foregroundColor(author == selectedAuthor ? .primary : .secondary)
-                }
+    private func update() -> Void {
+        collection.orders?.forEach { order in
+            if let order = order as? OrderInCollection {
+                //collection.removeFromOrders(order)
+                //order.article = nil
+                viewContext.delete(order)
             }
         }
+        
+        collection.articles?.forEach { article in
+            if let article = article as? Article {
+                article.removeFromCollections(collection)
+            }
+        }
+        
+        for index in 0..<articlesInCollection.count {
+            let article = articlesInCollection[index]
+            article.addToCollections(collection)
+            
+            let order = OrderInCollection(context: viewContext)
+            order.collectionId = collection.uuid
+            order.articleId = article.uuid
+            order.order = Int64(index)
+            collection.addToOrders(order)
+            article.addToOrders(order)
+        }
+        
+        viewModel.save(viewContext: viewContext)
+        
     }
 }
 

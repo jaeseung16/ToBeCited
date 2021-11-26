@@ -119,6 +119,7 @@ struct CollectionDetailView: View {
         .sheet(isPresented: $presentEditOrderView) {
             EditOrderView(orders: ordersInCollection)
                 .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentEditCollectionView) {
             EditCollectionView(collection: collection, articlesInCollection: articlesInCollection)

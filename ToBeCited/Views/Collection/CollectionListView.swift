@@ -24,9 +24,18 @@ struct CollectionListView: View {
                 ForEach(collections) { collection in
                     if let name = collection.name, name != "" {
                         NavigationLink(destination: CollectionDetailView(collection: collection, collectionName: name)) {
-                            HStack {
-                                Text(name)
-                                Text(collection.lastupd ?? Date(), style: .date)
+                            VStack {
+                                HStack {
+                                    Text(name)
+                                    Spacer()
+                                }
+                                
+                                HStack {
+                                    Spacer()
+                                    Text(collection.lastupd ?? Date(), style: .date)
+                                        .font(.callout)
+                                        .foregroundColor(.secondary)
+                                }
                             }
                         }
                     }

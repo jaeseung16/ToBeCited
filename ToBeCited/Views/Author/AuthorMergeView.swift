@@ -57,6 +57,7 @@ struct AuthorMergeView: View {
             
             Button {
                 merge()
+                presentationMode.wrappedValue.dismiss()
             } label: {
                 Text("Perform merge")
             }

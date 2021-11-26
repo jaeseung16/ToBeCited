@@ -10,6 +10,7 @@ import SwiftUI
 struct EditOrderView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var orders: [OrderInCollection]
     @State private var isEdited = false
@@ -56,18 +57,7 @@ struct EditOrderView: View {
             orders[k].order = Int64(k)
         }
         
-        update()
-    }
-    
-    private func update() -> Void {
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        viewModel.save(viewContext: viewContext)
     }
 }
 
