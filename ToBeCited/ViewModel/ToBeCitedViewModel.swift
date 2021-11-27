@@ -24,6 +24,12 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     private var subscriptions: Set<AnyCancellable> = []
     
+    var yearOnlyDateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy"
+        return dateFormatter
+    }
+    
     override init() {
         super.init()
         

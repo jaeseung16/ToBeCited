@@ -66,8 +66,13 @@ struct ArticleListView: View {
                             }
                             
                             HStack {
+                                Text(article.journal ?? "")
+                                    .font(.callout)
+                                    .foregroundColor(.secondary)
                                 Spacer()
-                                Text(article.published ?? Date(), style: .date)
+                                Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
+                                    .font(.callout)
+                                    .foregroundColor(.secondary)
                             }
                         }
                     }

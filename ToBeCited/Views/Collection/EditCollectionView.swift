@@ -58,6 +58,10 @@ struct EditCollectionView: View {
                         } label: {
                             HStack {
                                 Text(article.title ?? "")
+                                
+                                Spacer()
+                                
+                                Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
                             }
                         }
                     }
@@ -147,6 +151,10 @@ struct EditCollectionView: View {
                     } label: {
                         HStack {
                             Text(article.title ?? "")
+                            
+                            Spacer()
+                            
+                            Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
                         }
                     }
                 }

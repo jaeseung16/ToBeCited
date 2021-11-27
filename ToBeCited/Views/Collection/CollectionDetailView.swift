@@ -104,11 +104,21 @@ struct CollectionDetailView: View {
             List {
                 ForEach(ordersInCollection) { order in
                     HStack {
+                        Text("\(order.order + 1)")
+                        
+                        Spacer()
+                            .frame(width: 20)
+                        
                         Text(order.article?.title ?? "")
                         
                         Spacer()
                         
-                        Text("\(order.order + 1)")
+                        Text(order.article?.journal ?? "")
+                        
+                        Spacer()
+                            .frame(width: 20)
+                        
+                        Text("\(viewModel.yearOnlyDateFormatter.string(from: order.article?.published ?? Date()))")
                     }
                 }
                 .onDelete(perform: delete)
