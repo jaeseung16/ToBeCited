@@ -10,78 +10,68 @@ import SwiftUI
 struct SelectReferencesView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) private var presentationMode
+    @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var article: Article
+    @State var selectedAuthor: Author?
     
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false)],
         animation: .default)
     private var articles: FetchedResults<Article>
     
-    private var references: [Article] {
-        var references = [Article]()
-        article.references?.forEach { reference in
-            if let reference = reference as? Article {
-                references.append(reference)
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true)],
+        animation: .default)
+    private var authors: FetchedResults<Author>
+    
+    @State var references: [Article]
+    
+    private var filteredArticles: Array<Article> {
+        articles.filter { article in
+            if let authors = article.authors as? Set<Author>, let author = selectedAuthor {
+                return authors.contains(author)
             }
+            return false
         }
-        return references
     }
     
     var body: some View {
-        VStack {
-            header()
-            
-            Divider()
-            
-            List {
-                ForEach(references) { reference in
-                    Button {
-                        self.article.removeFromReferences(reference)
-                        
-                        reference.removeFromCited(self.article)
-                        
-                        do {
-                            try viewContext.save()
-                        } catch {
-                            // Replace this implementation with code to handle the error appropriately.
-                            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                            let nsError = error as NSError
-                            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        GeometryReader { geometry in
+            VStack {
+                header()
+                
+                Divider()
+                
+                List {
+                    ForEach(references) { reference in
+                        Button {
+                            if let index = references.firstIndex(of: reference) {
+                                references.remove(at: index)
+                            }
+                            
+                            article.removeFromReferences(reference)
+                            reference.removeFromCited(article)
+                            update()
+                        } label: {
+                            Text(reference.title ?? "")
                         }
-                        
-                    } label: {
-                        Text(reference.title ?? "")
                     }
                 }
+                
+                Divider()
+                
+                authorsView()
+                    .frame(height: 0.25 * geometry.size.height)
+                
+                Divider()
+                
+                filteredArticlesView()
+                    .frame(height: 0.3 * geometry.size.height)
             }
-            
-            Divider()
-            
-            List {
-                ForEach(articles) { reference in
-                    Button {
-                        self.article.addToReferences(reference)
-                        
-                        reference.addToCited(self.article)
-                        
-                        do {
-                            try viewContext.save()
-                        } catch {
-                            // Replace this implementation with code to handle the error appropriately.
-                            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                            let nsError = error as NSError
-                            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-                        }
-                        
-                    } label: {
-                        Text(reference.title ?? "")
-                    }
-                }
-            }
+            .navigationTitle(article.title ?? "No Title")
+            .padding()
         }
-        .navigationTitle(article.title ?? "No Title")
-        .padding()
     }
     
     private func header() -> some View {
@@ -93,16 +83,77 @@ struct SelectReferencesView: View {
             }
             
             Spacer()
-            
-            Button {
-                update()
-            } label: {
-                Text("Save")
-            }
         }
     }
     
     private func update() -> Void {
-        
+        viewModel.save(viewContext: viewContext)
+    }
+    
+    private func authorsView() -> some View {
+        VStack {
+            Text("CHOOSE AN AUTHOR")
+                .font(.callout)
+            
+            List {
+                ForEach(authors) { author in
+                    Button {
+                        selectedAuthor = author
+                    } label: {
+                        HStack {
+                            Text(author.firstName ?? "")
+                            
+                            Text(author.lastName ?? "")
+                            
+                            Spacer()
+                            
+                            Text("\(author.articles?.count ?? 0)")
+                        }
+                    }
+                    .foregroundColor(author == selectedAuthor ? .primary : .secondary)
+                }
+            }
+            .listStyle(PlainListStyle())
+        }
+    }
+    
+    private func filteredArticlesView() -> some View {
+        VStack {
+            if let author = selectedAuthor, let lastName = author.lastName {
+                HStack {
+                    Text("ARTICLES BY")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                        .frame(width: 50)
+                    Text(author.firstName ?? "")
+                    Text(lastName)
+                    Spacer()
+                }
+            }
+            
+            List {
+                ForEach(filteredArticles) { reference in
+                    Button {
+                        if references.contains(reference) {
+                            if let index = references.firstIndex(of: reference) {
+                                references.remove(at: index)
+                            }
+                        } else {
+                            references.append(reference)
+                        }
+                        
+                        article.addToReferences(reference)
+                        reference.addToCited(article)
+                        update()
+                    } label: {
+                        HStack {
+                            Text(reference.title ?? "")
+                        }
+                    }
+                }
+            }
+            .listStyle(PlainListStyle())
+        }
     }
 }

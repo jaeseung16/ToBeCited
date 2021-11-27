@@ -88,27 +88,6 @@ struct ArticleDetailView: View {
             VStack {
                 header()
                 
-                /*
-                if presentPdfView {
-                    VStack {
-                        HStack {
-                            Button {
-                                presentPdfView = false
-                            } label: {
-                                Text("Dismiss")
-                            }
-                        }
-                        
-                        if let url = pdfURL {
-                            NavigationLink {
-                                PreviewController(url: url)
-                            } label: {
-                                Text("Open")
-                            }
-                        }
-                    }
-                }
-                */
                 
                 Divider()
                 
@@ -179,24 +158,6 @@ struct ArticleDetailView: View {
             }
         } message: {
             Text(errorMessage)
-        }
-        .sheet(isPresented: $presentPdfView) {
-            VStack {
-                HStack {
-                    Button {
-                        presentPdfView = false
-                    } label: {
-                        Text("Dismiss")
-                    }
-                }
-                
-                PDFKitView(pdfData: article.pdf!)
-                /*
-                if let url = pdfURL {
-                    PreviewController(url: url)
-                }
-                */
-            }
         }
     }
     
@@ -371,7 +332,7 @@ struct ArticleDetailView: View {
                 Spacer()
                 
                 NavigationLink {
-                    SelectReferencesView(article: article)
+                    SelectReferencesView(article: article, references: references)
                 } label: {
                     Label("edit", systemImage: "pencil.circle")
                 }
