@@ -17,7 +17,6 @@ struct ArticleDetailView: View {
     @State private var presentEditAbstractView = false
     @State private var exportPDF = false
     @State private var pdfData = Data()
-    @State private var abstract = ""
     @State private var pdfURL: URL?
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
@@ -57,7 +56,6 @@ struct ArticleDetailView: View {
                 references.append(reference)
             }
         }
-        //print("references.count = \(references.count)")
         return references
     }
     
@@ -68,7 +66,6 @@ struct ArticleDetailView: View {
                 cited.append(article)
             }
         }
-        //print("cited.count = \(cited.count)")
         return cited
     }
     
@@ -79,7 +76,6 @@ struct ArticleDetailView: View {
                 collections.append(collection)
             }
         }
-        //print("collections.count = \(collections.count)")
         return collections
     }
     
@@ -87,7 +83,6 @@ struct ArticleDetailView: View {
         ScrollView {
             VStack {
                 header()
-                
                 
                 Divider()
                 
@@ -104,26 +99,6 @@ struct ArticleDetailView: View {
                 citedView()
                 
                 collectionsView()
-                
-                /*
-                if article.pdf != nil {
-                    PDFKitView(pdfData: article.pdf!)
-                        .scaledToFit()
-                    /*
-                     Button {
-                     presentPdfView = true
-                     } label: {
-                     
-                     }
-                     */
-                } else if !pdfData.isEmpty {
-                    PDFKitView(pdfData: pdfData)
-                        .scaledToFit()
-                }
-                */
-                //ScrollView {
-                //    Text(article.ris?.content ?? "")
-                //}
             }
         }
         .navigationTitle(article.title ?? "Title is not available")
@@ -131,11 +106,9 @@ struct ArticleDetailView: View {
         .fileImporter(isPresented: $importPdf, allowedContentTypes: [.pdf]) { result in
             switch result {
             case .success(let url):
-                print("pdf url = \(url)")
                 if let data = try? Data(contentsOf: url) {
-                    self.pdfData = data
+                    pdfData = data
                     update()
-                    print("data = \(data)")
                 }
             case .failure(let error):
                 errorMessage = "Failed to import a pdf file: \(error.localizedDescription)"
@@ -144,9 +117,8 @@ struct ArticleDetailView: View {
         }
         .fileExporter(isPresented: $exportPDF, documents: [PDFFile(pdfData: pdfData)], contentType: .pdf) { result in
             switch result {
-            case .success(_):
-                print("success")
-                //dismiss.callAsFunction()
+            case .success(let url):
+                print("saved pdf at \(url)")
             case .failure(let error):
                 errorMessage = "Failed to export the pdf file: \(error.localizedDescription)"
                 showErrorAlert = true
@@ -198,20 +170,11 @@ struct ArticleDetailView: View {
     }
     
     private func update() -> Void {
-        if !self.pdfData.isEmpty {
-            self.article.pdf = self.pdfData
+        if !pdfData.isEmpty {
+            article.pdf = pdfData
         }
         
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
-        
-        self.abstract = ""
+        viewModel.save(viewContext: viewContext)
     }
     
     private func title() -> some View {
@@ -340,9 +303,14 @@ struct ArticleDetailView: View {
             
             List {
                 ForEach(references) { reference in
-                    Text(reference.title ?? "No title")
+                    HStack {
+                        Text(reference.title ?? "N/A")
+                        Spacer()
+                        Text(reference.journal ?? "N/A")
+                    }
                 }
             }
+            .listStyle(PlainListStyle())
         }
         .frame(height: 200.0)
     }
@@ -359,9 +327,14 @@ struct ArticleDetailView: View {
             
             List {
                 ForEach(cited) { cited in
-                    Text(cited.title ?? "No title")
+                    HStack {
+                        Text(cited.title ?? "N/A")
+                        Spacer()
+                        Text(cited.journal ?? "N/A")
+                    }
                 }
             }
+            .listStyle(PlainListStyle())
         }
         .frame(height: 200.0)
     }
@@ -378,9 +351,14 @@ struct ArticleDetailView: View {
             
             List {
                 ForEach(collections) { collection in
-                    Text(collection.name ?? "No title")
+                    HStack {
+                        Text(collection.name ?? "No title")
+                        Spacer()
+                        Text(collection.created ?? Date(), style: .date)
+                    }
                 }
             }
+            .listStyle(PlainListStyle())
         }
         .frame(height: 200.0)
     }
