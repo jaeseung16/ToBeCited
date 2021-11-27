@@ -88,7 +88,7 @@ struct AddRISView: View {
             let newArticle = Article(context: viewContext)
             newArticle.created = created
             newArticle.title = record.primaryTitle ?? record.title
-            newArticle.journal = record.periodicalNameFullFormat
+            newArticle.journal = record.periodicalNameFullFormat ?? record.secondaryTitle
             newArticle.abstract = record.abstract
             newArticle.doi = record.doi
             newArticle.volume = record.volumeNumber

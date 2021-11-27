@@ -187,7 +187,7 @@ struct ArticleDetailView: View {
             }
             
             Text(article.title ?? "Title is not available")
-                .font(.title)
+                .font(.title2)
                 .multilineTextAlignment(.center)
                 .padding()
         }
@@ -201,6 +201,7 @@ struct ArticleDetailView: View {
             
             if article.published != nil {
                 Text(publicationDate)
+                    .font(.callout)
             }
             
             if article.doi != nil, let url = URL(string: "https://dx.doi.org/\(article.doi!)") {
@@ -288,7 +289,7 @@ struct ArticleDetailView: View {
     private func referencesView() -> some View {
         VStack {
             HStack {
-                Text("REFERENCES IMPORTED IN TOBECITED")
+                Text("\(references.count) REFERENCES IMPORTED IN TOBECITED")
                     .font(.callout)
                     .foregroundColor(.secondary)
                 
@@ -318,7 +319,7 @@ struct ArticleDetailView: View {
     private func citedView() -> some View {
         VStack {
             HStack {
-                Text("ARTICLES CITING THIS ARTICLE IMPORTED IN TOBECITED")
+                Text("\(cited.count) ARTICLES CITING THIS ARTICLE IMPORTED IN TOBECITED")
                     .font(.callout)
                     .foregroundColor(.secondary)
                 
