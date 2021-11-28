@@ -103,7 +103,7 @@ struct AuthorDetailView: View {
                 }
             }
         }
-        .navigationTitle(name(of: author))
+        .navigationTitle(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
         .frame(maxHeight: .infinity, alignment: .top)
         .padding()
         .sheet(isPresented: $presentAuthorMergeView) {

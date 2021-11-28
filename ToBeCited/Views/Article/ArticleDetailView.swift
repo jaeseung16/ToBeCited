@@ -249,16 +249,6 @@ struct ArticleDetailView: View {
         }
     }
     
-    private func name(of author: Author) -> String {
-        guard let lastName = author.lastName, let firstName = author.firstName else {
-            return "The name of an author is not available"
-        }
-        
-        let middleName = author.middleName == nil ? " " : " \(author.middleName!) "
-        
-        return firstName + middleName + lastName
-    }
-    
     private func abstractView() -> some View {
         VStack {
             HStack {

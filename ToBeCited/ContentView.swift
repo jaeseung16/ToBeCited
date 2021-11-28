@@ -12,40 +12,6 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
 
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false)],
-        animation: .default)
-    private var articles: FetchedResults<Article>
-    
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true)],
-        animation: .default)
-    private var authors: FetchedResults<Author>
-    
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Collection.name, ascending: true)],
-        animation: .default)
-    private var collections: FetchedResults<Collection>
-    
-    private func getContacts(of author: Author) -> [AuthorContact] {
-        let predicate = NSPredicate(format: "author == %@", argumentArray: [author])
-        let sortDescriptor = NSSortDescriptor(keyPath: \AuthorContact.created, ascending: false)
-        
-        let fetchRequest = NSFetchRequest<AuthorContact>(entityName: "AuthorContact")
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        fetchRequest.predicate = predicate
-        
-        let fc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: viewContext, sectionNameKeyPath: nil, cacheName: nil)
-        
-        do {
-            try fc.performFetch()
-        } catch {
-            NSLog("Failed fetch contacts with author = \(author)")
-        }
-        
-        return fc.fetchedObjects ?? [AuthorContact]()
-    }
-    
     var body: some View {
         TabView {
             ArticleListView()
@@ -53,7 +19,7 @@ struct ContentView: View {
                     Label("Articles", systemImage: "doc.on.doc")
                 }
             
-            authorsTabView()
+            AuthorListView()
                 .tabItem {
                     Label("Authors", systemImage: "person.3")
                 }
@@ -64,36 +30,6 @@ struct ContentView: View {
                 }
         }
     }
-    
-    private func authorsTabView() -> some View {
-        NavigationView {
-            List {
-                ForEach(authors) { author in
-                    NavigationLink(destination: AuthorDetailView(author: author, contacts: getContacts(of: author))) {
-                        HStack {
-                            Text(author.lastName ?? "")
-                            Text(author.firstName ?? "")
-                            Text(author.middleName ?? "")
-                        }
-                    }
-                }
-                .onDelete(perform: deleteAuthors)
-            }
-            .navigationTitle("Authors")
-        }
-    }
-  
-    private func deleteAuthors(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { authors[$0] }.forEach { author in
-                if author.articles == nil || author.articles!.count == 0 {
-                    viewContext.delete(author)
-                }
-            }
-            viewModel.save(viewContext: viewContext)
-        }
-    }
-
 }
 
 struct ContentView_Previews: PreviewProvider {
