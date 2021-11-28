@@ -23,7 +23,12 @@ struct AuthorListView: View {
         NavigationView {
             List {
                 ForEach(authors) { author in
-                    NavigationLink(destination: AuthorDetailView(author: author)) {
+                    NavigationLink(destination: AuthorDetailView(author: author,
+                                                                 firstName: author.firstName ?? "",
+                                                                 middleName: author.middleName ?? "",
+                                                                 lastName: author.lastName ?? "",
+                                                                 nameSuffix: author.nameSuffix ?? "",
+                                                                 orcid: author.orcid ?? "")) {
                         HStack {
                             Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
                             Spacer()
@@ -34,25 +39,6 @@ struct AuthorListView: View {
             }
             .navigationTitle("Authors")
         }
-    }
-    
-    private func getContacts(of author: Author) -> [AuthorContact] {
-        let predicate = NSPredicate(format: "author == %@", argumentArray: [author])
-        let sortDescriptor = NSSortDescriptor(keyPath: \AuthorContact.created, ascending: false)
-        
-        let fetchRequest = NSFetchRequest<AuthorContact>(entityName: "AuthorContact")
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        fetchRequest.predicate = predicate
-        
-        let fc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: viewContext, sectionNameKeyPath: nil, cacheName: nil)
-        
-        do {
-            try fc.performFetch()
-        } catch {
-            NSLog("Failed fetch contacts with author = \(author)")
-        }
-        
-        return fc.fetchedObjects ?? [AuthorContact]()
     }
     
     private func deleteAuthors(offsets: IndexSet) {

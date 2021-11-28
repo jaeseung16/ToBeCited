@@ -65,7 +65,6 @@ struct ArticleSummaryView: View {
             
             authorList()
         }
-        .padding()
     }
     
     private var journalString: String {

@@ -14,8 +14,13 @@ struct AuthorDetailView: View {
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var author: Author
+    @State var firstName: String
+    @State var middleName: String
+    @State var lastName: String
+    @State var nameSuffix: String
+    @State var orcid: String
     
-    var contacts: [AuthorContact] {
+    private var contacts: [AuthorContact] {
         author.contacts?.filter { $0 is AuthorContact } as! [AuthorContact]
     }
     
@@ -24,11 +29,6 @@ struct AuthorDetailView: View {
     @State private var editLastName = false
     @State private var editFirstName = false
     @State private var editMiddleName = false
-    
-    @State private var lastName = ""
-    @State private var firstName = ""
-    @State private var middleName = ""
-    
     @State private var cancelled = false
     
     private var articles: [Article] {
@@ -38,7 +38,13 @@ struct AuthorDetailView: View {
                 articles.append(article)
             }
         }
-        return articles
+        return articles.sorted {
+            if let date1 = $0.published, let date2 = $1.published {
+                return date1 > date2
+            } else {
+                return false
+            }
+        }
     }
     
     private var authors: [Author] {
@@ -64,6 +70,14 @@ struct AuthorDetailView: View {
         return [Author]()
     }
     
+    private var orcidURL: URL? {
+        if let orcid = author.orcid, let url = URL(string: "https://orcid.org/\(orcid)") {
+            return url
+        } else {
+            return nil
+        }
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -72,6 +86,27 @@ struct AuthorDetailView: View {
                 Divider()
                 
                 name(author: author)
+                
+                HStack {
+                    Text("ORCID")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                        .frame(width: 20)
+                    
+                    TextField("orcid", text: $orcid, prompt: nil)
+                        .onSubmit {
+                            author.orcid = orcid
+                            viewModel.save(viewContext: viewContext)
+                        }
+                    
+                    if let orcidURL = orcidURL {
+                        Link(destination: orcidURL) {
+                            Label("ORCiD", systemImage: "link")
+                        }
+                    }
+                }
                 
                 Divider()
                 
@@ -121,17 +156,13 @@ struct AuthorDetailView: View {
                     .foregroundColor(.secondary)
                 
                 Spacer()
+                    .frame(width: 20)
                 
-                Text(author.lastName ?? "")
-                
-                Spacer()
-                
-                Button {
-                    lastName = author.lastName ?? ""
-                    editLastName = true
-                } label: {
-                    Label("Edit", systemImage: "pencil.circle")
-                }
+                TextField("lastname", text: $lastName, prompt: nil)
+                    .onSubmit {
+                        author.lastName = lastName
+                        viewModel.save(viewContext: viewContext)
+                    }
             }
             
             HStack {
@@ -140,17 +171,13 @@ struct AuthorDetailView: View {
                     .foregroundColor(.secondary)
                 
                 Spacer()
+                    .frame(width: 20)
                 
-                Text(author.firstName ?? "")
-                
-                Spacer()
-                
-                Button {
-                    firstName = author.firstName ?? ""
-                    editFirstName = true
-                } label: {
-                    Label("Edit", systemImage: "pencil.circle")
-                }
+                TextField("fistname", text: $firstName, prompt: nil)
+                    .onSubmit {
+                        author.firstName = firstName
+                        viewModel.save(viewContext: viewContext)
+                    }
             }
             
             HStack {
@@ -159,48 +186,31 @@ struct AuthorDetailView: View {
                     .foregroundColor(.secondary)
                 
                 Spacer()
+                    .frame(width: 20)
                 
-                Text(author.middleName ?? "")
+                TextField("fistname", text: $middleName, prompt: nil)
+                    .onSubmit {
+                        author.middleName = middleName
+                        viewModel.save(viewContext: viewContext)
+                    }
+            }
+            
+            HStack {
+                Text("SUFFIX")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
                 
                 Spacer()
+                    .frame(width: 20)
                 
-                Button {
-                    middleName = author.middleName ?? ""
-                    editMiddleName = true
-                } label: {
-                    Label("Edit", systemImage: "pencil.circle")
-                }
+                TextField("suffix", text: $nameSuffix, prompt: nil)
+                    .onSubmit {
+                        author.nameSuffix = nameSuffix
+                        viewModel.save(viewContext: viewContext)
+                    }
             }
             
         }
-        .sheet(isPresented: $editLastName) {
-            if !cancelled {
-                author.lastName = lastName
-                saveViewContext()
-            }
-        } content: {
-            UpdateTextView(title: "Edit the author's last name", textToUpdate: $lastName, cancelled: $cancelled)
-        }
-        .sheet(isPresented: $editFirstName) {
-            if !cancelled {
-                author.firstName = firstName
-                saveViewContext()
-            }
-        } content: {
-            UpdateTextView(title: "Edit the author's first name", textToUpdate: $firstName, cancelled: $cancelled)
-        }
-        .sheet(isPresented: $editMiddleName) {
-            if !cancelled {
-                author.middleName = middleName
-                saveViewContext()
-            }
-        } content: {
-            UpdateTextView(title: "Edit the author's middle name", textToUpdate: $middleName, cancelled: $cancelled)
-        }
-    }
-    
-    func saveViewContext() -> Void {
-        viewModel.save(viewContext: viewContext)
     }
     
     private func contactsView() -> some View {
@@ -298,7 +308,7 @@ struct AuthorDetailView: View {
                 let contact = contacts[index]
                 author.removeFromContacts(contact)
                 viewContext.delete(contact)
-                saveViewContext()
+                viewModel.save(viewContext: viewContext)
             }
         }
     }
