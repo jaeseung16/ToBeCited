@@ -308,6 +308,13 @@ struct ArticleDetailView: View {
                         Text(reference.title ?? "N/A")
                         Spacer()
                         Text(reference.journal ?? "N/A")
+                            .font(.callout)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                            .frame(width: 20)
+                        Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
+                            .font(.callout)
+                            .foregroundColor(.secondary)
                     }
                 }
             }
@@ -332,6 +339,13 @@ struct ArticleDetailView: View {
                         Text(cited.title ?? "N/A")
                         Spacer()
                         Text(cited.journal ?? "N/A")
+                            .font(.callout)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                            .frame(width: 20)
+                        Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
+                            .font(.callout)
+                            .foregroundColor(.secondary)
                     }
                 }
             }
@@ -356,6 +370,8 @@ struct ArticleDetailView: View {
                         Text(collection.name ?? "No title")
                         Spacer()
                         Text(collection.created ?? Date(), style: .date)
+                            .font(.callout)
+                            .foregroundColor(.secondary)
                     }
                 }
             }
