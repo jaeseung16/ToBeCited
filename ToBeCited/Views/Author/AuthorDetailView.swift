@@ -11,6 +11,7 @@ import CoreData
 struct AuthorDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) private var presentationMode
+    @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     var author: Author
     var contacts: [AuthorContact]
@@ -83,7 +84,22 @@ struct AuthorDetailView: View {
             
             List {
                 ForEach(articles) { article in
-                    Text(article.title ?? "")
+                    NavigationLink {
+                        ArticleSummaryView(article: article)
+                    } label: {
+                        HStack {
+                            Text(article.title ?? "N/A")
+                            Spacer()
+                            Text(article.journal ?? "N/A")
+                                .font(.callout)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                                .frame(width: 20)
+                            Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
+                                .font(.callout)
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 }
             }
         }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CollectionSummaryView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var collection: Collection
@@ -24,6 +25,10 @@ struct CollectionSummaryView: View {
         return orders.sorted { $0.order < $1.order }
     }
     
+    private var articlesInCollection: [Article] {
+        ordersInCollection.filter { $0.article != nil} .map { $0.article! }
+    }
+    
     var body: some View {
         VStack {
             HStack {
@@ -37,23 +42,27 @@ struct CollectionSummaryView: View {
             Divider()
             
             List {
-                ForEach(ordersInCollection) { order in
-                    HStack {
-                        Text("\(order.order + 1)")
-                        
-                        Spacer()
-                            .frame(width: 20)
-                        
-                        Text(order.article?.title ?? "")
-                        
-                        Spacer()
-                        
-                        Text(order.article?.journal ?? "")
-                        
-                        Spacer()
-                            .frame(width: 20)
-                        
-                        Text("\(viewModel.yearOnlyDateFormatter.string(from: order.article?.published ?? Date()))")
+                ForEach(articlesInCollection) { article in
+                    NavigationLink {
+                        ArticleSummaryView(article: article)
+                    } label: {
+                        HStack {
+                            //Text("\(order.order + 1)")
+                            
+                            Spacer()
+                                .frame(width: 20)
+                            
+                            Text(article.title ?? "")
+                            
+                            Spacer()
+                            
+                            Text(article.journal ?? "")
+                            
+                            Spacer()
+                                .frame(width: 20)
+                            
+                            Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
+                        }
                     }
                 }
             }

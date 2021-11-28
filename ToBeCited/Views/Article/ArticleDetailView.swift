@@ -304,17 +304,21 @@ struct ArticleDetailView: View {
             
             List {
                 ForEach(references) { reference in
-                    HStack {
-                        Text(reference.title ?? "N/A")
-                        Spacer()
-                        Text(reference.journal ?? "N/A")
-                            .font(.callout)
-                            .foregroundColor(.secondary)
-                        Spacer()
-                            .frame(width: 20)
-                        Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
-                            .font(.callout)
-                            .foregroundColor(.secondary)
+                    NavigationLink {
+                        ArticleSummaryView(article: reference)
+                    } label: {
+                        HStack {
+                            Text(reference.title ?? "N/A")
+                            Spacer()
+                            Text(reference.journal ?? "N/A")
+                                .font(.callout)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                                .frame(width: 20)
+                            Text("\(viewModel.yearOnlyDateFormatter.string(from: reference.published ?? Date()))")
+                                .font(.callout)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
             }
@@ -335,17 +339,21 @@ struct ArticleDetailView: View {
             
             List {
                 ForEach(cited) { cited in
-                    HStack {
-                        Text(cited.title ?? "N/A")
-                        Spacer()
-                        Text(cited.journal ?? "N/A")
-                            .font(.callout)
-                            .foregroundColor(.secondary)
-                        Spacer()
-                            .frame(width: 20)
-                        Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
-                            .font(.callout)
-                            .foregroundColor(.secondary)
+                    NavigationLink {
+                        ArticleSummaryView(article: cited)
+                    } label: {
+                        HStack {
+                            Text(cited.title ?? "N/A")
+                            Spacer()
+                            Text(cited.journal ?? "N/A")
+                                .font(.callout)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                                .frame(width: 20)
+                            Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
+                                .font(.callout)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
             }

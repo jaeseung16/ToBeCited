@@ -9,7 +9,6 @@ import SwiftUI
 
 struct CollectionDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.presentationMode) private var presentationMode
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var collection: Collection
@@ -100,25 +99,30 @@ struct CollectionDetailView: View {
                 }
             }
 
-            
             List {
                 ForEach(ordersInCollection) { order in
-                    HStack {
-                        Text("\(order.order + 1)")
-                        
-                        Spacer()
-                            .frame(width: 20)
-                        
-                        Text(order.article?.title ?? "")
-                        
-                        Spacer()
-                        
-                        Text(order.article?.journal ?? "")
-                        
-                        Spacer()
-                            .frame(width: 20)
-                        
-                        Text("\(viewModel.yearOnlyDateFormatter.string(from: order.article?.published ?? Date()))")
+                    NavigationLink {
+                        if let article = order.article {
+                            ArticleSummaryView(article: article)
+                        }
+                    } label: {
+                        HStack {
+                            Text("\(order.order + 1)")
+                            
+                            Spacer()
+                                .frame(width: 20)
+                            
+                            Text(order.article?.title ?? "")
+                            
+                            Spacer()
+                            
+                            Text(order.article?.journal ?? "")
+                            
+                            Spacer()
+                                .frame(width: 20)
+                            
+                            Text("\(viewModel.yearOnlyDateFormatter.string(from: order.article?.published ?? Date()))")
+                        }
                     }
                 }
                 .onDelete(perform: delete)
@@ -141,7 +145,6 @@ struct CollectionDetailView: View {
                 .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
-
     }
     
     private func header() -> some View {
