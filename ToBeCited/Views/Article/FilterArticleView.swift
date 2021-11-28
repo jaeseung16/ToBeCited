@@ -36,13 +36,13 @@ struct FilterArticleView: View {
                 Divider()
                 
                 HStack {
-                    Text("AUTHORS")
+                    Text("SELECT AN AUTHOR")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Spacer()
                 }
                 
-                Picker("AUTHORS", selection: $selectedAuthor) {
+                Picker("SELECT AN AUTHOR", selection: $selectedAuthor) {
                     ForEach(authors) { author in
                         if let uuid = author.uuid {
                             Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
@@ -73,13 +73,14 @@ struct FilterArticleView: View {
     
     private func selectedAuthorView() -> some View {
         HStack {
-            Text("AUTHOR      ")
+            Text("AUTHOR")
                 .font(.caption)
+                .frame(width: 100, alignment: .leading)
             
             Spacer()
             
             if author == nil {
-                Text("n/a")
+                Text("N/A")
                     .foregroundColor(.secondary)
             } else {
                 Text("\(viewModel.nameComponents(of: author!).formatted(.name(style: .long)))")
@@ -105,10 +106,11 @@ struct FilterArticleView: View {
         HStack {
             Text("PUBLISHED IN")
                 .font(.caption)
+                .frame(width: 100, alignment: .leading)
             
             Spacer()
             
-            TextField("Publication Year", value: $publishedIn, formatter: NumberFormatter(), prompt: Text("n/a"))
+            TextField("Publication Year", value: $publishedIn, formatter: NumberFormatter(), prompt: Text("N/A"))
                 .multilineTextAlignment(.center)
             
             Spacer()
