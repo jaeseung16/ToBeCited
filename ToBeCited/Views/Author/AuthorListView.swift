@@ -13,7 +13,9 @@ struct AuthorListView: View {
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
+                          NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
+                          NSSortDescriptor(keyPath: \Author.created, ascending: false)],
         animation: .default)
     private var authors: FetchedResults<Author>
 
@@ -21,7 +23,7 @@ struct AuthorListView: View {
         NavigationView {
             List {
                 ForEach(authors) { author in
-                    NavigationLink(destination: AuthorDetailView(author: author, contacts: getContacts(of: author))) {
+                    NavigationLink(destination: AuthorDetailView(author: author)) {
                         HStack {
                             Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
                             Spacer()

@@ -10,11 +10,14 @@ import CoreData
 
 struct AuthorDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
-    var author: Author
-    var contacts: [AuthorContact]
+    @State var author: Author
+    
+    var contacts: [AuthorContact] {
+        author.contacts?.filter { $0 is AuthorContact } as! [AuthorContact]
+    }
     
     @State private var presentAuthorMergeView = false
     @State private var presentAddContactView = false
@@ -62,55 +65,33 @@ struct AuthorDetailView: View {
     }
     
     var body: some View {
-        VStack {
-            header()
-            
-            Divider()
-            
-            name(author: author)
-            
-            contactView()
-                .padding()
-            
-            Divider()
-            
-            HStack {
-                Text("\(author.articles?.count ?? 0) ARTICLES")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
+        GeometryReader { geometry in
+            VStack {
+                header()
                 
-                Spacer()
+                Divider()
+                
+                name(author: author)
+                
+                Divider()
+                
+                contactsView()
+                    .frame(height: 0.25 * geometry.size.height)
+                
+                Divider()
+                
+                articlesView()
+                    .frame(height: 0.45 * geometry.size.height)
             }
-            
-            List {
-                ForEach(articles) { article in
-                    NavigationLink {
-                        ArticleSummaryView(article: article)
-                    } label: {
-                        HStack {
-                            Text(article.title ?? "N/A")
-                            Spacer()
-                            Text(article.journal ?? "N/A")
-                                .font(.callout)
-                                .foregroundColor(.secondary)
-                            Spacer()
-                                .frame(width: 20)
-                            Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
-                                .font(.callout)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                }
+            .navigationTitle(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
+            .frame(maxHeight: .infinity, alignment: .top)
+            .padding()
+            .sheet(isPresented: $presentAuthorMergeView) {
+                AuthorMergeView(authors: authors)
             }
-        }
-        .navigationTitle(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
-        .frame(maxHeight: .infinity, alignment: .top)
-        .padding()
-        .sheet(isPresented: $presentAuthorMergeView) {
-            AuthorMergeView(authors: authors)
-        }
-        .sheet(isPresented: $presentAddContactView) {
-            AddContactView(author: author)
+            .sheet(isPresented: $presentAddContactView) {
+                AddContactView(author: $author)
+            }
         }
     }
     
@@ -219,41 +200,78 @@ struct AuthorDetailView: View {
     }
     
     func saveViewContext() -> Void {
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        viewModel.save(viewContext: viewContext)
+    }
+    
+    private func contactsView() -> some View {
+        VStack {
+            HStack {
+                Text("CONTACT INFORMATION")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            
+            List {
+                ForEach(contacts) { contact in
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Text(contact.email ?? "")
+                            Text(contact.institution ?? "")
+                            Text(contact.address ?? "")
+                            Text("Added on \(dateFormatter.string(from: contact.created ?? Date()))")
+                                .font(.callout)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                    }
+                   
+                }
+                .onDelete(perform: deleteContact)
+            }
+            .listStyle(PlainListStyle())
         }
     }
     
-    private func contactView() -> some View {
-        ForEach(contacts) { contact in
-            VStack {
-                HStack {
-                    Text("CONTACT INFORMATION")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
-                    Spacer()
-                    
-                    Button {
-                        delete(contact)
-                    } label: {
-                        Label("Delete", systemImage: "minus.circle")
-                    }
-                    
-                }
-                
-                Text(contact.email ?? "")
-                Text(contact.institution ?? "")
-                Text(contact.address ?? "")
-                Text("Added on \(dateFormatter.string(from: contact.created ?? Date()))")
+    private func articlesView() -> some View {
+        VStack {
+            HStack {
+                Text("\(author.articles?.count ?? 0) ARTICLES")
                     .font(.callout)
                     .foregroundColor(.secondary)
+                
+                Spacer()
             }
+            
+            List {
+                ForEach(articles) { article in
+                    NavigationLink {
+                        ArticleSummaryView(article: article)
+                    } label: {
+                        VStack {
+                            HStack {
+                                Text(article.title ?? "N/A")
+                                Spacer()
+                            }
+                            
+                            HStack {
+                                Spacer()
+                                Text(article.journal ?? "N/A")
+                                    .font(.callout)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                    .frame(width: 20)
+                                Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
+                                    .font(.callout)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
+            .listStyle(PlainListStyle())
         }
     }
     
@@ -274,12 +292,14 @@ struct AuthorDetailView: View {
         return dateFormatter
     }
     
-    private func delete(_ contact: AuthorContact) {
+    private func deleteContact(_ indexSet: IndexSet) -> Void {
         withAnimation {
-            author.removeFromContacts(contact)
-            viewContext.delete(contact)
-            
-            saveViewContext()
+            indexSet.forEach { index in
+                let contact = contacts[index]
+                author.removeFromContacts(contact)
+                viewContext.delete(contact)
+                saveViewContext()
+            }
         }
     }
 }

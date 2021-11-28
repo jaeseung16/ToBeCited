@@ -9,9 +9,10 @@ import SwiftUI
 
 struct AddContactView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
-    @State var author: Author
+    @Binding var author: Author
     
     @State private var email = ""
     @State private var institution = ""
@@ -44,7 +45,7 @@ struct AddContactView: View {
     private func header() -> some View {
         HStack {
             Button {
-                presentationMode.wrappedValue.dismiss()
+                dismiss.callAsFunction()
             } label: {
                 Text("Cancel")
             }
@@ -53,7 +54,7 @@ struct AddContactView: View {
             
             Button {
                 saveContact()
-                presentationMode.wrappedValue.dismiss()
+                dismiss.callAsFunction()
             } label: {
                 Text("Save")
             }
@@ -69,18 +70,6 @@ struct AddContactView: View {
         contact.address = address
         
         author.addToContacts(contact)
-        
-        saveViewContext()
-    }
-    
-    func saveViewContext() -> Void {
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        viewModel.save(viewContext: viewContext)
     }
 }
