@@ -366,12 +366,16 @@ struct ArticleDetailView: View {
             
             List {
                 ForEach(collections) { collection in
-                    HStack {
-                        Text(collection.name ?? "No title")
-                        Spacer()
-                        Text(collection.created ?? Date(), style: .date)
-                            .font(.callout)
-                            .foregroundColor(.secondary)
+                    NavigationLink {
+                        CollectionSummaryView(collection: collection)
+                    } label: {
+                        HStack {
+                            Text(collection.name ?? "No title")
+                            Spacer()
+                            Text(collection.created ?? Date(), style: .date)
+                                .font(.callout)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
             }
