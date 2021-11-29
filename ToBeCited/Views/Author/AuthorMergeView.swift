@@ -90,6 +90,17 @@ struct AuthorMergeView: View {
                 }
             })
             
+            selected[index].contacts?.forEach { contact in
+                if let contact = contact as? AuthorContact {
+                    merged.addToContacts(contact)
+                    selected[index].removeFromContacts(contact)
+                }
+            }
+            
+            if let orcid = selected[index].orcid, merged.orcid == nil {
+                merged.orcid = orcid
+            }
+            
             viewContext.delete(selected[index])
         }
         
