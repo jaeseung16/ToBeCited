@@ -9,7 +9,8 @@ import SwiftUI
 
 struct AuthorMergeView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     var authors: [Author]
     
@@ -23,7 +24,13 @@ struct AuthorMergeView: View {
             
             List {
                 ForEach(selected) { author in
-                    name(author: author)
+                    HStack {
+                        Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
+                        
+                        Spacer()
+                        
+                        Text("\(author.articles?.count ?? 0)")
+                    }
                 }
             }
             Divider()
@@ -37,7 +44,13 @@ struct AuthorMergeView: View {
                             selected.append(author)
                         }
                     } label: {
-                        name(author: author)
+                        HStack {
+                            Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
+                            
+                            Spacer()
+                            
+                            Text("\(author.articles?.count ?? 0)")
+                        }
                     }
                 }
             }
@@ -48,7 +61,7 @@ struct AuthorMergeView: View {
     private func header() -> some View {
         HStack {
             Button {
-                presentationMode.wrappedValue.dismiss()
+                dismiss.callAsFunction()
             } label: {
                 Text("Done")
             }
@@ -57,22 +70,12 @@ struct AuthorMergeView: View {
             
             Button {
                 merge()
-                presentationMode.wrappedValue.dismiss()
+                dismiss.callAsFunction()
             } label: {
-                Text("Perform merge")
+                Text("Merge")
             }
             .disabled(selected.count < 2)
 
-        }
-    }
-    
-    private func name(author: Author) -> some View {
-        HStack {
-            Text(author.lastName ?? "")
-            Spacer()
-            Text(author.firstName ?? "")
-            Spacer()
-            Text(author.middleName ?? "")
         }
     }
     
@@ -90,14 +93,7 @@ struct AuthorMergeView: View {
             viewContext.delete(selected[index])
         }
         
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        viewModel.save(viewContext: viewContext)
     }
 }
 

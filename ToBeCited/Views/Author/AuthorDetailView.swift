@@ -21,7 +21,7 @@ struct AuthorDetailView: View {
     @State var orcid: String
     
     private var contacts: [AuthorContact] {
-        author.contacts?.filter { $0 is AuthorContact } as! [AuthorContact]
+        author.contacts?.filter { $0 is AuthorContact }.map { $0 as! AuthorContact } ?? [AuthorContact]()
     }
     
     @State private var presentAuthorMergeView = false
@@ -123,9 +123,13 @@ struct AuthorDetailView: View {
             .padding()
             .sheet(isPresented: $presentAuthorMergeView) {
                 AuthorMergeView(authors: authors)
+                    .environment(\.managedObjectContext, viewContext)
+                    .environmentObject(viewModel)
             }
             .sheet(isPresented: $presentAddContactView) {
                 AddContactView(author: $author)
+                    .environment(\.managedObjectContext, viewContext)
+                    .environmentObject(viewModel)
             }
         }
     }
