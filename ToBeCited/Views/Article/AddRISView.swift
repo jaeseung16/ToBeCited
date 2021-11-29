@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
-struct AddRISView: View {
+struct AddRISView: View, DropDelegate {
     @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var presentRISFilePicker = false
@@ -17,28 +18,39 @@ struct AddRISView: View {
     @State private var risRecords = [RISRecord]()
     
     var body: some View {
-        VStack {
-            header()
-            
-            Divider()
-            
-            Text(risString)
-        }
-        .frame(maxHeight: .infinity, alignment: .top)
-        .padding()
-        .sheet(isPresented: $presentRISFilePicker) {
-            RISFilePickerViewController(risString: $risString)
-        }
-        .onChange(of: presentRISFilePicker) { _ in
-            if !presentRISFilePicker {
-                let parser = RISParser()
-                let records = try? parser.parse(risString)
+        GeometryReader { geometry in
+            VStack {
+                header()
                 
-                if records != nil {
-                    print("records.count = \(records!.count)")
+                Divider()
+                
+                if risString.isEmpty {
+                    Image(systemName: "doc.text")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 0.2 * geometry.size.width)
+                        .onDrop(of: [RISFilePickerViewController.risUTType, .text], delegate: self)
+                } else {
+                    Text(risString)
+                }
+                
+            }
+            .frame(maxHeight: .infinity, alignment: .top)
+            .padding()
+            .sheet(isPresented: $presentRISFilePicker) {
+                RISFilePickerViewController(risString: $risString)
+            }
+            .onChange(of: risString) { _ in
+                if !risString.isEmpty {
+                    let parser = RISParser()
+                    let records = try? parser.parse(risString)
                     
-                    for record in records! {
-                        self.risRecords.append(record)
+                    if records != nil {
+                        print("records.count = \(records!.count)")
+                        
+                        for record in records! {
+                            self.risRecords.append(record)
+                        }
                     }
                 }
             }
@@ -64,7 +76,7 @@ struct AddRISView: View {
             
             HStack {
                 Button(action: {
-                    presentationMode.wrappedValue.dismiss()
+                    dismiss.callAsFunction()
                 }, label: {
                     Text("Cancel")
                 })
@@ -73,7 +85,7 @@ struct AddRISView: View {
                 
                 Button(action: {
                     addNewArticle()
-                    presentationMode.wrappedValue.dismiss()
+                    dismiss.callAsFunction()
                 }, label: {
                     Text("Save")
                 })
@@ -97,7 +109,7 @@ struct AddRISView: View {
             newArticle.uuid = UUID()
             
             // Need to parse DA or PY, Y1
-            //newArticle.published = Date(from: <#T##Decoder#>record.date
+            // newArticle.published = Date(from: record.date)
             
             if let date = record.date {
                 let splitDate = date.split(separator: "/")
@@ -146,14 +158,7 @@ struct AddRISView: View {
             
         }
         
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        viewModel.save(viewContext: viewContext)
         
         risRecords.removeAll()
     }
@@ -174,6 +179,30 @@ struct AddRISView: View {
         viewModel.populate(author: authorEntity, with: authorName)
 
         authorEntity.addToArticles(article)
+    }
+    
+    func performDrop(info: DropInfo) -> Bool {
+        print("info = \(info)")
+        print("info.hasItemsConforming(to: [RISFilePickerViewController.risUTType] = \(info.hasItemsConforming(to: [.text]))")
+        if info.hasItemsConforming(to: [.text]) {
+            info.itemProviders(for: [.text]).forEach { itemProvider in
+                itemProvider.loadItem(forTypeIdentifier: UTType.text.identifier, options: nil) { data, error in
+                    guard let data = data else {
+                        if let error = error {
+                            print("\(error)")
+                        }
+                        return
+                    }
+                    
+                    print("data = \(data)")
+                    
+                    if let url = data as? URL, let contents = try? String(contentsOf: url) {
+                        risString = contents
+                    }
+                }
+            }
+        }
+        return true
     }
 }
 

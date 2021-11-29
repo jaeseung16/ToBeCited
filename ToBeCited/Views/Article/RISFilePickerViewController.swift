@@ -10,13 +10,14 @@ import UIKit
 import UniformTypeIdentifiers
 
 struct RISFilePickerViewController: UIViewControllerRepresentable {
+    static let risUTType = UTType("com.resonance.jlee.ToBeCited.ris")!
+    
     @Binding var risString: String
     
     let risParser = RISParser()
     
     func makeUIViewController(context: Context) -> some UIViewController {
-        let risUTType = UTType("com.resonance.jlee.ToBeCited.ris")!
-        let documentPickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.text, risUTType])
+        let documentPickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.text, RISFilePickerViewController.risUTType])
         
         documentPickerViewController.allowsMultipleSelection = false
         documentPickerViewController.delegate = context.coordinator
@@ -39,7 +40,6 @@ struct RISFilePickerViewController: UIViewControllerRepresentable {
         }
         
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-            
             for url in urls {
                 if url.absoluteString.lowercased().contains("ris") {
                     if let risString = try? String(contentsOf: url) {
