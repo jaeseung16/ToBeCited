@@ -91,6 +91,7 @@ struct AuthorDetailView: View {
                     Text("ORCID")
                         .font(.caption)
                         .foregroundColor(.secondary)
+                        .frame(width: 90, alignment: .leading)
                     
                     Spacer()
                         .frame(width: 20)
@@ -127,7 +128,7 @@ struct AuthorDetailView: View {
                     .environmentObject(viewModel)
             }
             .sheet(isPresented: $presentAddContactView) {
-                AddContactView(author: $author)
+                AddContactView(author: author)
                     .environment(\.managedObjectContext, viewContext)
                     .environmentObject(viewModel)
             }
@@ -158,11 +159,12 @@ struct AuthorDetailView: View {
                 Text("LAST NAME")
                     .font(.caption)
                     .foregroundColor(.secondary)
+                    .frame(width: 90, alignment: .leading)
                 
                 Spacer()
                     .frame(width: 20)
                 
-                TextField("lastname", text: $lastName, prompt: nil)
+                TextField("last name", text: $lastName, prompt: nil)
                     .onSubmit {
                         author.lastName = lastName
                         viewModel.save(viewContext: viewContext)
@@ -173,11 +175,12 @@ struct AuthorDetailView: View {
                 Text("FIRST NAME")
                     .font(.caption)
                     .foregroundColor(.secondary)
+                    .frame(width: 90, alignment: .leading)
                 
                 Spacer()
                     .frame(width: 20)
                 
-                TextField("fistname", text: $firstName, prompt: nil)
+                TextField("fist name", text: $firstName, prompt: nil)
                     .onSubmit {
                         author.firstName = firstName
                         viewModel.save(viewContext: viewContext)
@@ -188,11 +191,12 @@ struct AuthorDetailView: View {
                 Text("MIDDLE NAME")
                     .font(.caption)
                     .foregroundColor(.secondary)
+                    .frame(width: 90, alignment: .leading)
                 
                 Spacer()
                     .frame(width: 20)
                 
-                TextField("fistname", text: $middleName, prompt: nil)
+                TextField("middle name", text: $middleName, prompt: nil)
                     .onSubmit {
                         author.middleName = middleName
                         viewModel.save(viewContext: viewContext)
@@ -203,6 +207,7 @@ struct AuthorDetailView: View {
                 Text("SUFFIX")
                     .font(.caption)
                     .foregroundColor(.secondary)
+                    .frame(width: 90, alignment: .leading)
                 
                 Spacer()
                     .frame(width: 20)
@@ -229,19 +234,7 @@ struct AuthorDetailView: View {
             
             List {
                 ForEach(contacts) { contact in
-                    HStack {
-                        Spacer()
-                        VStack {
-                            Text(contact.email ?? "")
-                            Text(contact.institution ?? "")
-                            Text(contact.address ?? "")
-                            Text("Added on \(dateFormatter.string(from: contact.created ?? Date()))")
-                                .font(.callout)
-                                .foregroundColor(.secondary)
-                        }
-                        Spacer()
-                    }
-                   
+                    AuthorContactView(contact: contact, email: contact.email ?? "", institution: contact.institution ?? "", address: contact.address ?? "")
                 }
                 .onDelete(perform: deleteContact)
             }

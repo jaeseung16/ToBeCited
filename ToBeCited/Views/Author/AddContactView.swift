@@ -12,8 +12,7 @@ struct AddContactView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
-    @Binding var author: Author
-    
+    @State var author: Author
     @State private var email = ""
     @State private var institution = ""
     @State private var address = ""
