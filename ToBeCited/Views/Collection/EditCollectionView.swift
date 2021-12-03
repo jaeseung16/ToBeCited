@@ -18,7 +18,9 @@ struct EditCollectionView: View {
     private var articles: FetchedResults<Article>
     
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
+                          NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
+                          NSSortDescriptor(keyPath: \Author.created, ascending: false)],
         animation: .default)
     private var authors: FetchedResults<Author>
     

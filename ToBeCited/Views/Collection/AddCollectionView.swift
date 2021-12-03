@@ -16,6 +16,13 @@ struct AddCollectionView: View {
         animation: .default)
     private var articles: FetchedResults<Article>
     
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
+                          NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
+                          NSSortDescriptor(keyPath: \Author.created, ascending: false)],
+        animation: .default)
+    private var authors: FetchedResults<Author>
+    
     @State private var name: String = ""
     @State private var articlesToAdd = [Article]()
     
