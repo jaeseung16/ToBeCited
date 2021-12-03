@@ -101,27 +101,20 @@ struct CollectionDetailView: View {
 
             List {
                 ForEach(ordersInCollection) { order in
-                    NavigationLink {
-                        if let article = order.article {
-                            ArticleSummaryView(article: article)
-                        }
-                    } label: {
-                        HStack {
-                            Text("\(order.order + 1)")
-                            
-                            Spacer()
-                                .frame(width: 20)
-                            
-                            Text(order.article?.title ?? "")
-                            
-                            Spacer()
-                            
-                            Text(order.article?.journal ?? "")
-                            
-                            Spacer()
-                                .frame(width: 20)
-                            
-                            Text("\(viewModel.yearOnlyDateFormatter.string(from: order.article?.published ?? Date()))")
+                    if let article = order.article {
+                        NavigationLink {
+                            if let article = order.article {
+                                ArticleSummaryView(article: article)
+                            }
+                        } label: {
+                            HStack {
+                                Text("\(order.order + 1)")
+                                
+                                Spacer()
+                                    .frame(width: 20)
+                                
+                                ArticleRowView(article: article)
+                            }
                         }
                     }
                 }

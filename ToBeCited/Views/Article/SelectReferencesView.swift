@@ -54,10 +54,11 @@ struct SelectReferencesView: View {
                             reference.removeFromCited(article)
                             update()
                         } label: {
-                            Text(reference.title ?? "")
+                            ArticleRowView(article: reference)
                         }
                     }
                 }
+                .listStyle(PlainListStyle())
                 
                 Divider()
                 
@@ -147,9 +148,7 @@ struct SelectReferencesView: View {
                         reference.addToCited(article)
                         update()
                     } label: {
-                        HStack {
-                            Text(reference.title ?? "")
-                        }
+                        ArticleRowView(article: reference)
                     }
                 }
             }

@@ -25,8 +25,8 @@ struct EditOrderView: View {
             
             List {
                 ForEach(orders) { order in
-                    HStack {
-                        Text(order.article?.title ?? "")
+                    if let article = order.article {
+                        ArticleRowView(article: article)
                     }
                 }
                 .onMove(perform: move)

@@ -16,6 +16,7 @@
 		900B8F3C2741AE3500D40347 /* ToBeCitedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B8F3B2741AE3500D40347 /* ToBeCitedViewModel.swift */; };
 		900B8F3E2741B12700D40347 /* EditCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B8F3D2741B12600D40347 /* EditCollectionView.swift */; };
 		900D77042745BB0C00F0416C /* ExportOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900D77032745BB0C00F0416C /* ExportOrder.swift */; };
+		901086B2275AA5590067A1E2 /* ArticleRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901086B1275AA5590067A1E2 /* ArticleRowView.swift */; };
 		9012113E27431B43008A35F7 /* ExportCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9012113D27431B43008A35F7 /* ExportCollectionView.swift */; };
 		902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902978712739A0AD00D82FE7 /* PreviewController.swift */; };
 		90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62040271E06BE005D0FEA /* RISReferenceType.swift */; };
@@ -81,6 +82,7 @@
 		900B8F3B2741AE3500D40347 /* ToBeCitedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedViewModel.swift; sourceTree = "<group>"; };
 		900B8F3D2741B12600D40347 /* EditCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCollectionView.swift; sourceTree = "<group>"; };
 		900D77032745BB0C00F0416C /* ExportOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportOrder.swift; sourceTree = "<group>"; };
+		901086B1275AA5590067A1E2 /* ArticleRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleRowView.swift; sourceTree = "<group>"; };
 		9012113D27431B43008A35F7 /* ExportCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportCollectionView.swift; sourceTree = "<group>"; };
 		902978712739A0AD00D82FE7 /* PreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewController.swift; sourceTree = "<group>"; };
 		902978752739BEE700D82FE7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 				90DEAF53274ADE8100058AAC /* ArticleListView.swift */,
 				90DEAF55274AE2C300058AAC /* FilterArticleView.swift */,
 				90C8D7AF2753C99A0063DE71 /* ArticleSummaryView.swift */,
+				901086B1275AA5590067A1E2 /* ArticleRowView.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -438,6 +441,7 @@
 				90EDF32A271C85BF0097F0E0 /* Persistence.swift in Sources */,
 				90C8D7AE2753C7F70063DE71 /* CollectionSummaryView.swift in Sources */,
 				90FE9771271F68A1002A75C3 /* ArticleDetailView.swift in Sources */,
+				901086B2275AA5590067A1E2 /* ArticleRowView.swift in Sources */,
 				90EDF32D271C85BF0097F0E0 /* ToBeCited.xcdatamodeld in Sources */,
 				90F979402749A6A8008AD083 /* PDFDocument.swift in Sources */,
 				90EDF350271CA3110097F0E0 /* AddArticleView.swift in Sources */,
@@ -630,7 +634,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ToBeCited/ToBeCited.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"ToBeCited/Preview Content\"";
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_PREVIEWS = YES;
@@ -667,7 +671,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ToBeCited/ToBeCited.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"ToBeCited/Preview Content\"";
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_PREVIEWS = YES;

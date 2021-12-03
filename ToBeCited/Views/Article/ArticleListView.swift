@@ -59,22 +59,7 @@ struct ArticleListView: View {
             List {
                 ForEach(filteredArticles) { article in
                     NavigationLink(destination: ArticleDetailView(article: article)) {
-                        VStack {
-                            HStack {
-                                Text(article.title ?? "")
-                                Spacer()
-                            }
-                            
-                            HStack {
-                                Text(article.journal ?? "")
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                                Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
+                        ArticleRowView(article: article)
                     }
                 }
                 .onDelete(perform: deleteArticles)

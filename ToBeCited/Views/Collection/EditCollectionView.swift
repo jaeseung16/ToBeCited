@@ -56,13 +56,7 @@ struct EditCollectionView: View {
                                 update()
                             }
                         } label: {
-                            HStack {
-                                Text(article.title ?? "")
-                                
-                                Spacer()
-                                
-                                Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
-                            }
+                            ArticleRowView(article: article)
                         }
                     }
                 }
@@ -149,13 +143,7 @@ struct EditCollectionView: View {
                         
                         update()
                     } label: {
-                        HStack {
-                            Text(article.title ?? "")
-                            
-                            Spacer()
-                            
-                            Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
-                        }
+                        ArticleRowView(article: article)
                     }
                 }
             }

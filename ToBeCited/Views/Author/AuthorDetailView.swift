@@ -257,24 +257,7 @@ struct AuthorDetailView: View {
                     NavigationLink {
                         ArticleSummaryView(article: article)
                     } label: {
-                        VStack {
-                            HStack {
-                                Text(article.title ?? "N/A")
-                                Spacer()
-                            }
-                            
-                            HStack {
-                                Spacer()
-                                Text(article.journal ?? "N/A")
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                                    .frame(width: 20)
-                                Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
+                        ArticleRowView(article: article)
                     }
                 }
             }

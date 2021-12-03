@@ -19,53 +19,71 @@ struct AddCollectionView: View {
     @State private var name: String = ""
     @State private var articlesToAdd = [Article]()
     
+    @State var selectedAuthor: Author?
+    
+    private var filteredArticles: Array<Article> {
+        articles.filter { article in
+            if let authors = article.authors as? Set<Author>, let author = selectedAuthor {
+                return authors.contains(author)
+            }
+            return false
+        }
+    }
+    
     var body: some View {
-        VStack {
-            header()
-            
-            Divider()
-            
-            HStack {
-                Text("NAME")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+        GeometryReader { geometry in
+            VStack {
+                header()
                 
-                TextField("Collection Name", text: $name, prompt: nil)
-            }
-            
-            List {
-                ForEach(articlesToAdd) { article in
-                    Button {
-                        if let index = articlesToAdd.firstIndex(of: article) {
-                            articlesToAdd.remove(at: index)
-                        }
-                    } label: {
-                        Text(article.title ?? "")
-                    }
+                Divider()
+                
+                HStack {
+                    Text("NAME")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    TextField("Collection Name", text: $name, prompt: nil)
                 }
-                .onMove(perform: move)
-            }
-            
-            Divider()
-            
-            List {
-                ForEach(articles) { article in
-                    Button {
-                        if articlesToAdd.contains(article) {
+                
+                List {
+                    ForEach(articlesToAdd) { article in
+                        Button {
                             if let index = articlesToAdd.firstIndex(of: article) {
                                 articlesToAdd.remove(at: index)
                             }
-                        } else {
-                            articlesToAdd.append(article)
+                        } label: {
+                            ArticleRowView(article: article)
                         }
-                    } label: {
-                        Text(article.title ?? "")
+                    }
+                    .onMove(perform: move)
+                }
+                
+                Divider()
+                
+                authorsView()
+                    .frame(height: 0.25 * geometry.size.height)
+                
+                Divider()
+                
+                List {
+                    ForEach(filteredArticles) { article in
+                        Button {
+                            if articlesToAdd.contains(article) {
+                                if let index = articlesToAdd.firstIndex(of: article) {
+                                    articlesToAdd.remove(at: index)
+                                }
+                            } else {
+                                articlesToAdd.append(article)
+                            }
+                        } label: {
+                            ArticleRowView(article: article)
+                        }
                     }
                 }
             }
+            .frame(maxHeight: .infinity, alignment: .top)
+            .padding()
         }
-        .frame(maxHeight: .infinity, alignment: .top)
-        .padding()
     }
     
     private func header() -> some View {
@@ -92,6 +110,33 @@ struct AddCollectionView: View {
                     Text("Save")
                 })
             }
+        }
+    }
+    
+    private func authorsView() -> some View {
+        VStack {
+            Text("CHOOSE AN AUTHOR")
+                .font(.callout)
+            
+            List {
+                ForEach(authors) { author in
+                    Button {
+                        selectedAuthor = author
+                    } label: {
+                        HStack {
+                            Text(author.firstName ?? "")
+                            
+                            Text(author.lastName ?? "")
+                            
+                            Spacer()
+                            
+                            Text("\(author.articles?.count ?? 0)")
+                        }
+                    }
+                    .foregroundColor(author == selectedAuthor ? .primary : .secondary)
+                }
+            }
+            .listStyle(PlainListStyle())
         }
     }
     
