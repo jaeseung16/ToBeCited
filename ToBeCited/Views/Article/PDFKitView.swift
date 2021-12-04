@@ -12,7 +12,6 @@ struct PDFKitView: UIViewRepresentable {
     @State var pdfData: Data
     
     func makeUIView(context: Context) -> PDFView {
-        print("pdfData = \(pdfData)")
         let pdfView = PDFView()
         pdfView.document = PDFDocument(data: pdfData)
         pdfView.autoScales = true
@@ -21,7 +20,6 @@ struct PDFKitView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UIViewType, context: Context) {
-        print("pdfData = \(pdfData)")
         uiView.document = PDFDocument(data: pdfData)
     }
 }
