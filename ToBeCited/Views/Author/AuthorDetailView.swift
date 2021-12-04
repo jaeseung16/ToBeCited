@@ -79,7 +79,7 @@ struct AuthorDetailView: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
+        ScrollView {
             VStack {
                 header()
                 
@@ -112,12 +112,12 @@ struct AuthorDetailView: View {
                 Divider()
                 
                 contactsView()
-                    .frame(height: 0.25 * geometry.size.height)
+                    .frame(height: 200)
                 
                 Divider()
                 
                 articlesView()
-                    .frame(height: 0.45 * geometry.size.height)
+                    .frame(height: 400)
             }
             .navigationTitle(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
             .frame(maxHeight: .infinity, alignment: .top)
@@ -225,8 +225,8 @@ struct AuthorDetailView: View {
     private func contactsView() -> some View {
         VStack {
             HStack {
-                Text("CONTACT INFORMATION")
-                    .font(.caption)
+                Text("CONTACT INFORMATION: \(contacts.count) CONTACTS")
+                    .font(.callout)
                     .foregroundColor(.secondary)
                 
                 Spacer()
