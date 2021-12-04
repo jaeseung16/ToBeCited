@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ArticleDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.presentationMode) private var presentationMode
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var importPdf = false

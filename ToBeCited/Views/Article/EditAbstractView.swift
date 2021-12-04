@@ -9,7 +9,7 @@ import SwiftUI
 
 struct EditAbstractView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
     
     var article: Article
     @State var abstract: String
@@ -44,7 +44,7 @@ struct EditAbstractView: View {
             
             HStack {
                 Button {
-                    presentationMode.wrappedValue.dismiss()
+                    dismiss.callAsFunction()
                 } label: {
                     Text("Cancel")
                 }
@@ -53,7 +53,7 @@ struct EditAbstractView: View {
                 
                 Button {
                     update()
-                    presentationMode.wrappedValue.dismiss()
+                    dismiss.callAsFunction()
                 } label: {
                     Text("Save")
                 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UpdateTextView: View {
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
     
     var title: String
     @Binding var textToUpdate: String
@@ -33,7 +33,7 @@ struct UpdateTextView: View {
             HStack {
                 Button {
                     cancelled = true
-                    presentationMode.wrappedValue.dismiss()
+                    dismiss.callAsFunction()
                 } label: {
                     Text("Cancel")
                 }
@@ -42,7 +42,7 @@ struct UpdateTextView: View {
                 
                 Button {
                     cancelled = false
-                    presentationMode.wrappedValue.dismiss()
+                    dismiss.callAsFunction()
                 } label: {
                     Text("Done")
                 }

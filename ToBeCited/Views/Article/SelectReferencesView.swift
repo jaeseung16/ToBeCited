@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SelectReferencesView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var article: Article
@@ -80,7 +80,7 @@ struct SelectReferencesView: View {
     private func header() -> some View {
         HStack {
             Button {
-                presentationMode.wrappedValue.dismiss()
+                dismiss.callAsFunction()
             } label: {
                 Text("Dismiss")
             }

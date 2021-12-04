@@ -9,7 +9,8 @@ import SwiftUI
 
 struct AddCollectionView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false)],
@@ -103,7 +104,7 @@ struct AddCollectionView: View {
             
             HStack {
                 Button {
-                    presentationMode.wrappedValue.dismiss()
+                    dismiss.callAsFunction()
                 } label: {
                     Text("Cancel")
                 }
@@ -112,7 +113,7 @@ struct AddCollectionView: View {
                 
                 Button(action: {
                     addNewCollection()
-                    presentationMode.wrappedValue.dismiss()
+                    dismiss.callAsFunction()
                 }, label: {
                     Text("Save")
                 })
@@ -172,18 +173,9 @@ struct AddCollectionView: View {
             orderInCollection.order = Int64(index)
             orderInCollection.collection = collection
             orderInCollection.article = articlesToAdd[index]
-            
-            //collection.addToOrders(orderInCollection)
         }
         
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        viewModel.save(viewContext: viewContext)
     }
     
     private func move(from source: IndexSet, to destination: Int) {
