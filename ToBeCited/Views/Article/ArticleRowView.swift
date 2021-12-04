@@ -20,18 +20,18 @@ struct ArticleRowView: View {
             }
             
             HStack {
-                Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-                
                 Spacer()
-                    .frame(width: 20)
                 
                 Text(article.journal ?? "N/A")
                     .font(.callout)
                     .foregroundColor(.secondary)
                 
                 Spacer()
+                    .frame(width: 10)
+                
+                Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
             }
         }
     }
