@@ -210,7 +210,6 @@ struct ArticleDetailView: View {
             
             authorList()
         }
-        .padding()
     }
 
     private var journalString: String {
@@ -240,9 +239,7 @@ struct ArticleDetailView: View {
             
             ForEach(authors, id: \.uuid) { author in
                 HStack {
-                    Spacer()
-                    Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
-                    Spacer()
+                    AuthorNameView(author: author)
                 }
             }
         }

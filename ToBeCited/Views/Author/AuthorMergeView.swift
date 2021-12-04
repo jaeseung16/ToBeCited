@@ -25,10 +25,8 @@ struct AuthorMergeView: View {
             List {
                 ForEach(selected) { author in
                     HStack {
-                        Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
-                        
+                        AuthorNameView(author: author)
                         Spacer()
-                        
                         Text("\(author.articles?.count ?? 0)")
                     }
                 }
@@ -45,10 +43,8 @@ struct AuthorMergeView: View {
                         }
                     } label: {
                         HStack {
-                            Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
-                            
+                            AuthorNameView(author: author)
                             Spacer()
-                            
                             Text("\(author.articles?.count ?? 0)")
                         }
                     }

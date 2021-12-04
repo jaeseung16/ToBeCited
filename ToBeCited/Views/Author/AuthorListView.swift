@@ -29,10 +29,7 @@ struct AuthorListView: View {
                                                                  lastName: author.lastName ?? "",
                                                                  nameSuffix: author.nameSuffix ?? "",
                                                                  orcid: author.orcid ?? "")) {
-                        HStack {
-                            Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
-                            Spacer()
-                        }
+                        AuthorNameView(author: author)
                     }
                 }
                 .onDelete(perform: deleteAuthors)

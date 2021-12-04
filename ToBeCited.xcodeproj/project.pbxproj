@@ -35,6 +35,7 @@
 		90DEAF54274ADE8100058AAC /* ArticleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DEAF53274ADE8100058AAC /* ArticleListView.swift */; };
 		90DEAF56274AE2C300058AAC /* FilterArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DEAF55274AE2C300058AAC /* FilterArticleView.swift */; };
 		90EADA21274855D10001E150 /* TextDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EADA20274855D10001E150 /* TextDocument.swift */; };
+		90EB0CE7275BD6A0002106B2 /* AuthorNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EB0CE6275BD6A0002106B2 /* AuthorNameView.swift */; };
 		90EDF321271C85BD0097F0E0 /* ToBeCitedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF320271C85BD0097F0E0 /* ToBeCitedApp.swift */; };
 		90EDF323271C85BD0097F0E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF322271C85BD0097F0E0 /* ContentView.swift */; };
 		90EDF325271C85BE0097F0E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90EDF324271C85BE0097F0E0 /* Assets.xcassets */; };
@@ -102,6 +103,7 @@
 		90DEAF53274ADE8100058AAC /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
 		90DEAF55274AE2C300058AAC /* FilterArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterArticleView.swift; sourceTree = "<group>"; };
 		90EADA20274855D10001E150 /* TextDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDocument.swift; sourceTree = "<group>"; };
+		90EB0CE6275BD6A0002106B2 /* AuthorNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorNameView.swift; sourceTree = "<group>"; };
 		90EDF31D271C85BD0097F0E0 /* ToBeCited.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToBeCited.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90EDF320271C85BD0097F0E0 /* ToBeCitedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedApp.swift; sourceTree = "<group>"; };
 		90EDF322271C85BD0097F0E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -209,6 +211,7 @@
 				90D89A642725F18E0079EBD2 /* AddContactView.swift */,
 				90C8D7B12753E36D0063DE71 /* AuthorListView.swift */,
 				90EF91ED27584F3300B1CD6F /* AuthorContactView.swift */,
+				90EB0CE6275BD6A0002106B2 /* AuthorNameView.swift */,
 			);
 			path = Author;
 			sourceTree = "<group>";
@@ -454,6 +457,7 @@
 				90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */,
 				9009B6732720B31A0023C316 /* PDFKitView.swift in Sources */,
 				90C8D7B02753C99A0063DE71 /* ArticleSummaryView.swift in Sources */,
+				90EB0CE7275BD6A0002106B2 /* AuthorNameView.swift in Sources */,
 				90FD8419273C5F6B00929EF7 /* SelectReferencesView.swift in Sources */,
 				90D89A632725A9440079EBD2 /* UpdateTextView.swift in Sources */,
 				90EDF321271C85BD0097F0E0 /* ToBeCitedApp.swift in Sources */,

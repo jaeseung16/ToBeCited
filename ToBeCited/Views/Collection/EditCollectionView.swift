@@ -101,12 +101,8 @@ struct EditCollectionView: View {
                         selectedAuthor = author
                     } label: {
                         HStack {
-                            Text(author.firstName ?? "")
-                            
-                            Text(author.lastName ?? "")
-                            
+                            AuthorNameView(author: author)
                             Spacer()
-                            
                             Text("\(author.articles?.count ?? 0)")
                         }
                     }
