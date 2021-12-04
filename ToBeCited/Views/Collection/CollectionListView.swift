@@ -56,6 +56,7 @@ struct CollectionListView: View {
         .sheet(isPresented: $presentAddCollectionView) {
             AddCollectionView()
                 .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
         }
     }
     
