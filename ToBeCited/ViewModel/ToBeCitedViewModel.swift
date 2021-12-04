@@ -139,7 +139,21 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             return "Journal title is not available"
         }
         
-        return journalTitle + " " + (article.volume ?? "") + ", " + (article.startPage ?? "")
+        var journalString = journalTitle
+        
+        if let volume = article.volume {
+            journalString += " " + volume
+        }
+        
+        if let startPage = article.startPage {
+            journalString += ", " + startPage
+        }
+        
+        if let endPage = article.endPage {
+            journalString += "-" + endPage
+        }
+        
+        return journalString
     }
     
     // MARK: - Persistence History Request
