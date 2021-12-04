@@ -134,6 +134,14 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         author.nameSuffix = components.nameSuffix
     }
     
+    func journalString(article: Article) -> String {
+        guard let journalTitle = article.journal else {
+            return "Journal title is not available"
+        }
+        
+        return journalTitle + " " + (article.volume ?? "") + ", " + (article.startPage ?? "")
+    }
+    
     // MARK: - Persistence History Request
     private lazy var historyRequestQueue = DispatchQueue(label: "history")
     private func fetchUpdates(_ notification: Notification) -> Void {

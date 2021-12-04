@@ -51,7 +51,7 @@ struct ArticleSummaryView: View {
                 .multilineTextAlignment(.center)
                 .padding()
             
-            Text(journalString)
+            Text(viewModel.journalString(article: article))
             
             if article.published != nil {
                 Text(publicationDate)
@@ -65,14 +65,6 @@ struct ArticleSummaryView: View {
             
             authorList()
         }
-    }
-    
-    private var journalString: String {
-        guard let journalTitle = article.journal else {
-            return "Journal title is not available"
-        }
-        
-        return journalTitle + " " + (article.volume ?? "") + ", " + (article.startPage ?? "")
     }
     
     private var publicationDate: String {

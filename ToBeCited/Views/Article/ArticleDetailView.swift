@@ -196,7 +196,7 @@ struct ArticleDetailView: View {
         VStack {
             title()
             
-            Text(journalString)
+            Text(viewModel.journalString(article: article))
             
             if article.published != nil {
                 Text(publicationDate)
@@ -210,14 +210,6 @@ struct ArticleDetailView: View {
             
             authorList()
         }
-    }
-
-    private var journalString: String {
-        guard let journalTitle = article.journal else {
-            return "Journal title is not available"
-        }
-        
-        return journalTitle + " " + (article.volume ?? "") + ", " + (article.startPage ?? "")
     }
     
     private var publicationDate: String {
