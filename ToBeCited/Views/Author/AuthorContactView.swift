@@ -19,14 +19,6 @@ struct AuthorContactView: View {
     var body: some View {
         VStack {
             HStack {
-                Spacer()
-                
-                Text("Added on \(dateFormatter.string(from: contact.created ?? Date()))")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-            }
-            
-            HStack {
                 Text("EMAIL")
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -63,6 +55,14 @@ struct AuthorContactView: View {
                         contact.address = address
                         viewModel.save(viewContext: viewContext)
                     }
+            }
+            
+            HStack {
+                Spacer()
+                
+                Text("Added on \(dateFormatter.string(from: contact.created ?? Date()))")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
             }
         }
     }
