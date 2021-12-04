@@ -105,7 +105,8 @@ struct AddRISView: View, DropDelegate {
             newArticle.doi = record.doi
             newArticle.volume = record.volumeNumber
             newArticle.issueNumber = record.issueNumber
-            newArticle.page = record.startPage
+            newArticle.startPage = record.startPage
+            newArticle.endPage = record.endPage
             newArticle.uuid = UUID()
             
             // Need to parse DA or PY, Y1

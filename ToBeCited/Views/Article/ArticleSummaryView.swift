@@ -72,7 +72,7 @@ struct ArticleSummaryView: View {
             return "Journal title is not available"
         }
         
-        return journalTitle + " " + (article.volume ?? "") + ", " + (article.page ?? "")
+        return journalTitle + " " + (article.volume ?? "") + ", " + (article.startPage ?? "")
     }
     
     private var publicationDate: String {

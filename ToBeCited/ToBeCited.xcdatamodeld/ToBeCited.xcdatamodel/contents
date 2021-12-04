@@ -4,11 +4,12 @@
         <attribute name="abstract" optional="YES" attributeType="String"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="doi" optional="YES" attributeType="String"/>
+        <attribute name="endPage" optional="YES" attributeType="String"/>
         <attribute name="issueNumber" optional="YES" attributeType="String"/>
         <attribute name="journal" optional="YES" attributeType="String"/>
-        <attribute name="page" optional="YES" attributeType="String"/>
         <attribute name="pdf" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
         <attribute name="published" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="startPage" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="volume" optional="YES" attributeType="String"/>
@@ -64,7 +65,7 @@
         <relationship name="article" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Article" inverseName="ris" inverseEntity="Article"/>
     </entity>
     <elements>
-        <element name="Article" positionX="-36" positionY="18" width="128" height="284"/>
+        <element name="Article" positionX="-36" positionY="18" width="128" height="299"/>
         <element name="Author" positionX="-54" positionY="45" width="128" height="164"/>
         <element name="AuthorContact" positionX="-36" positionY="108" width="128" height="119"/>
         <element name="Citation" positionX="-18" positionY="117" width="128" height="74"/>
