@@ -19,6 +19,7 @@ The app helps a user organize the citations of the articles published in researc
   - Click an author to see the details. A user can
     - edit the last name, first name, middle name, suffix, and [ORCiD](https://en.wikipedia.org/wiki/ORCID).
     - add contact information for the author
+    - merge authors if they have the same last name and the same first letter of the first name
 
 ## Collections tab
   - Presents a list of collections
