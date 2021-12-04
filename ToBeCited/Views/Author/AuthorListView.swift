@@ -23,13 +23,15 @@ struct AuthorListView: View {
         NavigationView {
             List {
                 ForEach(authors) { author in
-                    NavigationLink(destination: AuthorDetailView(author: author,
-                                                                 firstName: author.firstName ?? "",
-                                                                 middleName: author.middleName ?? "",
-                                                                 lastName: author.lastName ?? "",
-                                                                 nameSuffix: author.nameSuffix ?? "",
-                                                                 orcid: author.orcid ?? "")) {
-                        AuthorNameView(author: author)
+                    if author.lastName != nil && author.lastName != "" {
+                        NavigationLink(destination: AuthorDetailView(author: author,
+                                                                     firstName: author.firstName ?? "",
+                                                                     middleName: author.middleName ?? "",
+                                                                     lastName: author.lastName ?? "",
+                                                                     nameSuffix: author.nameSuffix ?? "",
+                                                                     orcid: author.orcid ?? "")) {
+                            AuthorNameView(author: author)
+                        }
                     }
                 }
                 .onDelete(perform: deleteAuthors)
