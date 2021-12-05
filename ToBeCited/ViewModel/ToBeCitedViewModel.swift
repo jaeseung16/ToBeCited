@@ -18,6 +18,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private let parser = RISParser()
     
     @Published var ordersInCollection = [OrderInCollection]()
+    @Published var toggle = false
     
     var collection: Collection?
     var articlesInCollection: [Article]?
@@ -48,6 +49,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             let nsError = error as NSError
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
+        
+        toggle.toggle()
     }
     
     func parse(risString: String) -> [RISRecord]? {
