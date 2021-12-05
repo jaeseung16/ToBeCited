@@ -177,7 +177,10 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                         }
                         
                         self.lastToken = history.last?.token
-                        self.toggle.toggle()
+                        
+                        DispatchQueue.main.async {
+                            self.toggle.toggle()
+                        }
                     }
                 } catch {
                     self.logger.error("Could not convert history result to transactions after lastToken = \(String(describing: self.lastToken)): \(error.localizedDescription)")
