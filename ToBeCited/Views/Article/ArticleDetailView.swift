@@ -19,6 +19,7 @@ struct ArticleDetailView: View {
     @State private var pdfURL: URL?
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
+    @State private var presentSelectReferenceView = false
     
     var article: Article
     
@@ -122,6 +123,11 @@ struct ArticleDetailView: View {
                 errorMessage = "Failed to export the pdf file: \(error.localizedDescription)"
                 showErrorAlert = true
             }
+        }
+        .sheet(isPresented: $presentSelectReferenceView) {
+            SelectReferencesView(article: article, references: references)
+                .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
         }
         .alert("ERROR", isPresented: $showErrorAlert) {
             Button("OK") {
@@ -273,8 +279,8 @@ struct ArticleDetailView: View {
                 
                 Spacer()
                 
-                NavigationLink {
-                    SelectReferencesView(article: article, references: references)
+                Button {
+                    presentSelectReferenceView = true
                 } label: {
                     Label("edit", systemImage: "pencil.circle")
                 }
