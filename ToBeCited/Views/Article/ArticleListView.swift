@@ -12,7 +12,8 @@ struct ArticleListView: View {
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false),
+                          NSSortDescriptor(keyPath: \Article.title, ascending: true)],
         animation: .default)
     private var articles: FetchedResults<Article>
     
