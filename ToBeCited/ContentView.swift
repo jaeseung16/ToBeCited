@@ -29,6 +29,11 @@ struct ContentView: View {
                     Label("Collections", systemImage: "square.stack.3d.up")
                 }
         }
+        .alert("Failed to save data", isPresented: $viewModel.showAlert) {
+            Button("Dismiss") {
+                viewModel.showAlert.toggle()
+            }
+        }
     }
 }
 

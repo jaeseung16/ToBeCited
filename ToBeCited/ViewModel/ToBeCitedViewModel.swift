@@ -19,6 +19,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     @Published var ordersInCollection = [OrderInCollection]()
     @Published var toggle = false
+    @Published var showAlert = false
     
     var collection: Collection?
     var articlesInCollection: [Article]?
@@ -44,10 +45,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         do {
             try viewContext.save()
         } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
             let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            logger.error("While saving data, occured an unresolved error \(nsError), \(nsError.userInfo)")
+            showAlert.toggle()
         }
         
         toggle.toggle()
@@ -177,6 +177,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                         }
                         
                         self.lastToken = history.last?.token
+                        self.toggle.toggle()
                     }
                 } catch {
                     self.logger.error("Could not convert history result to transactions after lastToken = \(String(describing: self.lastToken)): \(error.localizedDescription)")
