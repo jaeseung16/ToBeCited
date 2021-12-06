@@ -42,10 +42,12 @@ struct RISFilePickerViewController: UIViewControllerRepresentable {
         func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
             for url in urls {
                 if url.absoluteString.lowercased().contains("ris") {
+                    let _ = url.startAccessingSecurityScopedResource()
                     if let risString = try? String(contentsOf: url) {
                         self.parent.risString = risString
                         break
                     }
+                    url.stopAccessingSecurityScopedResource()
                 }
             }
         }

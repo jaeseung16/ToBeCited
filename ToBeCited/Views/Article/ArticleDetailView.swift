@@ -106,10 +106,12 @@ struct ArticleDetailView: View {
         .fileImporter(isPresented: $importPdf, allowedContentTypes: [.pdf]) { result in
             switch result {
             case .success(let url):
+                let _ = url.startAccessingSecurityScopedResource()
                 if let data = try? Data(contentsOf: url) {
                     pdfData = data
                     update()
                 }
+                url.stopAccessingSecurityScopedResource()
             case .failure(let error):
                 errorMessage = "Failed to import a pdf file: \(error.localizedDescription)"
                 showErrorAlert = true
