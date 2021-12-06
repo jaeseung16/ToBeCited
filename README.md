@@ -4,7 +4,7 @@ The app helps a user organize the citations of the articles published in researc
 
 # How to Use
  
-## Articles tab
+### Articles tab
   - Presents a list of articles 
   - The list can be filtered by the publication year and/or an author
   - An article can be added by importing a [RIS(Research Information Systems)](https://en.wikipedia.org/wiki/RIS_(file_format)) file.
@@ -14,14 +14,14 @@ The app helps a user organize the citations of the articles published in researc
     - link the other articles through 'REFERENCES IMPORTED IN TOBECITED'
       - the linked articles display the selected article in 'ARTICLES CITING THIS ARTICLE IMPORTED IN TOBECITED'
 
-## Authors tab
+### Authors tab
   - Presents a list of authors imported with articles
   - Click an author to see the details. A user can
     - edit the last name, first name, middle name, suffix, and [ORCiD](https://en.wikipedia.org/wiki/ORCID).
     - add contact information for the author
     - merge authors if they have the same last name and the same first letter of the first name
 
-## Collections tab
+### Collections tab
   - Presents a list of collections
   - A collection can be added by clicking '+' and choosing from articles
   - Select a collection in the list to see the details. A user can
@@ -30,3 +30,5 @@ The app helps a user organize the citations of the articles published in researc
     - add/remove articles by clicking 'ARTICLES'
     - reorder articles by clicking 'ORDER'
     
+# Contact Information
+  - [jaeseung@gmail.com](mailto:jaeseung@gmail.com)
