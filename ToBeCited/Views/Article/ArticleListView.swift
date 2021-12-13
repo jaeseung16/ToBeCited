@@ -100,7 +100,7 @@ struct ArticleListView: View {
     
     private func deleteArticles(offsets: IndexSet) {
         withAnimation {
-            offsets.map { articles[$0] }.forEach { article in
+            offsets.map { filteredArticles[$0] }.forEach { article in
                 article.collections?.forEach { collection in
                     if let collection = collection as? Collection {
                         article.removeFromCollections(collection)
