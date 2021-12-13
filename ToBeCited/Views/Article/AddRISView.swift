@@ -108,22 +108,26 @@ struct AddRISView: View, DropDelegate {
             // Need to parse DA or PY, Y1
             // newArticle.published = Date(from: record.date)
             
+            var published: Date?
+            
             if let date = record.date {
                 let splitDate = date.split(separator: "/")
                 if splitDate.count > 2 {
-                    newArticle.published = getDate(from: splitDate)
+                    published = getDate(from: splitDate)
                 }
             } else if let pulbicationYear = record.pulbicationYear {
                 let splitPY = pulbicationYear.split(separator: "/")
                 if splitPY.count > 2 {
-                    newArticle.published = getDate(from: splitPY)
+                    published = getDate(from: splitPY)
                 }
             } else if let primaryDate = record.primaryDate {
                 let splitPrimaryDate = primaryDate.split(separator: "/")
                 if splitPrimaryDate.count > 2 {
-                    newArticle.published = getDate(from: splitPrimaryDate)
+                    published = getDate(from: splitPrimaryDate)
                 }
             }
+            newArticle.published = published
+            
             
             let parseStrategy = PersonNameComponents.ParseStrategy()
             if let primaryAuthor = record.primaryAuthor, let name = try? parseStrategy.parse(primaryAuthor) {
