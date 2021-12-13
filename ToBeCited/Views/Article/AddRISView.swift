@@ -31,7 +31,8 @@ struct AddRISView: View, DropDelegate {
                         .frame(height: 0.2 * geometry.size.width)
                         .onDrop(of: [RISFilePickerViewController.risUTType, .text], delegate: self)
                 } else {
-                    Text(risString)
+                    TextEditor(text: $risString)
+                        .lineSpacing(10)
                 }
                 
             }
@@ -39,20 +40,6 @@ struct AddRISView: View, DropDelegate {
             .padding()
             .sheet(isPresented: $presentRISFilePicker) {
                 RISFilePickerViewController(risString: $risString)
-            }
-            .onChange(of: risString) { _ in
-                if !risString.isEmpty {
-                    let parser = RISParser()
-                    let records = try? parser.parse(risString)
-                    
-                    if records != nil {
-                        print("records.count = \(records!.count)")
-                        
-                        for record in records! {
-                            self.risRecords.append(record)
-                        }
-                    }
-                }
             }
         }
     }
