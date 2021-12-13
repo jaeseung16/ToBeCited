@@ -81,6 +81,15 @@ struct AddRISView: View, DropDelegate {
     }
     
     private func addNewArticle() {
+        if !risString.isEmpty {
+            let parser = RISParser()
+            if let records = try? parser.parse(risString) {
+                for record in records {
+                    self.risRecords.append(record)
+                }
+            }
+        }
+        
         let created = Date()
         
         for record in risRecords {
