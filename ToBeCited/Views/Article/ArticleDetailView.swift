@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
-struct ArticleDetailView: View {
+struct ArticleDetailView: View, DropDelegate {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
@@ -83,6 +84,7 @@ struct ArticleDetailView: View {
         ScrollView {
             VStack {
                 header()
+                    .onDrop(of: [.pdf], delegate: self)
                 
                 Divider()
                 
@@ -354,6 +356,25 @@ struct ArticleDetailView: View {
             .listStyle(PlainListStyle())
         }
         .frame(height: 200.0)
+    }
+    
+    func performDrop(info: DropInfo) -> Bool {
+        if info.hasItemsConforming(to: [.pdf]) {
+            info.itemProviders(for: [.pdf]).forEach { itemProvider in
+                itemProvider.loadItem(forTypeIdentifier: UTType.pdf.identifier, options: nil) { url, error in
+                    guard let url = url as? URL, let data = try? Data(contentsOf: url) else {
+                        if let error = error {
+                            print("error = \(error)")
+                        }
+                        return
+                    }
+                    
+                    self.pdfData = data
+                    self.update()
+                }
+            }
+        }
+        return true
     }
 }
 
