@@ -62,22 +62,7 @@ struct CollectionListView: View {
     
     private func deleteCollections(offsets: IndexSet) {
         withAnimation {
-            offsets.map { collections[$0] }.forEach { collection in
-                collection.articles?.forEach { article in
-                    if let article = article as? Article {
-                        article.removeFromCollections(collection)
-                    }
-                }
-                
-                collection.orders?.forEach { order in
-                    if let order = order as? OrderInCollection {
-                        viewContext.delete(order)
-                    }
-                }
-                
-                viewContext.delete(collection)
-            }
-            viewModel.save(viewContext: viewContext)
+            viewModel.delete(offsets.map { collections[$0] }, viewContext: viewContext)
         }
     }
 }
