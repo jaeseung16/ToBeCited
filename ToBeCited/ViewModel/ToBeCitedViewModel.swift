@@ -288,6 +288,16 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
+    func delete(_ contacts: [AuthorContact], from author: Author, viewContext: NSManagedObjectContext) -> Void {
+        viewContext.perform {
+            contacts.forEach { contact in
+                author.removeFromContacts(contact)
+                viewContext.delete(contact)
+            }
+            self.save(viewContext: viewContext)
+        }
+    }
+    
     // MARK: - Persistence History Request
     private lazy var historyRequestQueue = DispatchQueue(label: "history")
     private func fetchUpdates(_ notification: Notification) -> Void {

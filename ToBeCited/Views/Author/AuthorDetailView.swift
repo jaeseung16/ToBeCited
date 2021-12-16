@@ -275,21 +275,9 @@ struct AuthorDetailView: View {
         return firstName + middleName + lastName
     }
     
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .none
-        return dateFormatter
-    }
-    
     private func deleteContact(_ indexSet: IndexSet) -> Void {
         withAnimation {
-            indexSet.forEach { index in
-                let contact = contacts[index]
-                author.removeFromContacts(contact)
-                viewContext.delete(contact)
-                viewModel.save(viewContext: viewContext)
-            }
+            viewModel.delete( indexSet.map { contacts[$0] }, from: author, viewContext: viewContext)
         }
     }
 }
