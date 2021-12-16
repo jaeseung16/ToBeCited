@@ -14,6 +14,8 @@ struct SelectReferencesView: View {
     
     @State var article: Article
     @State var selectedAuthor: Author?
+    @State var showAlertSameArticle = false
+    @State var showAlertCitedArticle = false
     
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false)],
@@ -67,6 +69,8 @@ struct SelectReferencesView: View {
                     .frame(height: 0.3 * geometry.size.height)
             }
             .navigationTitle(article.title ?? "No Title")
+            .alert(Text("An article cannot be its reference"), isPresented: $showAlertSameArticle, actions: {})
+            .alert(Text("A citing article cannot be a reference"), isPresented: $showAlertCitedArticle, actions: {})
             .padding()
         }
     }
@@ -139,18 +143,24 @@ struct SelectReferencesView: View {
     }
     
     private func update(reference: Article) -> Void {
-        if references.contains(reference) {
-            if let index = references.firstIndex(of: reference) {
-                references.remove(at: index)
-            }
-            article.removeFromReferences(reference)
-            reference.removeFromCited(article)
+        if reference == article {
+            showAlertSameArticle = true
+        } else if let references = reference.references, references.contains(article) {
+            showAlertCitedArticle = true
         } else {
-            references.append(reference)
-            article.addToReferences(reference)
-            reference.addToCited(article)
+            if references.contains(reference) {
+                if let index = references.firstIndex(of: reference) {
+                    references.remove(at: index)
+                }
+                article.removeFromReferences(reference)
+                reference.removeFromCited(article)
+            } else {
+                references.append(reference)
+                article.addToReferences(reference)
+                reference.addToCited(article)
+            }
+            
+            viewModel.save(viewContext: viewContext)
         }
-        
-        viewModel.save(viewContext: viewContext)
     }
 }

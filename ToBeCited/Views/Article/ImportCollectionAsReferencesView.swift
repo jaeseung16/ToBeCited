@@ -114,6 +114,14 @@ struct ImportCollectionAsReferencesView: View {
         for collection in collectionsToAdd {
             collection.articles?.forEach { reference in
                 if let reference = reference as? Article {
+                    guard reference != article else {
+                        return
+                    }
+                    
+                    guard let references = reference.references, !references.contains(article) else {
+                        return
+                    }
+                    
                     reference.addToCited(article)
                     article.addToReferences(reference)
                 }
