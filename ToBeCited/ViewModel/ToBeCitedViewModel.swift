@@ -118,13 +118,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                                     nameSuffix: author.nameSuffix)
     }
     
-    func populate(author: Author, with components: PersonNameComponents) {
-        author.lastName = components.familyName
-        author.firstName = components.givenName
-        author.middleName = components.middleName
-        author.nameSuffix = components.nameSuffix
-    }
-    
     func journalString(article: Article) -> String {
         guard let journalTitle = article.journal else {
             return "Journal title is not available"
@@ -157,7 +150,98 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         toggle.toggle()
     }
     
-    func delete(_ articles: [Article], viewContext: NSManagedObjectContext) {
+    func save(risRecords: [RISRecord], viewContext: NSManagedObjectContext) -> Void {
+        let created = Date()
+        
+        for record in risRecords {
+            let newArticle = Article(context: viewContext)
+            newArticle.created = created
+            newArticle.title = record.primaryTitle ?? record.title
+            newArticle.journal = record.periodicalNameFullFormat ?? record.secondaryTitle
+            newArticle.abstract = record.abstract
+            newArticle.doi = record.doi
+            newArticle.volume = record.volumeNumber
+            newArticle.issueNumber = record.issueNumber
+            newArticle.startPage = record.startPage
+            newArticle.endPage = record.endPage
+            newArticle.uuid = UUID()
+            
+            // Need to parse DA or PY, Y1
+            // newArticle.published = Date(from: record.date)
+            var published: Date?
+            if let date = record.date {
+                let splitDate = date.split(separator: "/")
+                if splitDate.count > 2 {
+                    published = getDate(from: splitDate)
+                }
+            } else if let pulbicationYear = record.pulbicationYear {
+                let splitPY = pulbicationYear.split(separator: "/")
+                if splitPY.count > 2 {
+                    published = getDate(from: splitPY)
+                }
+            } else if let primaryDate = record.primaryDate {
+                let splitPrimaryDate = primaryDate.split(separator: "/")
+                if splitPrimaryDate.count > 2 {
+                    published = getDate(from: splitPrimaryDate)
+                }
+            }
+            newArticle.published = published
+            
+            let parseStrategy = PersonNameComponents.ParseStrategy()
+            if let primaryAuthor = record.primaryAuthor, let name = try? parseStrategy.parse(primaryAuthor) {
+                createAuthorEntity(name, article: newArticle, viewContext: viewContext)
+            }
+            if let secondaryAuthor = record.secondaryAuthor, let name = try? parseStrategy.parse(secondaryAuthor) {
+                createAuthorEntity(name, article: newArticle, viewContext: viewContext)
+            }
+            if let tertiaryAuthor = record.tertiaryAuthor, let name = try? parseStrategy.parse(tertiaryAuthor) {
+                createAuthorEntity(name, article: newArticle, viewContext: viewContext)
+            }
+            if let subsidiaryAuthor = record.subsidiaryAuthor, let name = try? parseStrategy.parse(subsidiaryAuthor) {
+                createAuthorEntity(name, article: newArticle, viewContext: viewContext)
+            }
+            for author in record.authors {
+                if let name = try? parseStrategy.parse(author) {
+                    createAuthorEntity(name, article: newArticle, viewContext: viewContext)
+                }
+            }
+            
+            let writer = RISWriter(record: record)
+            let ris = RIS(context: viewContext)
+            ris.uuid = UUID()
+            ris.content = writer.toString()
+            ris.article = newArticle
+        }
+        
+        save(viewContext: viewContext)
+    }
+    
+    private func getDate(from yearMonthDate: [String.SubSequence]) -> Date? {
+        var date: Date? = nil
+        if let year = Int(yearMonthDate[0]), let month = Int(yearMonthDate[1]), let day = Int(yearMonthDate[2]) {
+            date = DateComponents(calendar: Calendar(identifier: .iso8601), year: year, month: month, day: day).date
+        }
+        return date
+    }
+    
+    private func createAuthorEntity(_ authorName: PersonNameComponents, article: Article, viewContext: NSManagedObjectContext) -> Void {
+        let authorEntity = Author(context: viewContext)
+        authorEntity.created = Date()
+        authorEntity.uuid = UUID()
+
+        populate(author: authorEntity, with: authorName)
+
+        authorEntity.addToArticles(article)
+    }
+    
+    private func populate(author: Author, with components: PersonNameComponents) {
+        author.lastName = components.familyName
+        author.firstName = components.givenName
+        author.middleName = components.middleName
+        author.nameSuffix = components.nameSuffix
+    }
+    
+    func delete(_ articles: [Article], viewContext: NSManagedObjectContext) -> Void {
         viewContext.perform {
             articles.forEach { article in
                 article.collections?.forEach { collection in
