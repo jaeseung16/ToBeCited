@@ -90,96 +90,9 @@ struct AddRISView: View, DropDelegate {
             }
         }
         
-        let created = Date()
-        
-        for record in risRecords {
-            let newArticle = Article(context: viewContext)
-            newArticle.created = created
-            newArticle.title = record.primaryTitle ?? record.title
-            newArticle.journal = record.periodicalNameFullFormat ?? record.secondaryTitle
-            newArticle.abstract = record.abstract
-            newArticle.doi = record.doi
-            newArticle.volume = record.volumeNumber
-            newArticle.issueNumber = record.issueNumber
-            newArticle.startPage = record.startPage
-            newArticle.endPage = record.endPage
-            newArticle.uuid = UUID()
-            
-            // Need to parse DA or PY, Y1
-            // newArticle.published = Date(from: record.date)
-            
-            var published: Date?
-            
-            if let date = record.date {
-                let splitDate = date.split(separator: "/")
-                if splitDate.count > 2 {
-                    published = getDate(from: splitDate)
-                }
-            } else if let pulbicationYear = record.pulbicationYear {
-                let splitPY = pulbicationYear.split(separator: "/")
-                if splitPY.count > 2 {
-                    published = getDate(from: splitPY)
-                }
-            } else if let primaryDate = record.primaryDate {
-                let splitPrimaryDate = primaryDate.split(separator: "/")
-                if splitPrimaryDate.count > 2 {
-                    published = getDate(from: splitPrimaryDate)
-                }
-            }
-            newArticle.published = published
-            
-            
-            let parseStrategy = PersonNameComponents.ParseStrategy()
-            if let primaryAuthor = record.primaryAuthor, let name = try? parseStrategy.parse(primaryAuthor) {
-                createAuthorEntity(name, article: newArticle)
-            }
-            
-            if let secondaryAuthor = record.secondaryAuthor, let name = try? parseStrategy.parse(secondaryAuthor) {
-                createAuthorEntity(name, article: newArticle)
-            }
-            
-            if let tertiaryAuthor = record.tertiaryAuthor, let name = try? parseStrategy.parse(tertiaryAuthor) {
-                createAuthorEntity(name, article: newArticle)
-            }
-            if let subsidiaryAuthor = record.subsidiaryAuthor, let name = try? parseStrategy.parse(subsidiaryAuthor) {
-                createAuthorEntity(name, article: newArticle)
-            }
-            
-            for author in record.authors {
-                if let name = try? parseStrategy.parse(author) {
-                    createAuthorEntity(name, article: newArticle)
-                }
-            }
-            
-            let writer = RISWriter(record: record)
-            let ris = RIS(context: viewContext)
-            ris.uuid = UUID()
-            ris.content = writer.toString()
-            ris.article = newArticle
-            
-        }
-        
-        viewModel.save(viewContext: viewContext)
+        viewModel.save(risRecords: risRecords, viewContext: viewContext)
         
         risRecords.removeAll()
-    }
-    
-    private func getDate(from yearMonthDate: [String.SubSequence]) -> Date? {
-        var date: Date? = nil
-        if let year = Int(yearMonthDate[0]), let month = Int(yearMonthDate[1]), let day = Int(yearMonthDate[2]) {
-            date = DateComponents(calendar: Calendar(identifier: .iso8601), year: year, month: month, day: day).date
-        }
-        return date
-    }
-    
-    private func createAuthorEntity(_ authorName: PersonNameComponents, article: Article) -> Void {
-        let authorEntity = Author(context: viewContext)
-        authorEntity.created = Date()
-        authorEntity.uuid = UUID()
-
-        viewModel.populate(author: authorEntity, with: authorName)
-
-        authorEntity.addToArticles(article)
     }
     
     func performDrop(info: DropInfo) -> Bool {
