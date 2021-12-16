@@ -22,6 +22,7 @@ struct ArticleDetailView: View, DropDelegate {
     @State private var errorMessage = ""
     @State private var presentSelectReferenceView = false
     @State private var presentAddToCollectionsView = false
+    @State private var presentImportCollectionAsReferences = false
     
     var article: Article
     
@@ -136,6 +137,11 @@ struct ArticleDetailView: View, DropDelegate {
         }
         .sheet(isPresented: $presentAddToCollectionsView) {
             AddToCollectionsView(article: article)
+                .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
+        }
+        .sheet(isPresented: $presentImportCollectionAsReferences) {
+            ImportCollectionAsReferencesView(article: article)
                 .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
@@ -293,6 +299,12 @@ struct ArticleDetailView: View, DropDelegate {
                     presentSelectReferenceView = true
                 } label: {
                     Label("edit", systemImage: "pencil.circle")
+                }
+                
+                Button {
+                    presentImportCollectionAsReferences = true
+                } label: {
+                    Label("import from collections", systemImage: "square.and.arrow.down.on.square")
                 }
             }
             

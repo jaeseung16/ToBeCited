@@ -19,6 +19,7 @@
 		901086B2275AA5590067A1E2 /* ArticleRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901086B1275AA5590067A1E2 /* ArticleRowView.swift */; };
 		90113C1E276BDD32007CE1D2 /* ContactDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90113C1D276BDD32007CE1D2 /* ContactDTO.swift */; };
 		90113C20276BF163007CE1D2 /* AddToCollectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90113C1F276BF163007CE1D2 /* AddToCollectionsView.swift */; };
+		90113C22276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90113C21276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift */; };
 		9012113E27431B43008A35F7 /* ExportCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9012113D27431B43008A35F7 /* ExportCollectionView.swift */; };
 		902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902978712739A0AD00D82FE7 /* PreviewController.swift */; };
 		90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62040271E06BE005D0FEA /* RISReferenceType.swift */; };
@@ -88,6 +89,7 @@
 		901086B1275AA5590067A1E2 /* ArticleRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleRowView.swift; sourceTree = "<group>"; };
 		90113C1D276BDD32007CE1D2 /* ContactDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDTO.swift; sourceTree = "<group>"; };
 		90113C1F276BF163007CE1D2 /* AddToCollectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToCollectionsView.swift; sourceTree = "<group>"; };
+		90113C21276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportCollectionAsReferencesView.swift; sourceTree = "<group>"; };
 		9012113D27431B43008A35F7 /* ExportCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportCollectionView.swift; sourceTree = "<group>"; };
 		902978712739A0AD00D82FE7 /* PreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewController.swift; sourceTree = "<group>"; };
 		902978752739BEE700D82FE7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 				90C8D7AF2753C99A0063DE71 /* ArticleSummaryView.swift */,
 				901086B1275AA5590067A1E2 /* ArticleRowView.swift */,
 				90113C1F276BF163007CE1D2 /* AddToCollectionsView.swift */,
+				90113C21276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -485,6 +488,7 @@
 				90EF91EE27584F3300B1CD6F /* AuthorContactView.swift in Sources */,
 				90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */,
 				90113C20276BF163007CE1D2 /* AddToCollectionsView.swift in Sources */,
+				90113C22276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift in Sources */,
 				900D77042745BB0C00F0416C /* ExportOrder.swift in Sources */,
 				9009B6792721FB640023C316 /* AuthorMergeView.swift in Sources */,
 			);
