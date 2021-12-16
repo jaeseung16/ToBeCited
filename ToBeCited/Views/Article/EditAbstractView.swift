@@ -10,6 +10,7 @@ import SwiftUI
 struct EditAbstractView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     var article: Article
     @State var abstract: String
@@ -64,14 +65,6 @@ struct EditAbstractView: View {
     
     private func update() -> Void {
         article.abstract = abstract
-        
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
+        viewModel.save(viewContext: viewContext)
     }
 }
