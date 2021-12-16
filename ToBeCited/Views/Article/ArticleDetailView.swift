@@ -21,6 +21,7 @@ struct ArticleDetailView: View, DropDelegate {
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
     @State private var presentSelectReferenceView = false
+    @State private var presentAddToCollectionsView = false
     
     var article: Article
     
@@ -130,6 +131,11 @@ struct ArticleDetailView: View, DropDelegate {
         }
         .sheet(isPresented: $presentSelectReferenceView) {
             SelectReferencesView(article: article, references: references)
+                .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
+        }
+        .sheet(isPresented: $presentAddToCollectionsView) {
+            AddToCollectionsView(article: article)
                 .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
@@ -336,6 +342,12 @@ struct ArticleDetailView: View, DropDelegate {
                     .foregroundColor(.secondary)
                 
                 Spacer()
+                
+                Button {
+                    presentAddToCollectionsView = true
+                } label: {
+                    Text("Add to existing collections")
+                }
             }
             
             List {
