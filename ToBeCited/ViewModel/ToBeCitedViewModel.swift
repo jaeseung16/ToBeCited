@@ -266,6 +266,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
+    func delete(_ authors: [Author], viewContext: NSManagedObjectContext) -> Void {
+        viewContext.perform {
+            authors.forEach {author in
+                if author.articles == nil || author.articles!.count == 0 {
+                    viewContext.delete(author)
+                }
+            }
+            self.save(viewContext: viewContext)
+        }
+    }
+    
     // MARK: - Persistence History Request
     private lazy var historyRequestQueue = DispatchQueue(label: "history")
     private func fetchUpdates(_ notification: Notification) -> Void {

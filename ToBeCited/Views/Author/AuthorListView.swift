@@ -41,12 +41,7 @@ struct AuthorListView: View {
     
     private func deleteAuthors(offsets: IndexSet) {
         withAnimation {
-            offsets.map { authors[$0] }.forEach { author in
-                if author.articles == nil || author.articles!.count == 0 {
-                    viewContext.delete(author)
-                }
-            }
-            viewModel.save(viewContext: viewContext)
+            viewModel.delete(offsets.map { authors[$0] }, viewContext: viewContext)
         }
     }
 }
