@@ -32,6 +32,13 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         return dateFormatter
     }
     
+    private var collectionDateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .medium
+        return dateFormatter
+    }
+    
     override init() {
         super.init()
         
@@ -249,6 +256,29 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         contactEntity.address = contact.address
         
         author.addToContacts(contactEntity)
+        save(viewContext: viewContext)
+    }
+    
+    func addCollection(_ name: String, articles: [Article], viewContext: NSManagedObjectContext) -> Void {
+        let date = Date()
+        
+        let collection = Collection(context: viewContext)
+        collection.name = name != "" ? name : collectionDateFormatter.string(from: date)
+        collection.uuid = UUID()
+        collection.created = date
+        collection.lastupd = date
+        
+        for index in 0..<articles.count {
+            collection.addToArticles(articles[index])
+            
+            let orderInCollection = OrderInCollection(context: viewContext)
+            orderInCollection.collectionId = collection.uuid
+            orderInCollection.articleId = articles[index].uuid
+            orderInCollection.order = Int64(index)
+            orderInCollection.collection = collection
+            orderInCollection.article = articles[index]
+        }
+        
         save(viewContext: viewContext)
     }
     

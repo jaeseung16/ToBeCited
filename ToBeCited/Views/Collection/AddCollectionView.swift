@@ -98,7 +98,13 @@ struct AddCollectionView: View {
         ZStack {
             HStack {
                 Spacer()
-                Text("Add an article")
+                if articlesToAdd.isEmpty {
+                    Text("Add a collection")
+                } else if articlesToAdd.count == 1 {
+                    Text("Add a collection including 1 article")
+                } else {
+                    Text("Add a collection including \(articlesToAdd.count) articles")
+                }
                 Spacer()
             }
             
@@ -112,7 +118,7 @@ struct AddCollectionView: View {
                 Spacer()
                 
                 Button(action: {
-                    addNewCollection()
+                    viewModel.addCollection(name, articles: articlesToAdd, viewContext: viewContext)
                     dismiss.callAsFunction()
                 }, label: {
                     Text("Save")
@@ -142,36 +148,6 @@ struct AddCollectionView: View {
             }
             .listStyle(PlainListStyle())
         }
-    }
-    
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .medium
-        return dateFormatter
-    }
-    
-    private func addNewCollection() -> Void {
-        let date = Date()
-        
-        let collection = Collection(context: viewContext)
-        collection.name = name != "" ? name : dateFormatter.string(from: date)
-        collection.uuid = UUID()
-        collection.created = date
-        collection.lastupd = date
-        
-        for index in 0..<articlesToAdd.count {
-            collection.addToArticles(articlesToAdd[index])
-            
-            let orderInCollection = OrderInCollection(context: viewContext)
-            orderInCollection.collectionId = collection.uuid
-            orderInCollection.articleId = articlesToAdd[index].uuid
-            orderInCollection.order = Int64(index)
-            orderInCollection.collection = collection
-            orderInCollection.article = articlesToAdd[index]
-        }
-        
-        viewModel.save(viewContext: viewContext)
     }
     
     private func move(from source: IndexSet, to destination: Int) {
