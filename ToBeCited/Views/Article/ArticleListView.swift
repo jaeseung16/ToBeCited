@@ -100,25 +100,7 @@ struct ArticleListView: View {
     
     private func deleteArticles(offsets: IndexSet) {
         withAnimation {
-            offsets.map { filteredArticles[$0] }.forEach { article in
-                article.collections?.forEach { collection in
-                    if let collection = collection as? Collection {
-                        article.removeFromCollections(collection)
-                    }
-                }
-                
-                // TODO: Reorder articles in collection
-                // TODO: Move these operations to viewModel
-                
-                article.orders?.forEach { order in
-                    if let order = order as? OrderInCollection {
-                        article.removeFromOrders(order)
-                    }
-                }
-                
-                viewContext.delete(article)
-            }
-            viewModel.save(viewContext: viewContext)
+            viewModel.delete(offsets.map { filteredArticles[$0] }, viewContext: viewContext)
         }
     }
 }
