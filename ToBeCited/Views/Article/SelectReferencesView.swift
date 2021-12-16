@@ -29,7 +29,7 @@ struct SelectReferencesView: View {
     
     @State var references: [Article]
     
-    private var filteredArticles: Array<Article> {
+    private var filteredArticles: [Article] {
         articles.filter { article in
             if let authors = article.authors as? Set<Author>, let author = selectedAuthor {
                 return authors.contains(author)
@@ -48,13 +48,7 @@ struct SelectReferencesView: View {
                 List {
                     ForEach(references) { reference in
                         Button {
-                            if let index = references.firstIndex(of: reference) {
-                                references.remove(at: index)
-                            }
-                            
-                            article.removeFromReferences(reference)
-                            reference.removeFromCited(article)
-                            update()
+                            update(reference: reference)
                         } label: {
                             ArticleRowView(article: reference)
                         }
@@ -87,10 +81,6 @@ struct SelectReferencesView: View {
             
             Spacer()
         }
-    }
-    
-    private func update() -> Void {
-        viewModel.save(viewContext: viewContext)
     }
     
     private func authorsView() -> some View {
@@ -138,17 +128,7 @@ struct SelectReferencesView: View {
             List {
                 ForEach(filteredArticles) { reference in
                     Button {
-                        if references.contains(reference) {
-                            if let index = references.firstIndex(of: reference) {
-                                references.remove(at: index)
-                            }
-                        } else {
-                            references.append(reference)
-                        }
-                        
-                        article.addToReferences(reference)
-                        reference.addToCited(article)
-                        update()
+                        update(reference: reference)
                     } label: {
                         ArticleRowView(article: reference)
                     }
@@ -156,5 +136,21 @@ struct SelectReferencesView: View {
             }
             .listStyle(PlainListStyle())
         }
+    }
+    
+    private func update(reference: Article) -> Void {
+        if references.contains(reference) {
+            if let index = references.firstIndex(of: reference) {
+                references.remove(at: index)
+            }
+            article.removeFromReferences(reference)
+            reference.removeFromCited(article)
+        } else {
+            references.append(reference)
+            article.addToReferences(reference)
+            reference.addToCited(article)
+        }
+        
+        viewModel.save(viewContext: viewContext)
     }
 }
