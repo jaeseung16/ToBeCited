@@ -298,6 +298,28 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
+    func delete(_ collections: [Collection], viewContext: NSManagedObjectContext) -> Void {
+        viewContext.perform {
+            collections.forEach { collection in
+                collection.articles?.forEach { article in
+                    if let article = article as? Article {
+                        article.removeFromCollections(collection)
+                    }
+                }
+                
+                collection.orders?.forEach { order in
+                    if let order = order as? OrderInCollection {
+                        viewContext.delete(order)
+                    }
+                }
+                
+                viewContext.delete(collection)
+            }
+            
+            self.save(viewContext: viewContext)
+        }
+    }
+    
     // MARK: - Persistence History Request
     private lazy var historyRequestQueue = DispatchQueue(label: "history")
     private func fetchUpdates(_ notification: Notification) -> Void {
