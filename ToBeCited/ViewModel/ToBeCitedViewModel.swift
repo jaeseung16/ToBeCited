@@ -41,18 +41,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
           .store(in: &subscriptions)
     }
     
-    func save(viewContext: NSManagedObjectContext) -> Void {
-        do {
-            try viewContext.save()
-        } catch {
-            let nsError = error as NSError
-            logger.error("While saving data, occured an unresolved error \(nsError), \(nsError.userInfo)")
-            showAlert.toggle()
-        }
-        
-        toggle.toggle()
-    }
-    
     func parse(risString: String) -> [RISRecord]? {
         try? parser.parse(risString)
     }
@@ -153,6 +141,45 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             }
         }
         return journalString
+    }
+    
+    // MARK: - Persistence
+    func save(viewContext: NSManagedObjectContext) -> Void {
+        do {
+            try viewContext.save()
+        } catch {
+            viewContext.rollback()
+            let nsError = error as NSError
+            logger.error("While saving data, occured an unresolved error \(nsError), \(nsError.userInfo)")
+            showAlert.toggle()
+        }
+        
+        toggle.toggle()
+    }
+    
+    func delete(_ articles: [Article], viewContext: NSManagedObjectContext) {
+        viewContext.perform {
+            articles.forEach { article in
+                article.collections?.forEach { collection in
+                    if let collection = collection as? Collection {
+                        article.removeFromCollections(collection)
+                    }
+                }
+                      
+                // TODO: Reorder articles in collection
+                // TODO: Move these operations to viewModel
+                      
+                article.orders?.forEach { order in
+                    if let order = order as? OrderInCollection {
+                        article.removeFromOrders(order)
+                    }
+                }
+                
+                viewContext.delete(article)
+            }
+            
+            self.save(viewContext: viewContext)
+        }
     }
     
     // MARK: - Persistence History Request
