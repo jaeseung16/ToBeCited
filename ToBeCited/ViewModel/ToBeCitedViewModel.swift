@@ -241,6 +241,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         author.nameSuffix = components.nameSuffix
     }
     
+    func add(contact: ContactDTO, to author: Author, viewContext: NSManagedObjectContext) -> Void {
+        let contactEntity = AuthorContact(context: viewContext)
+        contactEntity.created = Date()
+        contactEntity.email = contact.email
+        contactEntity.institution = contact.institution
+        contactEntity.address = contact.address
+        
+        author.addToContacts(contactEntity)
+        save(viewContext: viewContext)
+    }
+    
     func delete(_ articles: [Article], viewContext: NSManagedObjectContext) -> Void {
         viewContext.perform {
             articles.forEach { article in

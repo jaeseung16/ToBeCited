@@ -52,23 +52,13 @@ struct AddContactView: View {
             Spacer()
             
             Button {
-                saveContact()
+                let contactDTO = ContactDTO(email: email, institution: institution, address: address)
+                viewModel.add(contact: contactDTO, to: author, viewContext: viewContext)
                 dismiss.callAsFunction()
             } label: {
                 Text("Save")
             }
             .disabled(email.isEmpty && institution.isEmpty && address.isEmpty)
         }
-    }
-    
-    private func saveContact() -> Void {
-        let contact = AuthorContact(context: viewContext)
-        contact.created = Date()
-        contact.email = email
-        contact.institution = institution
-        contact.address = address
-        
-        author.addToContacts(contact)
-        viewModel.save(viewContext: viewContext)
     }
 }

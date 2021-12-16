@@ -17,6 +17,7 @@
 		900B8F3E2741B12700D40347 /* EditCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900B8F3D2741B12600D40347 /* EditCollectionView.swift */; };
 		900D77042745BB0C00F0416C /* ExportOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900D77032745BB0C00F0416C /* ExportOrder.swift */; };
 		901086B2275AA5590067A1E2 /* ArticleRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901086B1275AA5590067A1E2 /* ArticleRowView.swift */; };
+		90113C1E276BDD32007CE1D2 /* ContactDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90113C1D276BDD32007CE1D2 /* ContactDTO.swift */; };
 		9012113E27431B43008A35F7 /* ExportCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9012113D27431B43008A35F7 /* ExportCollectionView.swift */; };
 		902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902978712739A0AD00D82FE7 /* PreviewController.swift */; };
 		90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62040271E06BE005D0FEA /* RISReferenceType.swift */; };
@@ -84,6 +85,7 @@
 		900B8F3D2741B12600D40347 /* EditCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCollectionView.swift; sourceTree = "<group>"; };
 		900D77032745BB0C00F0416C /* ExportOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportOrder.swift; sourceTree = "<group>"; };
 		901086B1275AA5590067A1E2 /* ArticleRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleRowView.swift; sourceTree = "<group>"; };
+		90113C1D276BDD32007CE1D2 /* ContactDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDTO.swift; sourceTree = "<group>"; };
 		9012113D27431B43008A35F7 /* ExportCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportCollectionView.swift; sourceTree = "<group>"; };
 		902978712739A0AD00D82FE7 /* PreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewController.swift; sourceTree = "<group>"; };
 		902978752739BEE700D82FE7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 			children = (
 				900B8F3B2741AE3500D40347 /* ToBeCitedViewModel.swift */,
 				900D77032745BB0C00F0416C /* ExportOrder.swift */,
+				90113C1D276BDD32007CE1D2 /* ContactDTO.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -438,6 +441,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90113C1E276BDD32007CE1D2 /* ContactDTO.swift in Sources */,
 				90FD841E273C917E00929EF7 /* AddCollectionView.swift in Sources */,
 				90C8D7B22753E36D0063DE71 /* AuthorListView.swift in Sources */,
 				90DEAF54274ADE8100058AAC /* ArticleListView.swift in Sources */,
