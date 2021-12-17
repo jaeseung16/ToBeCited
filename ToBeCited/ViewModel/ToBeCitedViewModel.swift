@@ -154,7 +154,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             showAlert.toggle()
         }
         
-        toggle.toggle()
+        DispatchQueue.main.async {
+            self.toggle.toggle()
+        }
     }
     
     func save(risRecords: [RISRecord], viewContext: NSManagedObjectContext) -> Void {

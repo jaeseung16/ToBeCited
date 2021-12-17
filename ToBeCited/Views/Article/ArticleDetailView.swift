@@ -386,15 +386,20 @@ struct ArticleDetailView: View, DropDelegate {
         if info.hasItemsConforming(to: [.pdf]) {
             info.itemProviders(for: [.pdf]).forEach { itemProvider in
                 itemProvider.loadItem(forTypeIdentifier: UTType.pdf.identifier, options: nil) { url, error in
-                    guard let url = url as? URL, let data = try? Data(contentsOf: url) else {
+                    guard let url = url as? URL else {
                         if let error = error {
-                            print("error = \(error)")
+                            errorMessage = error.localizedDescription
+                            showErrorAlert = true
                         }
                         return
                     }
-                    
-                    self.pdfData = data
-                    self.update()
+
+                    let _ = url.startAccessingSecurityScopedResource()
+                    if let data = try? Data(contentsOf: url) {
+                        self.pdfData = data
+                        self.update()
+                    }
+                    url.stopAccessingSecurityScopedResource()
                 }
             }
         }
