@@ -59,7 +59,9 @@ struct ArticleListView: View {
         NavigationView {
             List {
                 ForEach(filteredArticles) { article in
-                    NavigationLink(destination: ArticleDetailView(article: article)) {
+                    NavigationLink(destination:
+                                    ArticleDetailView(article: article,
+                                                      title: article.title ?? "Title is not available")) {
                         ArticleRowView(article: article)
                     }
                 }

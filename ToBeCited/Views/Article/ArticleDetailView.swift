@@ -25,6 +25,7 @@ struct ArticleDetailView: View, DropDelegate {
     @State private var presentImportCollectionAsReferences = false
     
     var article: Article
+    @State var title: String
     
     private var authors: [Author] {
         var authors = [Author]()
@@ -105,7 +106,7 @@ struct ArticleDetailView: View, DropDelegate {
                 collectionsView()
             }
         }
-        .navigationTitle(article.title ?? "Title is not available")
+        .navigationTitle(title)
         .padding()
         .fileImporter(isPresented: $importPdf, allowedContentTypes: [.pdf]) { result in
             switch result {
@@ -113,7 +114,7 @@ struct ArticleDetailView: View, DropDelegate {
                 let _ = url.startAccessingSecurityScopedResource()
                 if let data = try? Data(contentsOf: url) {
                     pdfData = data
-                    update()
+                    updatePDF()
                 }
                 url.stopAccessingSecurityScopedResource()
             case .failure(let error):
@@ -179,7 +180,7 @@ struct ArticleDetailView: View, DropDelegate {
             
             NavigationLink {
                 PDFKitView(pdfData: article.pdf ?? Data())
-                    .navigationTitle(article.title ?? "")
+                    .navigationTitle(title)
             } label: {
                 Label("Open", systemImage: "eye")
             }
@@ -190,15 +191,14 @@ struct ArticleDetailView: View, DropDelegate {
         .fixedSize(horizontal: false, vertical: true)
     }
     
-    private func update() -> Void {
+    private func updatePDF() -> Void {
         if !pdfData.isEmpty {
             article.pdf = pdfData
+            viewModel.save(viewContext: viewContext)
         }
-        
-        viewModel.save(viewContext: viewContext)
     }
     
-    private func title() -> some View {
+    private func titleView() -> some View {
         VStack {
             HStack {
                 Text("TITLE")
@@ -207,16 +207,30 @@ struct ArticleDetailView: View, DropDelegate {
                 Spacer()
             }
             
-            Text(article.title ?? "Title is not available")
+            TextField("title", text: $title)
+                .onSubmit {
+                    updateTitle()
+                }
                 .font(.title2)
                 .multilineTextAlignment(.center)
+                .background {
+                    RoundedRectangle(cornerRadius: 5)
+                        .foregroundColor(.secondary)
+                }
                 .padding()
+        }
+    }
+    
+    private func updateTitle() -> Void {
+        if !title.isEmpty {
+            article.title = title
+            viewModel.save(viewContext: viewContext)
         }
     }
     
     private func citation() -> some View {
         VStack {
-            title()
+            titleView()
             
             Text(viewModel.journalString(article: article))
             
@@ -397,7 +411,7 @@ struct ArticleDetailView: View, DropDelegate {
                     let _ = url.startAccessingSecurityScopedResource()
                     if let data = try? Data(contentsOf: url) {
                         self.pdfData = data
-                        self.update()
+                        self.updatePDF()
                     }
                     url.stopAccessingSecurityScopedResource()
                 }
