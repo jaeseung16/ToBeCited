@@ -232,11 +232,9 @@ struct ArticleDetailView: View, DropDelegate {
                     updateTitle()
                 }
                 .font(.title2)
+                .disableAutocorrection(true)
                 .multilineTextAlignment(.center)
-                .background {
-                    RoundedRectangle(cornerRadius: 5)
-                        .foregroundColor(.secondary)
-                }
+                .textFieldStyle(.roundedBorder)
                 .padding()
         }
     }
