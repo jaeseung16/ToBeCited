@@ -28,6 +28,7 @@ struct EditAbstractView: View {
                 })
                 .disableAutocorrection(true)
                 .multilineTextAlignment(.leading)
+                .lineSpacing(10)
                 .border(Color.secondary)
             
         }

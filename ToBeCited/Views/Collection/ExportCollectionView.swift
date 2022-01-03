@@ -36,6 +36,7 @@ struct ExportCollectionView: View {
             templatePickerView()
             
             TextEditor(text: $viewModel.stringToExport)
+                .lineSpacing(10)
                 .frame(height: 300)
         }
         .fileExporter(isPresented: $showFileExporter, documents: [TextFile(initialText: viewModel.stringToExport)], contentType: .plainText) { result in
