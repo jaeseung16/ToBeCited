@@ -48,7 +48,7 @@ struct ArticleListView: View {
             if titleToSearch == "" {
                 return true
             } else if let title = article.title {
-                return title.contains(titleToSearch)
+                return title.range(of: titleToSearch, options: .caseInsensitive) != nil
             } else {
                 return false
             }
