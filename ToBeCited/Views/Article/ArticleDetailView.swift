@@ -157,37 +157,56 @@ struct ArticleDetailView: View, DropDelegate {
     }
     
     private func header() -> some View {
-        HStack {
-            Spacer()
-            
-            Text("PDF")
-            
-            Button {
-                importPdf = true
-            } label: {
-                Label("Import", systemImage: "square.and.arrow.down")
+        VStack {
+            if let ris = article.ris, let content = ris.content {
+                HStack {
+                    Spacer()
+                    
+                    Text("RIS")
+                    
+                    NavigationLink {
+                        EditRISView(ris: ris, content: content)
+                            .navigationTitle(title)
+                    } label: {
+                        Label("Edit", systemImage: "pencil.circle")
+                    }
+                    
+                    Spacer()
+                }
             }
             
-            Button {
-                if let pdfData = article.pdf {
-                    self.pdfData = pdfData
+            HStack {
+                Spacer()
+                
+                Text("PDF")
+                
+                Button {
+                    importPdf = true
+                } label: {
+                    Label("Import", systemImage: "square.and.arrow.down")
                 }
                 
-                exportPDF = true
-            } label: {
-                Label("Export", systemImage: "square.and.arrow.up")
+                Button {
+                    if let pdfData = article.pdf {
+                        self.pdfData = pdfData
+                    }
+                    
+                    exportPDF = true
+                } label: {
+                    Label("Export", systemImage: "square.and.arrow.up")
+                }
+                .disabled(!pdfExists)
+                
+                NavigationLink {
+                    PDFKitView(pdfData: article.pdf ?? Data())
+                        .navigationTitle(title)
+                } label: {
+                    Label("Open", systemImage: "eye")
+                }
+                .disabled(!pdfExists)
+                
+                Spacer()
             }
-            .disabled(!pdfExists)
-            
-            NavigationLink {
-                PDFKitView(pdfData: article.pdf ?? Data())
-                    .navigationTitle(title)
-            } label: {
-                Label("Open", systemImage: "eye")
-            }
-            .disabled(!pdfExists)
-            
-            Spacer()
         }
         .fixedSize(horizontal: false, vertical: true)
     }
