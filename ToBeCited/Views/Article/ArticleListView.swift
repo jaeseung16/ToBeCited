@@ -61,7 +61,8 @@ struct ArticleListView: View {
                 ForEach(filteredArticles) { article in
                     NavigationLink(destination:
                                     ArticleDetailView(article: article,
-                                                      title: article.title ?? "Title is not available")) {
+                                                      title: article.title ?? "Title is not available",
+                                                      published: article.published ?? Date())) {
                         ArticleRowView(article: article)
                     }
                 }

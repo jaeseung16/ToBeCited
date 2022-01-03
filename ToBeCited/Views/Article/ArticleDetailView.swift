@@ -26,6 +26,7 @@ struct ArticleDetailView: View, DropDelegate {
     
     var article: Article
     @State var title: String
+    @State var published: Date
     
     private var authors: [Author] {
         var authors = [Author]()
@@ -234,11 +235,8 @@ struct ArticleDetailView: View, DropDelegate {
             
             Text(viewModel.journalString(article: article))
             
-            if article.published != nil {
-                Text(publicationDate)
-                    .font(.callout)
-            }
-            
+            publishedView()
+        
             if article.doi != nil, let url = URL(string: "https://dx.doi.org/\(article.doi!)") {
                 Link(article.doi!, destination: url)
                     .foregroundColor(.blue)
@@ -246,6 +244,30 @@ struct ArticleDetailView: View, DropDelegate {
             
             authorList()
         }
+    }
+    
+    private func publishedView() -> some View {
+        ZStack {
+            HStack {
+                Text("PUBLISHED ON")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            
+            DatePicker("", selection: $published, displayedComponents: [.date])
+                .datePickerStyle(DefaultDatePickerStyle())
+                .labelsHidden()
+                .onChange(of: published) { _ in
+                    updatePublished()
+                }
+        }
+    }
+    
+    private func updatePublished() -> Void {
+        article.published = published
+        viewModel.save(viewContext: viewContext)
     }
     
     private var publicationDate: String {
