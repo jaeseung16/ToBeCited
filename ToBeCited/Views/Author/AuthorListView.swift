@@ -18,10 +18,24 @@ struct AuthorListView: View {
                   animation: .default)
     private var authors: FetchedResults<Author>
 
+    @State private var lastNameToSearch = ""
+    
+    private var filteredAuthors: [Author] {
+        authors.filter { author in
+            if lastNameToSearch == "" {
+                return true
+            } else if let lastName = author.lastName {
+                return lastName.range(of: lastNameToSearch, options: .caseInsensitive) != nil
+            } else {
+                return false
+            }
+        }
+    }
+    
     var body: some View {
         NavigationView {
             List {
-                ForEach(authors) { author in
+                ForEach(filteredAuthors) { author in
                     if author.lastName != nil && author.lastName != "" {
                         NavigationLink(destination: AuthorDetailView(author: author,
                                                                      firstName: author.firstName ?? "",
@@ -36,6 +50,7 @@ struct AuthorListView: View {
                 .onDelete(perform: deleteAuthors)
             }
             .navigationTitle("Authors")
+            .searchable(text: $lastNameToSearch)
         }
     }
     
