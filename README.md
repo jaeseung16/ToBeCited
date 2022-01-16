@@ -2,6 +2,8 @@
 
 The app helps a user organize the citations of the articles published in research journals.
 
+[![App Store Badge](https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.svg)](https://apps.apple.com/app/id1589609835)
+
 # How to Use
  
 ### Articles tab
