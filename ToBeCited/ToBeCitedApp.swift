@@ -17,6 +17,18 @@ struct ToBeCitedApp: App {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(viewModel)
+                .onOpenURL { url in
+                    if url.absoluteString.lowercased().contains("ris") {
+                        let _ = url.startAccessingSecurityScopedResource()
+                        if let risString = try? String(contentsOf: url) {
+                            if !risString.isEmpty {
+                                viewModel.risString = risString
+                            }
+                        }
+                        url.stopAccessingSecurityScopedResource()
+                    }
+                    
+                }
         }
     }
 }

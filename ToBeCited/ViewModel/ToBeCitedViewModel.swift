@@ -20,6 +20,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     @Published var ordersInCollection = [OrderInCollection]()
     @Published var toggle = false
     @Published var showAlert = false
+    @Published var risString = ""
     
     var collection: Collection?
     var articlesInCollection: [Article]?

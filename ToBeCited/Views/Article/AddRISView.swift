@@ -14,7 +14,7 @@ struct AddRISView: View, DropDelegate {
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var presentRISFilePicker = false
-    @State private var risString: String = ""
+    @State var risString: String = ""
     @State private var risRecords = [RISRecord]()
     
     var body: some View {

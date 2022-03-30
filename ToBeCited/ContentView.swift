@@ -12,6 +12,8 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
 
+    @State private var presentAddRISView = false
+    
     var body: some View {
         TabView {
             ArticleListView()
@@ -33,6 +35,14 @@ struct ContentView: View {
             Button("Dismiss") {
                 viewModel.showAlert.toggle()
             }
+        }
+        .onChange(of: viewModel.risString, perform: { _ in
+            presentAddRISView = true
+        })
+        .sheet(isPresented: $presentAddRISView) {
+            AddRISView(risString: viewModel.risString)
+                .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
         }
     }
 }
