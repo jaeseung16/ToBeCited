@@ -20,26 +20,31 @@ struct ArticleListView: View {
     @State private var presentAddArticleView = false
     @State private var presentFilterArticleView = false
     
-    @State private var author: Author?
-    @State private var publishedIn: Int?
+    private var publishedIn: String {
+        if let selectedPublishedIn = viewModel.selectedPublishedIn {
+            return "\(selectedPublishedIn)"
+        } else {
+            return ""
+        }
+    }
     @State private var titleToSearch = ""
     
     private var filteredArticles: [Article] {
         articles.filter { article in
-            if author == nil {
+            if viewModel.selectedAuthors == nil || viewModel.selectedAuthors!.isEmpty {
                 return true
-            } else if let authors = article.authors as? Set<Author> {
-                return authors.contains(author!)
+            } else if let authors = article.authors as? Set<Author>, let selectedAuthors = viewModel.selectedAuthors {
+                return !authors.intersection(selectedAuthors).isEmpty
             } else {
                 return false
             }
         }
         .filter { article in
-            if publishedIn == nil {
+            if viewModel.selectedPublishedIn == nil {
                 return true
-            } else if let published = article.published {
+            } else if let published = article.published, let selectedPublishedIn = viewModel.selectedPublishedIn {
                 let articlePublicationYear = Calendar.current.dateComponents([.year], from: published)
-                return articlePublicationYear.year == publishedIn
+                return articlePublicationYear.year == selectedPublishedIn
             } else {
                 return false
             }
@@ -68,7 +73,7 @@ struct ArticleListView: View {
                 }
                 .onDelete(perform: deleteArticles)
             }
-            .navigationTitle("Articles")
+            .navigationTitle(Text("Articles (\(filteredArticles.count))"))
             .toolbar {
                 ToolbarItemGroup {
                     HStack {
@@ -95,7 +100,7 @@ struct ArticleListView: View {
                 .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentFilterArticleView) {
-            FilterArticleView(author: $author, publishedIn: $publishedIn)
+            FilterArticleView(publishedIn: publishedIn)
                 .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }

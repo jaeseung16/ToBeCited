@@ -19,10 +19,27 @@ struct FilterArticleView: View {
         animation: .default)
     private var authors: FetchedResults<Author>
     
-    @Binding var author: Author?
-    @Binding var publishedIn: Int?
-    
+    @State private var lastNameToSearch = ""
+    @State var publishedIn: String
     @State private var selectedAuthor = UUID()
+    
+    private var numberFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .none
+        return formatter
+    }
+    
+    private var filteredAuthors: [Author] {
+        authors.filter { author in
+            if lastNameToSearch == "" {
+                return false
+            } else if let lastName = author.lastName {
+                return lastName.range(of: lastNameToSearch, options: .caseInsensitive) != nil
+            } else {
+                return false
+            }
+        }
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -44,6 +61,7 @@ struct FilterArticleView: View {
                     Spacer()
                 }
                 
+                /*
                 Picker("SELECT AN AUTHOR", selection: $selectedAuthor) {
                     ForEach(authors) { author in
                         if let uuid = author.uuid {
@@ -53,8 +71,24 @@ struct FilterArticleView: View {
                     }
                 }
                 .onChange(of: selectedAuthor) { _ in
-                    author = authors.first { $0.uuid == selectedAuthor }
+                    viewModel.selectedAuthor = authors.first { $0.uuid == selectedAuthor }
                 }
+                */
+                List {
+                    ForEach(filteredAuthors) { author in
+                        if author.lastName != nil && author.lastName != "" {
+                            NavigationLink(destination: AuthorDetailView(author: author,
+                                                                         firstName: author.firstName ?? "",
+                                                                         middleName: author.middleName ?? "",
+                                                                         lastName: author.lastName ?? "",
+                                                                         nameSuffix: author.nameSuffix ?? "",
+                                                                         orcid: author.orcid ?? "")) {
+                                AuthorNameView(author: author)
+                            }
+                        }
+                    }
+                }
+                
             }
             .padding()
         }
@@ -81,17 +115,24 @@ struct FilterArticleView: View {
             
             Spacer()
             
-            if author == nil {
+            /*
+            if viewModel.selectedAuthor == nil {
                 Text("N/A")
                     .foregroundColor(.secondary)
             } else {
-                Text("\(viewModel.nameComponents(of: author!).formatted(.name(style: .long)))")
+                Text("\(viewModel.nameComponents(of: viewModel.selectedAuthor!).formatted(.name(style: .long)))")
             }
+            */
+            TextField("AUTHOR", text: $lastNameToSearch, prompt: Text("Last Name"))
+                .onSubmit {
+                    viewModel.selectedAuthors = Set(filteredAuthors)
+                }
             
             Spacer()
             
             Button {
-                author = nil
+                viewModel.selectedAuthor = nil
+                viewModel.selectedAuthors = nil
             } label: {
                 Text("reset")
             }
@@ -112,13 +153,24 @@ struct FilterArticleView: View {
             
             Spacer()
             
-            TextField("Publication Year", value: $publishedIn, formatter: NumberFormatter(), prompt: Text("N/A"))
+            TextField("Publication Year", text: $publishedIn, prompt: Text("2000"))
+                .onSubmit {
+                    print("publishedIn=\(publishedIn)")
+                    
+                    if let publishedIn = numberFormatter.number(from: publishedIn) as? Int {
+                        viewModel.selectedPublishedIn = publishedIn
+                    } else {
+                        publishedIn = ""
+                        viewModel.selectedPublishedIn = nil
+                    }
+                }
                 .multilineTextAlignment(.center)
             
             Spacer()
             
             Button {
-                publishedIn = nil
+                publishedIn = ""
+                viewModel.selectedPublishedIn = nil
             } label: {
                 Text("reset")
             }
