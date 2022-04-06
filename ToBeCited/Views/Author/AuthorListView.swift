@@ -43,7 +43,13 @@ struct AuthorListView: View {
                                                                      lastName: author.lastName ?? "",
                                                                      nameSuffix: author.nameSuffix ?? "",
                                                                      orcid: author.orcid ?? "")) {
-                            AuthorNameView(author: author)
+                            HStack {
+                                AuthorNameView(author: author)
+                                Spacer()
+                                Text("\(author.articles?.count ?? 0)")
+                                    .font(.callout)
+                                    .foregroundColor(Color.secondary)
+                            }
                         }
                     }
                 }
