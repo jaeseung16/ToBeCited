@@ -36,20 +36,18 @@ struct AuthorListView: View {
         NavigationView {
             List {
                 ForEach(filteredAuthors) { author in
-                    if author.lastName != nil && author.lastName != "" {
-                        NavigationLink(destination: AuthorDetailView(author: author,
-                                                                     firstName: author.firstName ?? "",
-                                                                     middleName: author.middleName ?? "",
-                                                                     lastName: author.lastName ?? "",
-                                                                     nameSuffix: author.nameSuffix ?? "",
-                                                                     orcid: author.orcid ?? "")) {
-                            HStack {
-                                AuthorNameView(author: author)
-                                Spacer()
-                                Label("\(author.articles?.count ?? 0)", systemImage: "doc.on.doc")
-                                    .font(.callout)
-                                    .foregroundColor(Color.secondary)
-                            }
+                    NavigationLink(destination: AuthorDetailView(author: author,
+                                                                 firstName: author.firstName ?? "",
+                                                                 middleName: author.middleName ?? "",
+                                                                 lastName: author.lastName ?? "",
+                                                                 nameSuffix: author.nameSuffix ?? "",
+                                                                 orcid: author.orcid ?? "")) {
+                        HStack {
+                            AuthorNameView(author: author)
+                            Spacer()
+                            Label("\(author.articles?.count ?? 0)", systemImage: "doc.on.doc")
+                                .font(.callout)
+                                .foregroundColor(Color.secondary)
                         }
                     }
                 }
