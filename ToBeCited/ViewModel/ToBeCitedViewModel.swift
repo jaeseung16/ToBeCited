@@ -422,4 +422,23 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         return url.appendingPathComponent("token.data", isDirectory: false)
     }()
 
+    var articleCount: Int {
+        return getCount(entityName: "Article")
+    }
+    
+    var authorCount: Int {
+        return getCount(entityName: "Author")
+    }
+    
+    private func getCount(entityName: String) -> Int {
+        var count = 0
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        do {
+            count = try persistenteContainer.viewContext.count(for: fetchRequest)
+        } catch {
+            print("Can't count \(entityName): \(error.localizedDescription)")
+        }
+        return count
+    }
+    
 }
