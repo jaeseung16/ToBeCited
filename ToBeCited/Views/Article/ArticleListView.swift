@@ -78,6 +78,8 @@ struct ArticleListView: View {
                 ToolbarItemGroup {
                     HStack {
                         Button(action: {
+                            viewModel.selectedAuthors = nil
+                            viewModel.selectedPublishedIn = nil
                             presentFilterArticleView = true
                         }) {
                             Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
@@ -100,7 +102,7 @@ struct ArticleListView: View {
                 .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentFilterArticleView) {
-            FilterArticleView(publishedIn: publishedIn)
+            FilterArticleView()
                 .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }

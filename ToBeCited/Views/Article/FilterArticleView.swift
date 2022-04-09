@@ -19,8 +19,8 @@ struct FilterArticleView: View {
         animation: .default)
     private var authors: FetchedResults<Author>
     
-    @State private var lastNameToSearch = ""
-    @State var publishedIn: String
+    @State private var lastNameToSearch: String = ""
+    @State var publishedIn: String = ""
     @State private var selectedAuthor = UUID()
     
     private var numberFormatter: NumberFormatter {
