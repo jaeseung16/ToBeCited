@@ -41,13 +41,9 @@ struct CollectionListView: View {
                                 HStack {
                                     Text(name)
                                     Spacer()
-                                }
-                                
-                                HStack {
-                                    Spacer()
-                                    Text(collection.lastupd ?? Date(), style: .date)
+                                    Label("\(collection.articles?.count ?? 0)", systemImage: "doc.on.doc")
                                         .font(.callout)
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(Color.secondary)
                                 }
                             }
                         }

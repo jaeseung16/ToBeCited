@@ -144,7 +144,7 @@ struct FilterArticleView: View {
                 lastNameToSearch = ""
                 viewModel.selectedAuthors = nil
             } label: {
-                Text("reset")
+                Image(systemName: "clear")
             }
         }
     }
@@ -180,7 +180,7 @@ struct FilterArticleView: View {
                 publishedIn = ""
                 viewModel.selectedPublishedIn = nil
             } label: {
-                Text("reset")
+                Image(systemName: "clear")
             }
         }
     }

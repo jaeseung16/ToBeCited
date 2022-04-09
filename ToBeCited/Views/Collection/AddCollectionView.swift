@@ -27,15 +27,38 @@ struct AddCollectionView: View {
     @State private var name: String = ""
     @State private var articlesToAdd = [Article]()
     
+    @State private var lastNameToSearch = ""
     @State var selectedAuthor: Author?
+    private var filteredAuthors: [Author] {
+        authors.filter { author in
+            if lastNameToSearch.isEmpty {
+                return true
+            } else if let lastName = author.lastName {
+                return lastName.range(of: lastNameToSearch, options: .caseInsensitive) != nil
+            } else {
+                return false
+            }
+        }
+    }
     
+    @State private var titleToSearch = ""
     private var filteredArticles: Array<Article> {
-        articles.filter { article in
-            if let authors = article.authors as? Set<Author>, let author = selectedAuthor {
+        articles
+            .filter {
+                guard let authors = $0.authors as? Set<Author>, let author = selectedAuthor else {
+                    return true
+                }
                 return authors.contains(author)
             }
-            return false
-        }
+            .filter {
+                if titleToSearch.isEmpty {
+                    return true
+                } else if let title = $0.title {
+                    return title.range(of: titleToSearch, options: .caseInsensitive) != nil
+                } else {
+                    return false
+                }
+            }
     }
     
     var body: some View {
@@ -73,21 +96,8 @@ struct AddCollectionView: View {
                 
                 Divider()
                 
-                List {
-                    ForEach(filteredArticles) { article in
-                        Button {
-                            if articlesToAdd.contains(article) {
-                                if let index = articlesToAdd.firstIndex(of: article) {
-                                    articlesToAdd.remove(at: index)
-                                }
-                            } else {
-                                articlesToAdd.append(article)
-                            }
-                        } label: {
-                            ArticleRowView(article: article)
-                        }
-                    }
-                }
+                articlesView()
+                
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .padding()
@@ -129,18 +139,38 @@ struct AddCollectionView: View {
     
     private func authorsView() -> some View {
         VStack {
-            Text("CHOOSE AN AUTHOR")
-                .font(.callout)
+            HStack {
+                Text("FIND AN AUTHOR")
+                    .font(.callout)
+                
+                Text("\(filteredAuthors.count)")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                TextField("AUTHOR", text: $lastNameToSearch, prompt: Text("Last Name"))
+                    .multilineTextAlignment(.center)
+                
+                Button {
+                    lastNameToSearch = ""
+                    selectedAuthor = nil
+                } label: {
+                    Image(systemName: "clear")
+                }
+            }
             
             List {
-                ForEach(authors) { author in
+                ForEach(filteredAuthors) { author in
                     Button {
                         selectedAuthor = author
                     } label: {
                         HStack {
                             AuthorNameView(author: author)
                             Spacer()
-                            Text("\(author.articles?.count ?? 0)")
+                            Label("\(author.articles?.count ?? 0)", systemImage: "doc.on.doc")
+                                .font(.callout)
+                                .foregroundColor(Color.secondary)
                         }
                     }
                     .foregroundColor(author == selectedAuthor ? .primary : .secondary)
@@ -152,5 +182,45 @@ struct AddCollectionView: View {
     
     private func move(from source: IndexSet, to destination: Int) {
         articlesToAdd.move(fromOffsets: source, toOffset: destination)
+    }
+    
+    private func articlesView() -> some View {
+        VStack {
+            HStack {
+                Text("FIND ARTICLES")
+                    .font(.callout)
+                
+                Text("\(filteredArticles.count)")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                TextField("ARTICLE", text: $titleToSearch, prompt: Text("TITLE"))
+                    .multilineTextAlignment(.center)
+                
+                Button {
+                    titleToSearch = ""
+                } label: {
+                    Image(systemName: "clear")
+                }
+            }
+        
+            List {
+                ForEach(filteredArticles) { article in
+                    Button {
+                        if articlesToAdd.contains(article) {
+                            if let index = articlesToAdd.firstIndex(of: article) {
+                                articlesToAdd.remove(at: index)
+                            }
+                        } else {
+                            articlesToAdd.append(article)
+                        }
+                    } label: {
+                        ArticleRowView(article: article)
+                    }
+                }
+            }
+        }
     }
 }

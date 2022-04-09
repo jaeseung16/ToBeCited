@@ -73,7 +73,7 @@ struct ArticleListView: View {
                 }
                 .onDelete(perform: deleteArticles)
             }
-            .navigationTitle(Text("Articles (\(filteredArticles.count))"))
+            .navigationTitle(Text("Articles"))
             .toolbar {
                 ToolbarItemGroup {
                     HStack {
