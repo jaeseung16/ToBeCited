@@ -22,7 +22,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     @Published var showAlert = false
     @Published var risString = ""
     
-    @Published var selectedAuthor: Author?
     @Published var selectedAuthors: Set<Author>?
     @Published var selectedPublishedIn: Int?
     

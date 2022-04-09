@@ -55,44 +55,61 @@ struct FilterArticleView: View {
                 Divider()
                 
                 HStack {
-                    Text("SELECT AN AUTHOR")
+                    Text("SELECTED AUTHORS")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Spacer()
                 }
                 
-                /*
-                Picker("SELECT AN AUTHOR", selection: $selectedAuthor) {
-                    ForEach(authors) { author in
-                        if let uuid = author.uuid {
-                            Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
-                                .tag(uuid)
-                        }
-                    }
-                }
-                .onChange(of: selectedAuthor) { _ in
-                    viewModel.selectedAuthor = authors.first { $0.uuid == selectedAuthor }
-                }
-                */
-                List {
-                    ForEach(filteredAuthors) { author in
-                        if author.lastName != nil && author.lastName != "" {
-                            NavigationLink(destination: AuthorDetailView(author: author,
-                                                                         firstName: author.firstName ?? "",
-                                                                         middleName: author.middleName ?? "",
-                                                                         lastName: author.lastName ?? "",
-                                                                         nameSuffix: author.nameSuffix ?? "",
-                                                                         orcid: author.orcid ?? "")) {
-                                AuthorNameView(author: author)
-                            }
-                        }
-                    }
-                }
+                filteredAuthorList()
                 
             }
             .padding()
         }
-        
+    }
+    
+    private func filteredAuthorList() -> some View {
+        List {
+            ForEach(filteredAuthors) { author in
+                if author.lastName != nil && author.lastName != "" {
+                    Button {
+                        if viewModel.selectedAuthors != nil {
+                            if selected(author) {
+                                viewModel.selectedAuthors!.remove(author)
+                            } else {
+                                viewModel.selectedAuthors!.insert(author)
+                            }
+                        }
+                    } label: {
+                        filteredAuthorLabel(author)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func filteredAuthorLabel(_ author: Author) -> some View {
+        HStack {
+            AuthorNameView(author: author)
+            Spacer()
+            Label("\(author.articles?.count ?? 0)", systemImage: "doc.on.doc")
+                .font(.callout)
+                .foregroundColor(Color.secondary)
+            Divider()
+            if selected(author) {
+                Image(systemName: "checkmark.square")
+            } else {
+                Image(systemName: "square")
+            }
+        }
+    }
+    
+    private func selected(_ author: Author) -> Bool {
+        if let selectedAuthors = viewModel.selectedAuthors {
+            return selectedAuthors.contains(author)
+        } else {
+            return false
+        }
     }
     
     private func header() -> some View {
@@ -115,23 +132,16 @@ struct FilterArticleView: View {
             
             Spacer()
             
-            /*
-            if viewModel.selectedAuthor == nil {
-                Text("N/A")
-                    .foregroundColor(.secondary)
-            } else {
-                Text("\(viewModel.nameComponents(of: viewModel.selectedAuthor!).formatted(.name(style: .long)))")
-            }
-            */
             TextField("AUTHOR", text: $lastNameToSearch, prompt: Text("Last Name"))
                 .onSubmit {
                     viewModel.selectedAuthors = Set(filteredAuthors)
                 }
+                .multilineTextAlignment(.center)
             
             Spacer()
             
             Button {
-                viewModel.selectedAuthor = nil
+                lastNameToSearch = ""
                 viewModel.selectedAuthors = nil
             } label: {
                 Text("reset")
@@ -155,8 +165,6 @@ struct FilterArticleView: View {
             
             TextField("Publication Year", text: $publishedIn, prompt: Text("2000"))
                 .onSubmit {
-                    print("publishedIn=\(publishedIn)")
-                    
                     if let publishedIn = numberFormatter.number(from: publishedIn) as? Int {
                         viewModel.selectedPublishedIn = publishedIn
                     } else {

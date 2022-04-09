@@ -46,7 +46,7 @@ struct AuthorListView: View {
                             HStack {
                                 AuthorNameView(author: author)
                                 Spacer()
-                                Text("\(author.articles?.count ?? 0)")
+                                Label("\(author.articles?.count ?? 0)", systemImage: "doc.on.doc")
                                     .font(.callout)
                                     .foregroundColor(Color.secondary)
                             }
@@ -55,7 +55,7 @@ struct AuthorListView: View {
                 }
                 .onDelete(perform: deleteAuthors)
             }
-            .navigationTitle("Authors")
+            .navigationTitle(Text("Authors"))
             .searchable(text: $lastNameToSearch)
         }
     }

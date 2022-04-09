@@ -31,7 +31,7 @@ struct ArticleListView: View {
     
     private var filteredArticles: [Article] {
         articles.filter { article in
-            if viewModel.selectedAuthors == nil || viewModel.selectedAuthors!.isEmpty {
+            if viewModel.selectedAuthors == nil {
                 return true
             } else if let authors = article.authors as? Set<Author>, let selectedAuthors = viewModel.selectedAuthors {
                 return !authors.intersection(selectedAuthors).isEmpty
