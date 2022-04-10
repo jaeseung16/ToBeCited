@@ -89,7 +89,7 @@ struct CollectionDetailView: View {
                 Button {
                     presentEditCollectionView = true
                 } label: {
-                    Label("ARTICLES", systemImage: "pencil")
+                    Label("ARTICLES", systemImage: "doc.on.doc")
                 }
                 
                 Button {
