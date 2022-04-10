@@ -441,4 +441,31 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         return count
     }
     
+    func merge(authors: [Author], viewContext: NSManagedObjectContext) -> Void {
+        let toMerge = authors[0]
+        
+        for index in 1..<authors.count {
+            authors[index].articles?.forEach({ article in
+                if let article = article as? Article {
+                    toMerge.addToArticles(article)
+                    authors[index].removeFromArticles(article)
+                }
+            })
+            
+            authors[index].contacts?.forEach { contact in
+                if let contact = contact as? AuthorContact {
+                    toMerge.addToContacts(contact)
+                    authors[index].removeFromContacts(contact)
+                }
+            }
+            
+            if let orcid = authors[index].orcid, toMerge.orcid == nil {
+                toMerge.orcid = orcid
+            }
+            
+            viewContext.delete(authors[index])
+        }
+        
+        save(viewContext: viewContext)
+    }
 }

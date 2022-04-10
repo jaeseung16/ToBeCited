@@ -65,7 +65,7 @@ struct AuthorMergeView: View {
             Spacer()
             
             Button {
-                merge()
+                viewModel.merge(authors: selected, viewContext: viewContext)
                 dismiss.callAsFunction()
             } label: {
                 Text("Merge")
@@ -75,33 +75,6 @@ struct AuthorMergeView: View {
         }
     }
     
-    private func merge() -> Void {
-        let merged = selected[0]
-        
-        for index in 1..<selected.count {
-            selected[index].articles?.forEach({ article in
-                if let article = article as? Article {
-                    merged.addToArticles(article)
-                    selected[index].removeFromArticles(article)
-                }
-            })
-            
-            selected[index].contacts?.forEach { contact in
-                if let contact = contact as? AuthorContact {
-                    merged.addToContacts(contact)
-                    selected[index].removeFromContacts(contact)
-                }
-            }
-            
-            if let orcid = selected[index].orcid, merged.orcid == nil {
-                merged.orcid = orcid
-            }
-            
-            viewContext.delete(selected[index])
-        }
-        
-        viewModel.save(viewContext: viewContext)
-    }
 }
 
 
