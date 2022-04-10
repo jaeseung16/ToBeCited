@@ -497,4 +497,24 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         save(viewContext: viewContext)
         
     }
+        
+    func add(_ articles: [Article], to collections: [Collection], viewContext: NSManagedObjectContext) -> Void {
+        for collection in collections {
+            var count = collection.articles == nil ? 0 : collection.articles!.count
+            
+            for article in articles {
+                let order = OrderInCollection(context: viewContext)
+                order.collectionId = collection.uuid
+                order.articleId = article.uuid
+                order.order = Int64(count)
+                collection.addToOrders(order)
+                article.addToOrders(order)
+                
+                article.addToCollections(collection)
+                count += 1
+            }
+        }
+        
+        save(viewContext: viewContext)
+    }
 }

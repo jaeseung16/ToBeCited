@@ -30,6 +30,7 @@ struct AuthorDetailView: View {
     @State private var editFirstName = false
     @State private var editMiddleName = false
     @State private var cancelled = false
+    @State private var presentAddToCollectionsView = false
     
     private var articles: [Article] {
         var articles = [Article]()
@@ -129,6 +130,11 @@ struct AuthorDetailView: View {
             }
             .sheet(isPresented: $presentAddContactView) {
                 AddContactView(author: author)
+                    .environment(\.managedObjectContext, viewContext)
+                    .environmentObject(viewModel)
+            }
+            .sheet(isPresented: $presentAddToCollectionsView) {
+                AddAuthorToCollectionView(articles: articles)
                     .environment(\.managedObjectContext, viewContext)
                     .environmentObject(viewModel)
             }
@@ -250,6 +256,12 @@ struct AuthorDetailView: View {
                     .foregroundColor(.secondary)
                 
                 Spacer()
+                
+                Button {
+                    presentAddToCollectionsView = true
+                } label: {
+                    Text("Add to existing collections")
+                }
             }
             
             List {

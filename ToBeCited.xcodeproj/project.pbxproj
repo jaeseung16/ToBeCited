@@ -21,6 +21,7 @@
 		90113C20276BF163007CE1D2 /* AddToCollectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90113C1F276BF163007CE1D2 /* AddToCollectionsView.swift */; };
 		90113C22276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90113C21276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift */; };
 		9012113E27431B43008A35F7 /* ExportCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9012113D27431B43008A35F7 /* ExportCollectionView.swift */; };
+		9012D32028038FDB00860731 /* AddAuthorToCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9012D31F28038FDB00860731 /* AddAuthorToCollectionView.swift */; };
 		902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902978712739A0AD00D82FE7 /* PreviewController.swift */; };
 		9031FE0F278285FB005DADC8 /* EditRISView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9031FE0E278285FB005DADC8 /* EditRISView.swift */; };
 		9035E35A27F513F8007BCBD5 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9035E35927F513F8007BCBD5 /* StatsView.swift */; };
@@ -93,6 +94,7 @@
 		90113C1F276BF163007CE1D2 /* AddToCollectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToCollectionsView.swift; sourceTree = "<group>"; };
 		90113C21276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportCollectionAsReferencesView.swift; sourceTree = "<group>"; };
 		9012113D27431B43008A35F7 /* ExportCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportCollectionView.swift; sourceTree = "<group>"; };
+		9012D31F28038FDB00860731 /* AddAuthorToCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAuthorToCollectionView.swift; sourceTree = "<group>"; };
 		902978712739A0AD00D82FE7 /* PreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewController.swift; sourceTree = "<group>"; };
 		902978752739BEE700D82FE7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9031FE0E278285FB005DADC8 /* EditRISView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRISView.swift; sourceTree = "<group>"; };
@@ -226,6 +228,7 @@
 				90C8D7B12753E36D0063DE71 /* AuthorListView.swift */,
 				90EF91ED27584F3300B1CD6F /* AuthorContactView.swift */,
 				90EB0CE6275BD6A0002106B2 /* AuthorNameView.swift */,
+				9012D31F28038FDB00860731 /* AddAuthorToCollectionView.swift */,
 			);
 			path = Author;
 			sourceTree = "<group>";
@@ -492,6 +495,7 @@
 				90B62049271E07BE005D0FEA /* AddRISView.swift in Sources */,
 				900B8F3C2741AE3500D40347 /* ToBeCitedViewModel.swift in Sources */,
 				90FE9773271F7E62002A75C3 /* AuthorDetailView.swift in Sources */,
+				9012D32028038FDB00860731 /* AddAuthorToCollectionView.swift in Sources */,
 				90EF91EE27584F3300B1CD6F /* AuthorContactView.swift in Sources */,
 				90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */,
 				90113C20276BF163007CE1D2 /* AddToCollectionsView.swift in Sources */,
@@ -658,7 +662,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ToBeCited/ToBeCited.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"ToBeCited/Preview Content\"";
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_PREVIEWS = YES;
@@ -694,7 +698,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ToBeCited/ToBeCited.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"ToBeCited/Preview Content\"";
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_PREVIEWS = YES;
