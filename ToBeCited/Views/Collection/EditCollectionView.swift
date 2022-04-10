@@ -17,26 +17,20 @@ struct EditCollectionView: View {
         animation: .default)
     private var articles: FetchedResults<Article>
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
-                          NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
-                          NSSortDescriptor(keyPath: \Author.created, ascending: false)],
-        animation: .default)
-    private var authors: FetchedResults<Author>
-    
     var collection: Collection
     
     @State var articlesInCollection: [Article]
-    
-    @State var publishedYear = Date()
-    @State var selectedAuthor: Author?
+    @State var titleToSearch = ""
     
     private var filteredArticles: Array<Article> {
-        articles.filter { article in
-            if let authors = article.authors as? Set<Author>, let author = selectedAuthor {
-                return authors.contains(author)
+        articles.filter {
+            if titleToSearch == "" {
+                return true
+            } else if let title = $0.title {
+                return title.range(of: titleToSearch, options: .caseInsensitive) != nil
+            } else {
+                return false
             }
-            return false
         }
     }
     
@@ -48,28 +42,31 @@ struct EditCollectionView: View {
                 Divider()
                 
                 Text("The collection contains \(articlesInCollection.count) \(articlesInCollection.count == 1 ? "article" : "articles")")
-                    .foregroundColor(.secondary)
                 
                 List {
                     ForEach(articlesInCollection) { article in
                         Button {
                             if let index = articlesInCollection.firstIndex(of: article) {
                                 articlesInCollection.remove(at: index)
-                                update()
+                                viewModel.update(collection: collection, with: articlesInCollection, viewContext: viewContext)
                             }
                         } label: {
                             ArticleRowView(article: article)
                         }
                     }
                 }
-                .listStyle(PlainListStyle())
+                .listStyle(InsetListStyle())
                 
                 Divider()
                 
-                authorsView()
-                    .frame(height: 0.25 * geometry.size.height)
-                
-                Divider()
+                HStack {
+                    Label("Articles (\(filteredArticles.count))", systemImage: "doc.on.doc")
+                    Image(systemName: "magnifyingglass")
+                    TextField("WORDS IN TITLE", text: $titleToSearch, prompt: Text("WORDS IN TITLE"))
+                        .background(RoundedRectangle(cornerRadius: 8.0).stroke())
+                }
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
                 
                 filteredArticlesView()
                     .frame(height: 0.3 * geometry.size.height)
@@ -89,45 +86,9 @@ struct EditCollectionView: View {
             Spacer()
         }
     }
-
-    private func authorsView() -> some View {
-        VStack {
-            Text("CHOOSE AN AUTHOR")
-                .font(.callout)
-            
-            List {
-                ForEach(authors) { author in
-                    Button {
-                        selectedAuthor = author
-                    } label: {
-                        HStack {
-                            AuthorNameView(author: author)
-                            Spacer()
-                            Text("\(author.articles?.count ?? 0)")
-                        }
-                    }
-                    .foregroundColor(author == selectedAuthor ? .primary : .secondary)
-                }
-            }
-            .listStyle(PlainListStyle())
-        }
-    }
     
     private func filteredArticlesView() -> some View {
         VStack {
-            if let author = selectedAuthor, let lastName = author.lastName {
-                HStack {
-                    Text("ARTICLES BY")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    Spacer()
-                        .frame(width: 50)
-                    Text(author.firstName ?? "")
-                    Text(lastName)
-                    Spacer()
-                }
-            }
-            
             List {
                 ForEach(filteredArticles) { article in
                     Button {
@@ -139,45 +100,15 @@ struct EditCollectionView: View {
                             articlesInCollection.append(article)
                         }
                         
-                        update()
+                        viewModel.update(collection: collection, with: articlesInCollection, viewContext: viewContext)
                     } label: {
                         ArticleRowView(article: article)
                     }
                 }
             }
-            .listStyle(PlainListStyle())
+            .listStyle(InsetListStyle())
         }
     }
-    
-    private func update() -> Void {
-        collection.orders?.forEach { order in
-            if let order = order as? OrderInCollection {
-                //collection.removeFromOrders(order)
-                //order.article = nil
-                viewContext.delete(order)
-            }
-        }
-        
-        collection.articles?.forEach { article in
-            if let article = article as? Article {
-                article.removeFromCollections(collection)
-            }
-        }
-        
-        for index in 0..<articlesInCollection.count {
-            let article = articlesInCollection[index]
-            article.addToCollections(collection)
-            
-            let order = OrderInCollection(context: viewContext)
-            order.collectionId = collection.uuid
-            order.articleId = article.uuid
-            order.order = Int64(index)
-            collection.addToOrders(order)
-            article.addToOrders(order)
-        }
-        
-        viewModel.save(viewContext: viewContext)
-        
-    }
+     
 }
 

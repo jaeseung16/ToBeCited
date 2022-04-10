@@ -468,4 +468,33 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         
         save(viewContext: viewContext)
     }
+    
+    func update(collection: Collection, with articles: [Article], viewContext: NSManagedObjectContext) -> Void {
+        collection.orders?.forEach { order in
+            if let order = order as? OrderInCollection {
+                viewContext.delete(order)
+            }
+        }
+        
+        collection.articles?.forEach { article in
+            if let article = article as? Article {
+                article.removeFromCollections(collection)
+            }
+        }
+        
+        for index in 0..<articles.count {
+            let article = articles[index]
+            article.addToCollections(collection)
+            
+            let order = OrderInCollection(context: viewContext)
+            order.collectionId = collection.uuid
+            order.articleId = article.uuid
+            order.order = Int64(index)
+            collection.addToOrders(order)
+            article.addToOrders(order)
+        }
+        
+        save(viewContext: viewContext)
+        
+    }
 }
