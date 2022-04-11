@@ -48,7 +48,6 @@ struct EditCollectionView: View {
                         Button {
                             if let index = articlesInCollection.firstIndex(of: article) {
                                 articlesInCollection.remove(at: index)
-                                viewModel.update(collection: collection, with: articlesInCollection, viewContext: viewContext)
                             }
                         } label: {
                             ArticleRowView(article: article)
@@ -80,10 +79,17 @@ struct EditCollectionView: View {
             Button {
                 dismiss.callAsFunction()
             } label: {
-                Text("Dismiss")
+                Text("Cancel")
             }
 
             Spacer()
+            
+            Button(action: {
+                viewModel.update(collection: collection, with: articlesInCollection, viewContext: viewContext)
+                dismiss.callAsFunction()
+            }, label: {
+                Text("Save")
+            })
         }
     }
     
@@ -99,8 +105,6 @@ struct EditCollectionView: View {
                         } else {
                             articlesInCollection.append(article)
                         }
-                        
-                        viewModel.update(collection: collection, with: articlesInCollection, viewContext: viewContext)
                     } label: {
                         ArticleRowView(article: article)
                     }
