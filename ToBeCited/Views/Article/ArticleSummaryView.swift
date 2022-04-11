@@ -75,9 +75,21 @@ struct ArticleSummaryView: View {
     private func publishedView() -> some View {
         ZStack {
             HStack {
+                #if targetEnvironment(macCatalyst)
                 Label("PUBLISHED ON", systemImage: "calendar")
                     .font(.callout)
                     .foregroundColor(.secondary)
+                #else
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    Label("PUBLISHED ON", systemImage: "calendar")
+                        .font(.callout)
+                        .foregroundColor(.secondary)
+                } else {
+                    Image(systemName: "calendar")
+                        .font(.callout)
+                        .foregroundColor(.secondary)
+                }
+                #endif
                 
                 Spacer()
             }
@@ -90,9 +102,21 @@ struct ArticleSummaryView: View {
     private func doiLinkView(url: URL) -> some View {
         ZStack {
             HStack {
+                #if targetEnvironment(macCatalyst)
                 Label("DOI LINK", systemImage: "link")
                     .font(.callout)
                     .foregroundColor(.secondary)
+                #else
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    Label("DOI LINK", systemImage: "link")
+                        .font(.callout)
+                        .foregroundColor(.secondary)
+                } else {
+                    Image(systemName: "link")
+                        .font(.callout)
+                        .foregroundColor(.secondary)
+                }
+                #endif
                 
                 Spacer()
             }
