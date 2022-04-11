@@ -251,7 +251,7 @@ struct AuthorDetailView: View {
     private func articlesView() -> some View {
         VStack {
             HStack {
-                Text("\(author.articles?.count ?? 0) ARTICLES")
+                Label("ARTICLES (\(author.articles?.count ?? 0))", systemImage: "doc.on.doc")
                     .font(.callout)
                     .foregroundColor(.secondary)
                 

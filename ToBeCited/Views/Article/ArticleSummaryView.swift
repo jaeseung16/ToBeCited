@@ -54,13 +54,11 @@ struct ArticleSummaryView: View {
             Text(viewModel.journalString(article: article))
             
             if article.published != nil {
-                Text(publicationDate)
-                    .font(.callout)
+                publishedView()
             }
             
             if article.doi != nil, let url = URL(string: "https://dx.doi.org/\(article.doi!)") {
-                Link(article.doi!, destination: url)
-                    .foregroundColor(.blue)
+                doiLinkView(url: url)
             }
             
             authorList()
@@ -74,10 +72,40 @@ struct ArticleSummaryView: View {
         return dateFormatter.string(from: article.published!)
     }
     
+    private func publishedView() -> some View {
+        ZStack {
+            HStack {
+                Label("PUBLISHED ON", systemImage: "calendar")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            
+            Text(publicationDate)
+                .font(.callout)
+        }
+    }
+    
+    private func doiLinkView(url: URL) -> some View {
+        ZStack {
+            HStack {
+                Label("DOI LINK", systemImage: "link")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+            }
+            
+            Link(article.doi!, destination: url)
+                .foregroundColor(.blue)
+        }
+    }
+    
     private func authorList() -> some View {
         VStack {
             HStack {
-                Text("AUTHORS (unordered)")
+                Label("AUTHORS (unordered)", systemImage: "person.3")
                     .font(.callout)
                     .foregroundColor(.secondary)
                 
