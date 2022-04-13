@@ -30,13 +30,17 @@ struct SelectReferencesView: View {
     private var authors: FetchedResults<Author>
     
     @State var references: [Article]
+    @State private var titleToSearch = ""
     
     private var filteredArticles: [Article] {
-        articles.filter { article in
-            if let authors = article.authors as? Set<Author>, let author = selectedAuthor {
-                return authors.contains(author)
+        articles.filter {
+            if titleToSearch.isEmpty {
+                return true
+            } else if let title = $0.title {
+                return title.range(of: titleToSearch, options: .caseInsensitive) != nil
+            } else {
+                return false
             }
-            return false
         }
     }
     
@@ -60,10 +64,14 @@ struct SelectReferencesView: View {
                 
                 Divider()
                 
-                authorsView()
-                    .frame(height: 0.25 * geometry.size.height)
-                
-                Divider()
+                HStack {
+                    Label("Articles (\(filteredArticles.count))", systemImage: "doc.on.doc")
+                    Image(systemName: "magnifyingglass")
+                    TextField("WORDS IN TITLE", text: $titleToSearch, prompt: Text("WORDS IN TITLE"))
+                        .background(RoundedRectangle(cornerRadius: 8.0).stroke())
+                }
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
                 
                 filteredArticlesView()
                     .frame(height: 0.3 * geometry.size.height)
@@ -76,15 +84,24 @@ struct SelectReferencesView: View {
     }
     
     private func header() -> some View {
-        HStack {
-            Button {
-                dismiss.callAsFunction()
-            } label: {
-                Text("Dismiss")
+        ZStack {
+            HStack {
+                Button {
+                    dismiss.callAsFunction()
+                } label: {
+                    Text("Dismiss")
+                }
+                
+                Spacer()
             }
             
-            Spacer()
+            HStack {
+                Spacer()
+                Text("Edit References")
+                Spacer()
+            }
         }
+        
     }
     
     private func authorsView() -> some View {
@@ -115,31 +132,16 @@ struct SelectReferencesView: View {
     }
     
     private func filteredArticlesView() -> some View {
-        VStack {
-            if let author = selectedAuthor, let lastName = author.lastName {
-                HStack {
-                    Text("ARTICLES BY")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    Spacer()
-                        .frame(width: 50)
-                    Text(author.firstName ?? "")
-                    Text(lastName)
-                    Spacer()
+        List {
+            ForEach(filteredArticles) { article in
+                Button {
+                    update(reference: article)
+                } label: {
+                    ArticleRowView(article: article)
                 }
             }
-            
-            List {
-                ForEach(filteredArticles) { reference in
-                    Button {
-                        update(reference: reference)
-                    } label: {
-                        ArticleRowView(article: reference)
-                    }
-                }
-            }
-            .listStyle(PlainListStyle())
         }
+        .listStyle(InsetListStyle())
     }
     
     private func update(reference: Article) -> Void {
