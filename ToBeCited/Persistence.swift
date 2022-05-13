@@ -45,11 +45,7 @@ struct PersistenceController {
         
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                if let error = error as NSError? {
-                    if let error = error as NSError? {
-                        PersistenceController.logger.error("Could not load persistent store: \(storeDescription), \(error), \(error.userInfo)")
-                    }
-                }
+                PersistenceController.logger.error("Could not load persistent store: \(storeDescription), \(error), \(error.userInfo)")
             }
         })
         
