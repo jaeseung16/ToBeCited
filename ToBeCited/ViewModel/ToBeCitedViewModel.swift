@@ -364,63 +364,28 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             let backgroundContext = self.persistenteContainer.newBackgroundContext()
             backgroundContext.performAndWait {
                 do {
-                    let fetchHistoryRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: self.lastToken)
+                    let fetchHistoryRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: HistoryToken.shared.last)
                     
                     if let historyResult = try backgroundContext.execute(fetchHistoryRequest) as? NSPersistentHistoryResult,
                        let history = historyResult.result as? [NSPersistentHistoryTransaction] {
                         for transaction in history.reversed() {
                             self.persistenteContainer.viewContext.perform {
-                                if let userInfo = transaction.objectIDNotification().userInfo {
-                                    NSManagedObjectContext.mergeChanges(fromRemoteContextSave: userInfo,
-                                                                        into: [self.persistenteContainer.viewContext])
-                                }
+                                self.persistenteContainer.viewContext.mergeChanges(fromContextDidSave: transaction.objectIDNotification())
+                                HistoryToken.shared.last = transaction.token
                             }
                         }
-                        
-                        self.lastToken = history.last?.token
                         
                         DispatchQueue.main.async {
                             self.toggle.toggle()
                         }
                     }
                 } catch {
-                    self.logger.error("Could not convert history result to transactions after lastToken = \(String(describing: self.lastToken)): \(error.localizedDescription)")
+                    self.logger.error("Could not convert history result to transactions after lastToken = \(String(describing: HistoryToken.shared.last)): \(error.localizedDescription)")
                 }
                 //print("fetchUpdates \(Date().description(with: Locale.current))")
             }
         }
     }
-    
-    private var lastToken: NSPersistentHistoryToken? = nil {
-        didSet {
-            guard let token = lastToken,
-                  let data = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true) else {
-                return
-            }
-            
-            do {
-                try data.write(to: tokenFile)
-            } catch {
-                let message = "Could not write token data"
-                logger.error("###\(#function): \(message): \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    private lazy var tokenFile: URL = {
-        let url = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent("ToBeCited",isDirectory: true)
-        if !FileManager.default.fileExists(atPath: url.path) {
-            do {
-                try FileManager.default.createDirectory(at: url,
-                                                        withIntermediateDirectories: true,
-                                                        attributes: nil)
-            } catch {
-                let message = "Could not create persistent container URL"
-                logger.error("###\(#function): \(message): \(error.localizedDescription)")
-            }
-        }
-        return url.appendingPathComponent("token.data", isDirectory: false)
-    }()
 
     var articleCount: Int {
         return getCount(entityName: "Article")

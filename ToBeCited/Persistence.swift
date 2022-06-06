@@ -55,8 +55,7 @@ struct PersistenceController {
     }
     
     private func purgeHistory() {
-        let sevenDaysAgo = Date(timeIntervalSinceNow: TimeInterval(exactly: -604_800)!)
-        let purgeHistoryRequest = NSPersistentHistoryChangeRequest.deleteHistory(before: sevenDaysAgo)
+        let purgeHistoryRequest = NSPersistentHistoryChangeRequest.deleteHistory(before: HistoryToken.shared.lastSaved)
 
         do {
             try container.newBackgroundContext().execute(purgeHistoryRequest)
