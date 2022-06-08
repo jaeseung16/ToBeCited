@@ -9,12 +9,12 @@ import Foundation
 import CoreData
 import Combine
 import os
+import Persistence
 
 class ToBeCitedViewModel: NSObject, ObservableObject {
-    static let shared = ToBeCitedViewModel()
     let logger = Logger()
     
-    private let persistenteContainer = PersistenceController.shared.container
+    private var persistence: Persistence
     private let parser = RISParser()
     
     @Published var ordersInCollection = [OrderInCollection]()
@@ -30,6 +30,10 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     private var subscriptions: Set<AnyCancellable> = []
     
+    private var persistenceContainer: NSPersistentCloudKitContainer {
+        persistence.container
+    }
+    
     var yearOnlyDateFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy"
@@ -43,7 +47,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         return dateFormatter
     }
     
-    override init() {
+    init(persistence: Persistence) {
+        self.persistence = persistence
+        
         super.init()
         
         NotificationCenter.default
@@ -149,17 +155,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     // MARK: - Persistence
     func save(viewContext: NSManagedObjectContext) -> Void {
-        do {
-            try viewContext.save()
-        } catch {
-            viewContext.rollback()
-            let nsError = error as NSError
-            logger.error("While saving data, occured an unresolved error \(nsError), \(nsError.userInfo)")
-            showAlert.toggle()
-        }
-        
-        DispatchQueue.main.async {
-            self.toggle.toggle()
+        persistence.save { result in
+            switch result {
+            case .success(_):
+                DispatchQueue.main.async {
+                    self.toggle.toggle()
+                }
+            case .failure(_):
+                DispatchQueue.main.async {
+                    self.showAlert.toggle()
+                }
+            }
         }
     }
     
@@ -359,30 +365,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     // MARK: - Persistence History Request
     private lazy var historyRequestQueue = DispatchQueue(label: "history")
     private func fetchUpdates(_ notification: Notification) -> Void {
-        //print("fetchUpdates \(Date().description(with: Locale.current))")
-        historyRequestQueue.async {
-            let backgroundContext = self.persistenteContainer.newBackgroundContext()
-            backgroundContext.performAndWait {
-                do {
-                    let fetchHistoryRequest = NSPersistentHistoryChangeRequest.fetchHistory(after: HistoryToken.shared.last)
-                    
-                    if let historyResult = try backgroundContext.execute(fetchHistoryRequest) as? NSPersistentHistoryResult,
-                       let history = historyResult.result as? [NSPersistentHistoryTransaction] {
-                        for transaction in history.reversed() {
-                            self.persistenteContainer.viewContext.perform {
-                                self.persistenteContainer.viewContext.mergeChanges(fromContextDidSave: transaction.objectIDNotification())
-                                HistoryToken.shared.last = transaction.token
-                            }
-                        }
-                        
-                        DispatchQueue.main.async {
-                            self.toggle.toggle()
-                        }
-                    }
-                } catch {
-                    self.logger.error("Could not convert history result to transactions after lastToken = \(String(describing: HistoryToken.shared.last)): \(error.localizedDescription)")
-                }
-                //print("fetchUpdates \(Date().description(with: Locale.current))")
+        persistence.fetchUpdates(notification) { _ in
+            DispatchQueue.main.async {
+                self.toggle.toggle()
             }
         }
     }
@@ -399,7 +384,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         var count = 0
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
         do {
-            count = try persistenteContainer.viewContext.count(for: fetchRequest)
+            count = try persistenceContainer.viewContext.count(for: fetchRequest)
         } catch {
             print("Can't count \(entityName): \(error.localizedDescription)")
         }

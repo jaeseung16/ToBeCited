@@ -13,6 +13,12 @@ class HistoryToken {
     
     static private let pathComponent = "token.data"
     
+    init() {
+        if let data = try? Data(contentsOf: tokenFile) {
+            self.last = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? NSPersistentHistoryToken
+        }
+    }
+    
     var last: NSPersistentHistoryToken? = nil {
         didSet {
             guard let token = last,
@@ -27,14 +33,6 @@ class HistoryToken {
                 print("###\(#function): \(message): \(error)")
             }
         }
-    }
-    
-    var lastSaved: NSPersistentHistoryToken? {
-        if let data = try? Data(contentsOf: tokenFile) {
-            self.last = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? NSPersistentHistoryToken
-            return self.last
-        }
-        return nil
     }
     
     private lazy var tokenFile: URL = {

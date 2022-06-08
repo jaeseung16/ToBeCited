@@ -6,16 +6,18 @@
 //
 
 import SwiftUI
+import Persistence
 
 @main
 struct ToBeCitedApp: App {
-    let persistenceController = PersistenceController.shared
-    let viewModel = ToBeCitedViewModel.shared
-
+    
     var body: some Scene {
+        let persistence = Persistence(name: "ToBeCited", identifier: "iCloud.com.resonance.jlee.ToBeCited")
+        let viewModel = ToBeCitedViewModel(persistence: persistence)
+
         WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environment(\.managedObjectContext, persistence.container.viewContext)
                 .environmentObject(viewModel)
                 .onOpenURL { url in
                     if url.absoluteString.lowercased().contains("ris") {

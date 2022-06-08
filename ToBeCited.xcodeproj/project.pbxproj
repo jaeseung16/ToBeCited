@@ -25,6 +25,7 @@
 		902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902978712739A0AD00D82FE7 /* PreviewController.swift */; };
 		9031FE0F278285FB005DADC8 /* EditRISView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9031FE0E278285FB005DADC8 /* EditRISView.swift */; };
 		9035E35A27F513F8007BCBD5 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9035E35927F513F8007BCBD5 /* StatsView.swift */; };
+		903F1C91284EC47F00F93982 /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 903F1C90284EC47F00F93982 /* Persistence */; };
 		9042BEB6284CF89800C3BBD5 /* HistoryToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9042BEB5284CF89800C3BBD5 /* HistoryToken.swift */; };
 		9042BEB8284CF8D800C3BBD5 /* ToBeCitedConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9042BEB7284CF8D800C3BBD5 /* ToBeCitedConstants.swift */; };
 		90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62040271E06BE005D0FEA /* RISReferenceType.swift */; };
@@ -48,7 +49,6 @@
 		90EDF323271C85BD0097F0E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF322271C85BD0097F0E0 /* ContentView.swift */; };
 		90EDF325271C85BE0097F0E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90EDF324271C85BE0097F0E0 /* Assets.xcassets */; };
 		90EDF328271C85BF0097F0E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90EDF327271C85BF0097F0E0 /* Preview Assets.xcassets */; };
-		90EDF32A271C85BF0097F0E0 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF329271C85BF0097F0E0 /* Persistence.swift */; };
 		90EDF32D271C85BF0097F0E0 /* ToBeCited.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF32B271C85BF0097F0E0 /* ToBeCited.xcdatamodeld */; };
 		90EDF337271C85BF0097F0E0 /* ToBeCitedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF336271C85BF0097F0E0 /* ToBeCitedTests.swift */; };
 		90EDF341271C85BF0097F0E0 /* ToBeCitedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EDF340271C85BF0097F0E0 /* ToBeCitedUITests.swift */; };
@@ -125,7 +125,6 @@
 		90EDF322271C85BD0097F0E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		90EDF324271C85BE0097F0E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		90EDF327271C85BF0097F0E0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		90EDF329271C85BF0097F0E0 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		90EDF32C271C85BF0097F0E0 /* ToBeCited.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ToBeCited.xcdatamodel; sourceTree = "<group>"; };
 		90EDF332271C85BF0097F0E0 /* ToBeCitedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ToBeCitedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		90EDF336271C85BF0097F0E0 /* ToBeCitedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedTests.swift; sourceTree = "<group>"; };
@@ -149,6 +148,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				903F1C91284EC47F00F93982 /* Persistence in Frameworks */,
 				90BE389B2750350A005B98C7 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -270,7 +270,6 @@
 				90EDF320271C85BD0097F0E0 /* ToBeCitedApp.swift */,
 				90EDF322271C85BD0097F0E0 /* ContentView.swift */,
 				90EDF324271C85BE0097F0E0 /* Assets.xcassets */,
-				90EDF329271C85BF0097F0E0 /* Persistence.swift */,
 				90EDF32B271C85BF0097F0E0 /* ToBeCited.xcdatamodeld */,
 				90EDF326271C85BF0097F0E0 /* Preview Content */,
 				902978712739A0AD00D82FE7 /* PreviewController.swift */,
@@ -348,6 +347,9 @@
 			dependencies = (
 			);
 			name = ToBeCited;
+			packageProductDependencies = (
+				903F1C90284EC47F00F93982 /* Persistence */,
+			);
 			productName = ToBeCited;
 			productReference = 90EDF31D271C85BD0097F0E0 /* ToBeCited.app */;
 			productType = "com.apple.product-type.application";
@@ -420,6 +422,9 @@
 				Base,
 			);
 			mainGroup = 90EDF314271C85BD0097F0E0;
+			packageReferences = (
+				903F1C8F284EC47F00F93982 /* XCRemoteSwiftPackageReference "PersistenceSwift" */,
+			);
 			productRefGroup = 90EDF31E271C85BD0097F0E0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -466,7 +471,6 @@
 				90FD841E273C917E00929EF7 /* AddCollectionView.swift in Sources */,
 				90C8D7B22753E36D0063DE71 /* AuthorListView.swift in Sources */,
 				90DEAF54274ADE8100058AAC /* ArticleListView.swift in Sources */,
-				90EDF32A271C85BF0097F0E0 /* Persistence.swift in Sources */,
 				90C8D7AE2753C7F70063DE71 /* CollectionSummaryView.swift in Sources */,
 				90FE9771271F68A1002A75C3 /* ArticleDetailView.swift in Sources */,
 				901086B2275AA5590067A1E2 /* ArticleRowView.swift in Sources */,
@@ -871,6 +875,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		903F1C8F284EC47F00F93982 /* XCRemoteSwiftPackageReference "PersistenceSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jaeseung16/PersistenceSwift";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		903F1C90284EC47F00F93982 /* Persistence */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 903F1C8F284EC47F00F93982 /* XCRemoteSwiftPackageReference "PersistenceSwift" */;
+			productName = Persistence;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		90EDF32B271C85BF0097F0E0 /* ToBeCited.xcdatamodeld */ = {
