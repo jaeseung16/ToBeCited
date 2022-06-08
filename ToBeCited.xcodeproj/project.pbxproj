@@ -23,6 +23,8 @@
 		9012113E27431B43008A35F7 /* ExportCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9012113D27431B43008A35F7 /* ExportCollectionView.swift */; };
 		9012D32028038FDB00860731 /* AddAuthorToCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9012D31F28038FDB00860731 /* AddAuthorToCollectionView.swift */; };
 		902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902978712739A0AD00D82FE7 /* PreviewController.swift */; };
+		90306DCC28513F6500DEACB2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90306DCB28513F6500DEACB2 /* AppDelegate.swift */; };
+		90306DCE285142F400DEACB2 /* NotificationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90306DCD285142F400DEACB2 /* NotificationToken.swift */; };
 		9031FE0F278285FB005DADC8 /* EditRISView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9031FE0E278285FB005DADC8 /* EditRISView.swift */; };
 		9035E35A27F513F8007BCBD5 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9035E35927F513F8007BCBD5 /* StatsView.swift */; };
 		903F1C91284EC47F00F93982 /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 903F1C90284EC47F00F93982 /* Persistence */; };
@@ -99,6 +101,8 @@
 		9012D31F28038FDB00860731 /* AddAuthorToCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAuthorToCollectionView.swift; sourceTree = "<group>"; };
 		902978712739A0AD00D82FE7 /* PreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewController.swift; sourceTree = "<group>"; };
 		902978752739BEE700D82FE7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		90306DCB28513F6500DEACB2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		90306DCD285142F400DEACB2 /* NotificationToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationToken.swift; sourceTree = "<group>"; };
 		9031FE0E278285FB005DADC8 /* EditRISView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRISView.swift; sourceTree = "<group>"; };
 		9035E35927F513F8007BCBD5 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		9042BEB5284CF89800C3BBD5 /* HistoryToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryToken.swift; sourceTree = "<group>"; };
@@ -274,6 +278,8 @@
 				90EDF326271C85BF0097F0E0 /* Preview Content */,
 				902978712739A0AD00D82FE7 /* PreviewController.swift */,
 				9042BEB7284CF8D800C3BBD5 /* ToBeCitedConstants.swift */,
+				90306DCB28513F6500DEACB2 /* AppDelegate.swift */,
+				90306DCD285142F400DEACB2 /* NotificationToken.swift */,
 			);
 			path = ToBeCited;
 			sourceTree = "<group>";
@@ -478,6 +484,7 @@
 				90F979402749A6A8008AD083 /* PDFDocument.swift in Sources */,
 				90EDF350271CA3110097F0E0 /* AddArticleView.swift in Sources */,
 				90B62047271E06D4005D0FEA /* RISParser.swift in Sources */,
+				90306DCC28513F6500DEACB2 /* AppDelegate.swift in Sources */,
 				9009B6772720CF080023C316 /* ShareActivityView.swift in Sources */,
 				9009B6712720B19F0023C316 /* PDFFilePickerViewController.swift in Sources */,
 				900B8F3E2741B12700D40347 /* EditCollectionView.swift in Sources */,
@@ -502,6 +509,7 @@
 				9009B6752720B8220023C316 /* EditAbstractView.swift in Sources */,
 				90B62045271E06BE005D0FEA /* RISRecord.swift in Sources */,
 				90B6204D271E2C96005D0FEA /* RISWriter.swift in Sources */,
+				90306DCE285142F400DEACB2 /* NotificationToken.swift in Sources */,
 				90F27EE8275171F80072BAA1 /* CollectionListView.swift in Sources */,
 				90B62049271E07BE005D0FEA /* AddRISView.swift in Sources */,
 				9042BEB8284CF8D800C3BBD5 /* ToBeCitedConstants.swift in Sources */,

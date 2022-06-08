@@ -10,9 +10,10 @@ import Persistence
 
 @main
 struct ToBeCitedApp: App {
+    @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate 
     
     var body: some Scene {
-        let persistence = Persistence(name: "ToBeCited", identifier: "iCloud.com.resonance.jlee.ToBeCited")
+        let persistence = Persistence(name: ToBeCitedConstants.appName.rawValue, identifier: ToBeCitedConstants.iCloudIdentifier.rawValue)
         let viewModel = ToBeCitedViewModel(persistence: persistence)
 
         WindowGroup {

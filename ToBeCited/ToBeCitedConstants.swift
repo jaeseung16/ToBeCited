@@ -8,5 +8,6 @@
 import Foundation
 
 enum ToBeCitedConstants: String {
-    case appPathComponent = "ToBeCited"
+    case appName = "ToBeCited"
+    case iCloudIdentifier = "iCloud.com.resonance.jlee.ToBeCited"
 }

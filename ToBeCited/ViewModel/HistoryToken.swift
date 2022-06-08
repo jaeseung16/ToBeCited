@@ -36,7 +36,7 @@ class HistoryToken {
     }
     
     private lazy var tokenFile: URL = {
-        let url = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent(ToBeCitedConstants.appPathComponent.rawValue, isDirectory: true)
+        let url = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent(ToBeCitedConstants.appName.rawValue, isDirectory: true)
         if !FileManager.default.fileExists(atPath: url.path) {
             do {
                 try FileManager.default.createDirectory(at: url,
