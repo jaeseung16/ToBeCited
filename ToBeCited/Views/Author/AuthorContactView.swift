@@ -27,7 +27,7 @@ struct AuthorContactView: View {
                 TextField("email", text: $email, prompt: nil)
                     .onSubmit {
                         contact.email = email
-                        viewModel.save(viewContext: viewContext)
+                        viewModel.save(viewContext: viewContext, completionHandler: nil)
                     }
             }
             
@@ -40,7 +40,7 @@ struct AuthorContactView: View {
                 TextField("institution", text: $institution, prompt: nil)
                     .onSubmit {
                         contact.institution = institution
-                        viewModel.save(viewContext: viewContext)
+                        viewModel.save(viewContext: viewContext, completionHandler: nil)
                     }
             }
             
@@ -53,7 +53,7 @@ struct AuthorContactView: View {
                 TextField("address", text: $address, prompt: nil)
                     .onSubmit {
                         contact.address = address
-                        viewModel.save(viewContext: viewContext)
+                        viewModel.save(viewContext: viewContext, completionHandler: nil)
                     }
             }
             

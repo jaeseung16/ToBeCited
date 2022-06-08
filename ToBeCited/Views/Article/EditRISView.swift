@@ -66,6 +66,10 @@ struct EditRISView: View {
     
     private func update() -> Void {
         ris.content = content
-        viewModel.save(viewContext: viewContext)
+        viewModel.save(viewContext: viewContext) { success in
+            if !success {
+                viewModel.log("Failed to update RIS")
+            }
+        }
     }
 }

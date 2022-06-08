@@ -154,16 +154,22 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     // MARK: - Persistence
-    func save(viewContext: NSManagedObjectContext) -> Void {
+    func save(viewContext: NSManagedObjectContext, completionHandler: ((Bool) -> Void)?) -> Void {
         persistence.save { result in
             switch result {
             case .success(_):
                 DispatchQueue.main.async {
                     self.toggle.toggle()
+                    if completionHandler != nil {
+                        completionHandler!(true)
+                    }
                 }
             case .failure(_):
                 DispatchQueue.main.async {
                     self.showAlert.toggle()
+                    if completionHandler != nil {
+                        completionHandler!(false)
+                    }
                 }
             }
         }
@@ -232,7 +238,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             ris.article = newArticle
         }
         
-        save(viewContext: viewContext)
+        save(viewContext: viewContext, completionHandler: nil)
     }
     
     private func getDate(from yearMonthDate: [String.SubSequence]) -> Date? {
@@ -268,7 +274,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         contactEntity.address = contact.address
         
         author.addToContacts(contactEntity)
-        save(viewContext: viewContext)
+        save(viewContext: viewContext, completionHandler: nil)
     }
     
     func addCollection(_ name: String, articles: [Article], viewContext: NSManagedObjectContext) -> Void {
@@ -291,7 +297,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             orderInCollection.article = articles[index]
         }
         
-        save(viewContext: viewContext)
+        save(viewContext: viewContext, completionHandler: nil)
     }
     
     func delete(_ articles: [Article], viewContext: NSManagedObjectContext) -> Void {
@@ -315,7 +321,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 viewContext.delete(article)
             }
             
-            self.save(viewContext: viewContext)
+            self.save(viewContext: viewContext, completionHandler: nil)
         }
     }
     
@@ -326,7 +332,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     viewContext.delete(author)
                 }
             }
-            self.save(viewContext: viewContext)
+            self.save(viewContext: viewContext, completionHandler: nil)
         }
     }
     
@@ -336,7 +342,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 author.removeFromContacts(contact)
                 viewContext.delete(contact)
             }
-            self.save(viewContext: viewContext)
+            self.save(viewContext: viewContext, completionHandler: nil)
         }
     }
     
@@ -358,7 +364,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 viewContext.delete(collection)
             }
             
-            self.save(viewContext: viewContext)
+            self.save(viewContext: viewContext, completionHandler: nil)
         }
     }
     
@@ -416,7 +422,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             viewContext.delete(authors[index])
         }
         
-        save(viewContext: viewContext)
+        save(viewContext: viewContext, completionHandler: nil)
     }
     
     func update(collection: Collection, with articles: [Article], viewContext: NSManagedObjectContext) -> Void {
@@ -444,7 +450,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             article.addToOrders(order)
         }
         
-        save(viewContext: viewContext)
+        save(viewContext: viewContext, completionHandler: nil)
         
     }
         
@@ -465,6 +471,10 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             }
         }
         
-        save(viewContext: viewContext)
+        save(viewContext: viewContext, completionHandler: nil)
+    }
+    
+    func log(_ message: String) -> Void {
+        logger.log("\(message)")
     }
 }

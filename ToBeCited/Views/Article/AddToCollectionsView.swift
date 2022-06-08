@@ -120,7 +120,11 @@ struct AddToCollectionsView: View {
             article.addToCollections(collection)
         }
         
-        viewModel.save(viewContext: viewContext)
+        viewModel.save(viewContext: viewContext) { success in
+            if !success {
+                viewModel.log("AddToCollectionsView: Failed to update")
+            }
+        }
     }
     
 }

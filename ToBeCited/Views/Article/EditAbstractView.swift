@@ -66,6 +66,10 @@ struct EditAbstractView: View {
     
     private func update() -> Void {
         article.abstract = abstract
-        viewModel.save(viewContext: viewContext)
+        viewModel.save(viewContext: viewContext) { success in
+            if !success {
+                viewModel.log("Failed to update abstract")
+            }
+        }
     }
 }
