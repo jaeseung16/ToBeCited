@@ -32,8 +32,8 @@ struct ContentView: View {
                 }
         }
         .alert("Failed to save data", isPresented: $viewModel.showAlert) {
-            Button("Dismiss") {
-                viewModel.showAlert.toggle()
+            Button("Dismiss", role: .cancel) {
+                //
             }
         }
         .onChange(of: viewModel.risString, perform: { _ in
