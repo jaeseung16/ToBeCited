@@ -238,7 +238,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             ris.article = newArticle
         }
         
-        save(viewContext: viewContext, completionHandler: nil)
+        save(viewContext: viewContext) { success in
+            self.logger.log("Saved data: success=\(success)")
+        }
     }
     
     private func getDate(from yearMonthDate: [String.SubSequence]) -> Date? {
@@ -321,7 +323,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 viewContext.delete(article)
             }
             
-            self.save(viewContext: viewContext, completionHandler: nil)
+            self.save(viewContext: viewContext) { success in
+                self.logger.log("Delete data: success=\(success)")
+            }
         }
     }
     
