@@ -164,7 +164,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                         completionHandler!(true)
                     }
                 }
-            case .failure(_):
+            case .failure(let error):
+                self.logger.log("Error while saving data: \(error.localizedDescription)")
+                self.logger.log("Error while saving data: \(Thread.callStackSymbols)")
                 DispatchQueue.main.async {
                     self.showAlert.toggle()
                     if completionHandler != nil {
