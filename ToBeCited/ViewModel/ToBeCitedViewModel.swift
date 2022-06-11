@@ -56,6 +56,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
           .publisher(for: .NSPersistentStoreRemoteChange)
           .sink { self.fetchUpdates($0) }
           .store(in: &subscriptions)
+        
+        self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
     }
     
     func parse(risString: String) -> [RISRecord]? {
@@ -165,8 +167,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     }
                 }
             case .failure(let error):
-                self.logger.log("Error while saving data: \(error.localizedDescription)")
-                self.logger.log("Error while saving data: \(Thread.callStackSymbols)")
+                self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
+                self.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
+                print("Error while saving data: \(Thread.callStackSymbols)")
                 DispatchQueue.main.async {
                     self.showAlert.toggle()
                     if completionHandler != nil {
