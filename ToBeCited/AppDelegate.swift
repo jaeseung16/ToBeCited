@@ -33,7 +33,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         registerForPushNotifications()
         
         // TODO: - Remove or comment out after testing
-        UserDefaults.standard.setValue(false, forKey: didCreateArticleSubscription)
+        //UserDefaults.standard.setValue(false, forKey: didCreateArticleSubscription)
         
         subscribe()
 
