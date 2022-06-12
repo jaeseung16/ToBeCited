@@ -22,11 +22,8 @@
 		90113C22276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90113C21276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift */; };
 		9012113E27431B43008A35F7 /* ExportCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9012113D27431B43008A35F7 /* ExportCollectionView.swift */; };
 		9012D32028038FDB00860731 /* AddAuthorToCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9012D31F28038FDB00860731 /* AddAuthorToCollectionView.swift */; };
-		901A21E0285637B3006CF1A4 /* NotificationTokenHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901A21DF285637B3006CF1A4 /* NotificationTokenHelper.swift */; };
-		901A21E228565800006CF1A4 /* DatabaseOperationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901A21E128565800006CF1A4 /* DatabaseOperationHelper.swift */; };
 		902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902978712739A0AD00D82FE7 /* PreviewController.swift */; };
 		90306DCC28513F6500DEACB2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90306DCB28513F6500DEACB2 /* AppDelegate.swift */; };
-		90306DCE285142F400DEACB2 /* NotificationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90306DCD285142F400DEACB2 /* NotificationToken.swift */; };
 		9031FE0F278285FB005DADC8 /* EditRISView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9031FE0E278285FB005DADC8 /* EditRISView.swift */; };
 		9035E35A27F513F8007BCBD5 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9035E35927F513F8007BCBD5 /* StatsView.swift */; };
 		903F1C91284EC47F00F93982 /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 903F1C90284EC47F00F93982 /* Persistence */; };
@@ -101,12 +98,9 @@
 		90113C21276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportCollectionAsReferencesView.swift; sourceTree = "<group>"; };
 		9012113D27431B43008A35F7 /* ExportCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportCollectionView.swift; sourceTree = "<group>"; };
 		9012D31F28038FDB00860731 /* AddAuthorToCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAuthorToCollectionView.swift; sourceTree = "<group>"; };
-		901A21DF285637B3006CF1A4 /* NotificationTokenHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationTokenHelper.swift; sourceTree = "<group>"; };
-		901A21E128565800006CF1A4 /* DatabaseOperationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseOperationHelper.swift; sourceTree = "<group>"; };
 		902978712739A0AD00D82FE7 /* PreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewController.swift; sourceTree = "<group>"; };
 		902978752739BEE700D82FE7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		90306DCB28513F6500DEACB2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		90306DCD285142F400DEACB2 /* NotificationToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationToken.swift; sourceTree = "<group>"; };
 		9031FE0E278285FB005DADC8 /* EditRISView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRISView.swift; sourceTree = "<group>"; };
 		9035E35927F513F8007BCBD5 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		9042BEB5284CF89800C3BBD5 /* HistoryToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryToken.swift; sourceTree = "<group>"; };
@@ -283,9 +277,6 @@
 				902978712739A0AD00D82FE7 /* PreviewController.swift */,
 				9042BEB7284CF8D800C3BBD5 /* ToBeCitedConstants.swift */,
 				90306DCB28513F6500DEACB2 /* AppDelegate.swift */,
-				90306DCD285142F400DEACB2 /* NotificationToken.swift */,
-				901A21DF285637B3006CF1A4 /* NotificationTokenHelper.swift */,
-				901A21E128565800006CF1A4 /* DatabaseOperationHelper.swift */,
 			);
 			path = ToBeCited;
 			sourceTree = "<group>";
@@ -498,7 +489,6 @@
 				9042BEB6284CF89800C3BBD5 /* HistoryToken.swift in Sources */,
 				90EDF323271C85BD0097F0E0 /* ContentView.swift in Sources */,
 				90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */,
-				901A21E0285637B3006CF1A4 /* NotificationTokenHelper.swift in Sources */,
 				9009B6732720B31A0023C316 /* PDFKitView.swift in Sources */,
 				90C8D7B02753C99A0063DE71 /* ArticleSummaryView.swift in Sources */,
 				9035E35A27F513F8007BCBD5 /* StatsView.swift in Sources */,
@@ -509,7 +499,6 @@
 				90EADA21274855D10001E150 /* TextDocument.swift in Sources */,
 				90D89A652725F18E0079EBD2 /* AddContactView.swift in Sources */,
 				9012113E27431B43008A35F7 /* ExportCollectionView.swift in Sources */,
-				901A21E228565800006CF1A4 /* DatabaseOperationHelper.swift in Sources */,
 				90DEAF56274AE2C300058AAC /* FilterArticleView.swift in Sources */,
 				90B62044271E06BE005D0FEA /* RISTag.swift in Sources */,
 				90FD841C273C8B9200929EF7 /* CollectionDetailView.swift in Sources */,
@@ -517,7 +506,6 @@
 				9009B6752720B8220023C316 /* EditAbstractView.swift in Sources */,
 				90B62045271E06BE005D0FEA /* RISRecord.swift in Sources */,
 				90B6204D271E2C96005D0FEA /* RISWriter.swift in Sources */,
-				90306DCE285142F400DEACB2 /* NotificationToken.swift in Sources */,
 				90F27EE8275171F80072BAA1 /* CollectionListView.swift in Sources */,
 				90B62049271E07BE005D0FEA /* AddRISView.swift in Sources */,
 				9042BEB8284CF8D800C3BBD5 /* ToBeCitedConstants.swift in Sources */,

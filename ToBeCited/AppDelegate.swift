@@ -21,8 +21,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     private let recordValueKey = "CD_title"
     
     private let databaseOperationHelper = DatabaseOperationHelper(appName: ToBeCitedConstants.appName.rawValue)
-    private let notificationTokenHelper = NotificationTokenHelper(appName: ToBeCitedConstants.appName.rawValue)
-    private var tokenCache = [NotificationTokenType: CKServerChangeToken]()
     
     private var database: CKDatabase {
         CKContainer(identifier: ToBeCitedConstants.iCloudIdentifier.rawValue).privateCloudDatabase
@@ -143,6 +141,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return
         }
 
+        logger.log("Processing \(record)")
+        
         let content = UNMutableNotificationContent()
         content.title = ToBeCitedConstants.appName.rawValue
         content.body = title
