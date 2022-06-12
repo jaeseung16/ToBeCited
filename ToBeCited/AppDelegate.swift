@@ -10,6 +10,7 @@ import UIKit
 import os
 import CloudKit
 import CoreData
+import Persistence
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     private let logger = Logger()
@@ -67,52 +68,18 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return
         }
         
-        let fetchSubscriptionsOperation = CKFetchSubscriptionsOperation(subscriptionIDs: [subscriptionID])
-        fetchSubscriptionsOperation.fetchSubscriptionsResultBlock = { result in
+        let subscriber = Subscriber(database: database, subscriptionID: subscriptionID, recordType: recordType)
+        subscriber.subscribe { result in
             switch result {
-            case .success():
-                self.logger.log("subscribe success to fetch subscriptions")
-            case .failure(let error):
-                self.logger.log("subscribe failed to find subscriptions: \(String(describing: error))")
-            }
-        }
-        
-        fetchSubscriptionsOperation.perSubscriptionResultBlock = { (subscriptionID, result) in
-            if subscriptionID == self.subscriptionID {
-                switch result {
-                case .success(let subscription):
-                    self.logger.log("subscribe found: \(String(describing: subscription))")
-                    UserDefaults.standard.setValue(true, forKey: self.didCreateArticleSubscription)
-                    self.logger.log("set: didCreateArticleSubscription=\(UserDefaults.standard.bool(forKey: self.didCreateArticleSubscription))")
-                case .failure(let error):
-                    self.logger.log("subscribe can't find: \(String(describing: error))")
-                    self.addSubscription()
-                }
-            }
-        }
-        
-        database.add(fetchSubscriptionsOperation)
-    }
-    
-    private func addSubscription() {
-        let subscription = CKDatabaseSubscription(subscriptionID: subscriptionID)
-        subscription.recordType = recordType
-        subscription.notificationInfo = CKSubscription.NotificationInfo()
-                
-        let operation = CKModifySubscriptionsOperation(subscriptionsToSave: [subscription], subscriptionIDsToDelete: nil)
-        operation.qualityOfService = .utility
-        operation.modifySubscriptionsResultBlock = { result in
-            switch result {
-            case .success():
-                self.logger.log("setting: didCreateArticleSubscription=\(UserDefaults.standard.bool(forKey: self.didCreateArticleSubscription))")
+            case .success(let subscription):
+                self.logger.log("Subscribed to \(subscription, privacy: .public)")
                 UserDefaults.standard.setValue(true, forKey: self.didCreateArticleSubscription)
-                self.logger.log("set: didCreateLinkSubscription=\(UserDefaults.standard.bool(forKey: self.didCreateArticleSubscription))")
+                self.logger.log("set: didCreateArticleSubscription=\(UserDefaults.standard.bool(forKey: self.didCreateArticleSubscription))")
             case .failure(let error):
-                self.logger.log("Failed to modify subscription: \(String(describing: error))")
+                self.logger.log("Failed to modify subscription: \(error.localizedDescription, privacy: .public)")
                 UserDefaults.standard.setValue(false, forKey: self.didCreateArticleSubscription)
             }
         }
-        database.add(operation)
     }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
