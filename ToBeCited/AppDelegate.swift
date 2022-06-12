@@ -20,6 +20,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     private let recordType = "CD_Article"
     private let recordValueKey = "CD_title"
     
+    private let databaseOperationHelper = DatabaseOperationHelper(appName: ToBeCitedConstants.appName.rawValue)
     private let notificationTokenHelper = NotificationTokenHelper(appName: ToBeCitedConstants.appName.rawValue)
     private var tokenCache = [NotificationTokenType: CKServerChangeToken]()
     
@@ -115,19 +116,22 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         if !notification.isPruned && notification.notificationType == .database {
             if let databaseNotification = notification as? CKDatabaseNotification, databaseNotification.subscriptionID == subscriptionID {
                 logger.log("databaseNotification=\(String(describing: databaseNotification.subscriptionID))")
-                processSubscribedNotification()
+                processRemoteNotification()
             }
         }
         
         completionHandler(.newData)
     }
     
-    private func processSubscribedNotification() {
-        let serverToken = try? notificationTokenHelper.read(.server)
-        if serverToken != nil {
-            tokenCache[.zone] = serverToken
+    private func processRemoteNotification() {
+        databaseOperationHelper.addDatabaseChangesOperation(database: database) { result in
+            switch result {
+            case .success(let record):
+                self.processRecord(record)
+            case .failure(let error):
+                self.logger.log("Failed to process remote notification: error=\(error.localizedDescription, privacy: .public)")
+            }
         }
-        addDatabaseChangesOperation(serverToken: serverToken)
     }
     
     private func processRecord(_ record: CKRecord) {
@@ -149,73 +153,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         logger.log("Processed \(record)")
     }
-    
-    private func addDatabaseChangesOperation(serverToken: CKServerChangeToken?) -> Void {
-        let dbChangesOperation = CKFetchDatabaseChangesOperation(previousServerChangeToken: serverToken)
-        
-        dbChangesOperation.recordZoneWithIDChangedBlock = { self.addZoneChangesOperation(zoneId: $0) }
-        
-        dbChangesOperation.changeTokenUpdatedBlock = { token in
-            self.tokenCache[.server] = token
-        }
 
-        dbChangesOperation.fetchDatabaseChangesResultBlock = { result in
-            switch result {
-            case .success((let token, _)):
-                try? self.notificationTokenHelper.write(token, for: .server)
-            case .failure(let error):
-                self.logger.log("Failed to fetch database changes: \(String(describing: error))")
-                if let lastToken = self.tokenCache[.server] {
-                    try? self.notificationTokenHelper.write(lastToken, for: .server)
-                }
-            }
-        }
-        
-        dbChangesOperation.qualityOfService = .utility
-        database.add(dbChangesOperation)
-    }
-    
-    private func addZoneChangesOperation(zoneId: CKRecordZone.ID) -> Void {
-        let zoneToken = try? notificationTokenHelper.read(.zone)
-        if zoneToken != nil {
-            tokenCache[.zone] = zoneToken
-        }
-        
-        var configurations = [CKRecordZone.ID: CKFetchRecordZoneChangesOperation.ZoneConfiguration]()
-        let config = CKFetchRecordZoneChangesOperation.ZoneConfiguration()
-        config.previousServerChangeToken = zoneToken
-        configurations[zoneId] = config
-        
-        let zoneChangesOperation = CKFetchRecordZoneChangesOperation(recordZoneIDs: [zoneId], configurationsByRecordZoneID: configurations)
-        
-        zoneChangesOperation.recordWasChangedBlock = { recordID, result in
-            switch(result) {
-            case .success(let record):
-                self.processRecord(record)
-            case .failure(let error):
-                self.logger.log("Failed to check if record was changed: recordID=\(recordID), error=\(String(describing: error))")
-            }
-        }
-        
-        zoneChangesOperation.recordZoneChangeTokensUpdatedBlock = { recordZoneID, token, _ in
-            self.tokenCache[.zone] = token
-        }
-        
-        zoneChangesOperation.recordZoneFetchResultBlock = { recordZoneID, result in
-            switch(result) {
-            case .success((let serverToken, _, _)):
-                try? self.notificationTokenHelper.write(serverToken, for: .zone)
-            case .failure(let error):
-                self.logger.log("Failed to fetch record zone: recordZoneID=\(recordZoneID), error=\(String(describing: error))")
-                if let lastToken = self.tokenCache[.zone] {
-                    try? self.notificationTokenHelper.write(lastToken, for: .zone)
-                }
-            }
-        }
-        
-        zoneChangesOperation.qualityOfService = .utility
-        database.add(zoneChangesOperation)
-    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
