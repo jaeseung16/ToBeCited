@@ -69,11 +69,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         
         self.spotlightIndexing = UserDefaults.standard.bool(forKey: "spotlight_indexing")
         
-        if let persistentStoreDescription = self.persistence.container.persistentStoreDescriptions.first {
-            self.articleIndexer = ArticleSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
-            
+        if let articleIndexer: ArticleSpotlightDelegate = self.persistenceHelper.getSpotlightDelegate() {
+            self.articleIndexer = articleIndexer
             self.toggleIndexing(self.articleIndexer, enabled: true)
-            
             NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
         }
         
