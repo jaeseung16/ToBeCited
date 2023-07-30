@@ -10,12 +10,6 @@ import SwiftUI
 struct ArticleListView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false),
-                          NSSortDescriptor(keyPath: \Article.title, ascending: true)],
-        animation: .default)
-    private var articles: FetchedResults<Article>
     
     @State private var presentAddArticleView = false
     @State private var presentFilterArticleView = false
@@ -30,7 +24,7 @@ struct ArticleListView: View {
     @State private var titleToSearch = ""
     
     private var filteredArticles: [Article] {
-        articles.filter { article in
+        viewModel.articles.filter { article in
             if viewModel.selectedAuthors == nil {
                 return true
             } else if let authors = article.authors as? Set<Author>, let selectedAuthors = viewModel.selectedAuthors {
@@ -45,15 +39,6 @@ struct ArticleListView: View {
             } else if let published = article.published, let selectedPublishedIn = viewModel.selectedPublishedIn {
                 let articlePublicationYear = Calendar.current.dateComponents([.year], from: published)
                 return articlePublicationYear.year == selectedPublishedIn
-            } else {
-                return false
-            }
-        }
-        .filter { article in
-            if titleToSearch == "" {
-                return true
-            } else if let title = article.title {
-                return title.range(of: titleToSearch, options: .caseInsensitive) != nil
             } else {
                 return false
             }
@@ -96,6 +81,9 @@ struct ArticleListView: View {
             
         }
         .searchable(text: $titleToSearch)
+        .onChange(of: titleToSearch) { newValue in
+            viewModel.searchArticle(titleToSearch)
+        }
         .sheet(isPresented: $presentAddArticleView) {
             AddRISView()
                 .environment(\.managedObjectContext, viewContext)
@@ -112,11 +100,5 @@ struct ArticleListView: View {
         withAnimation {
             viewModel.delete(offsets.map { filteredArticles[$0] }, viewContext: viewContext)
         }
-    }
-}
-
-struct ArticleListView_Previews: PreviewProvider {
-    static var previews: some View {
-        ArticleListView()
     }
 }

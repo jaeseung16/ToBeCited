@@ -10,9 +10,13 @@ import CoreData
 import Combine
 import os
 import Persistence
+import SwiftUI
+import CoreSpotlight
 
 class ToBeCitedViewModel: NSObject, ObservableObject {
     let logger = Logger()
+    
+    @AppStorage("ToBeCited.spotlightIndexing") private var spotlightIndexing: Bool = false
     
     private var persistence: Persistence
     private let parser = RISParser()
@@ -30,9 +34,12 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     private var subscriptions: Set<AnyCancellable> = []
     
+    private(set) var articleIndexer: ArticleSpotlightDelegate?
+    
     private var persistenceContainer: NSPersistentCloudKitContainer {
         persistence.cloudContainer!
     }
+    private let persistenceHelper: PersistenceHelper
     
     var yearOnlyDateFormatter: DateFormatter {
         let dateFormatter = DateFormatter()
@@ -49,6 +56,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     init(persistence: Persistence) {
         self.persistence = persistence
+        self.persistenceHelper = PersistenceHelper(persistence: persistence)
         
         super.init()
         
@@ -58,6 +66,37 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
           .store(in: &subscriptions)
         
         self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        
+        self.spotlightIndexing = UserDefaults.standard.bool(forKey: "spotlight_indexing")
+        
+        if let persistentStoreDescription = self.persistence.container.persistentStoreDescriptions.first {
+            self.articleIndexer = ArticleSpotlightDelegate(forStoreWith: persistentStoreDescription, coordinator: self.persistenceContainer.persistentStoreCoordinator)
+            
+            self.toggleIndexing(self.articleIndexer, enabled: true)
+            
+            NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
+        }
+        
+        if !spotlightIndexing {
+            DispatchQueue.main.async {
+                self.indexArticles()
+                self.spotlightIndexing.toggle()
+            }
+        }
+        
+        fetchArticles()
+    }
+    
+    @objc private func defaultsChanged() -> Void {
+        logger.log("spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
+        
+        if !self.spotlightIndexing {
+            DispatchQueue.main.async {
+                self.toggleIndexing(self.articleIndexer, enabled: false)
+                self.toggleIndexing(self.articleIndexer, enabled: true)
+                self.spotlightIndexing.toggle()
+            }
+        }
     }
     
     func parse(risString: String) -> [RISRecord]? {
@@ -156,6 +195,15 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     // MARK: - Persistence
+    @Published var articles = [Article]()
+    
+    func fetchArticles() {
+        let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Article.published, ascending: false),
+                                        NSSortDescriptor(keyPath: \Article.title, ascending: true)]
+        articles = persistenceHelper.perform(fetchRequest)
+    }
+    
     func save(viewContext: NSManagedObjectContext, completionHandler: ((Bool) -> Void)?) -> Void {
         persistence.save { result in
             switch result {
@@ -486,4 +534,123 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     func log(_ message: String) -> Void {
         logger.log("\(message)")
     }
+    
+    // MARK: - Spotlight
+    private var spotlightFoundArticles: [CSSearchableItem] = []
+    private var articleSearchQuery: CSSearchQuery?
+    
+    private func toggleIndexing(_ indexer: NSCoreDataCoreSpotlightDelegate?, enabled: Bool) {
+        guard let indexer = indexer else { return }
+        if enabled {
+            indexer.startSpotlightIndexing()
+        } else {
+            indexer.stopSpotlightIndexing()
+        }
+    }
+    
+    private func indexArticles() -> Void {
+        logger.log("Indexing \(self.articles.count, privacy: .public) articles")
+        index<Article>(articles, indexName: ToBeCitedConstants.articleIndexName.rawValue)
+    }
+    
+    private func index<T: NSManagedObject>(_ entities: [T], indexName: String) {
+        let searchableItems: [CSSearchableItem] = entities.compactMap { (entity: T) -> CSSearchableItem? in
+            guard let attributeSet = attributeSet(for: entity) else {
+                self.logger.log("Cannot generate attribute set for \(entity, privacy: .public)")
+                return nil
+            }
+            return CSSearchableItem(uniqueIdentifier: entity.objectID.uriRepresentation().absoluteString, domainIdentifier: ToBeCitedConstants.domainIdentifier.rawValue, attributeSet: attributeSet)
+        }
+        
+        logger.log("Adding \(searchableItems.count) items to index=\(indexName, privacy: .public)")
+        
+        CSSearchableIndex(name: indexName).indexSearchableItems(searchableItems) { error in
+            guard let error = error else {
+                return
+            }
+            self.logger.log("Error while indexing \(T.self): \(error.localizedDescription, privacy: .public)")
+        }
+    }
+    
+    private func attributeSet(for object: NSManagedObject) -> CSSearchableItemAttributeSet? {
+        if let article = object as? Article {
+            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
+            attributeSet.title = article.title
+            attributeSet.textContent = article.abstract
+            attributeSet.displayName = article.title
+            attributeSet.contentDescription = article.journal
+            return attributeSet
+        }
+        return nil
+    }
+    
+    func searchArticle(_ text: String) -> Void {
+        if text.isEmpty {
+            articleSearchQuery?.cancel()
+            fetchArticles()
+        } else {
+            searchArticles(text)
+        }
+    }
+    
+    private func searchArticles(_ text: String) {
+        let escapedText = text.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+        let queryString = "(title == \"*\(escapedText)*\"cd) || (textContent == \"*\(escapedText)*\"cd)"
+        
+        articleSearchQuery = CSSearchQuery(queryString: queryString, attributes: ["title"])
+        
+        articleSearchQuery?.foundItemsHandler = { items in
+            DispatchQueue.main.async {
+                self.spotlightFoundArticles += items
+            }
+        }
+        
+        articleSearchQuery?.completionHandler = { error in
+            if let error = error {
+                self.logger.log("Searching \(text) came back with error: \(error.localizedDescription, privacy: .public)")
+            } else {
+                DispatchQueue.main.async {
+                    self.fetchArticles(self.spotlightFoundArticles)
+                    self.spotlightFoundArticles.removeAll()
+                }
+            }
+        }
+        
+        articleSearchQuery?.start()
+    }
+    
+    private func fetchArticles(_ items: [CSSearchableItem]) {
+        logger.log("Fetching \(items.count) articles")
+        let fetched: [Article] = fetch(items)
+        logger.log("fetched.count=\(fetched.count)")
+        articles = fetched.sorted(by: { article1, article2 in
+            guard let created1 = article1.created else {
+                return false
+            }
+            guard let created2 = article2.created else {
+                return true
+            }
+            return created1 > created2
+        })
+        logger.log("Found \(self.articles.count) articles")
+    }
+    
+    private func fetch<T: NSManagedObject>(_ items: [CSSearchableItem]) -> [T] {
+        return items.compactMap { (item: CSSearchableItem) -> T? in
+            guard let url = URL(string: item.uniqueIdentifier) else {
+                self.logger.log("url is nil for item=\(item)")
+                return nil
+            }
+            return find(for: url) as? T
+        }
+    }
+    
+    func find(for url: URL) -> NSManagedObject? {
+        guard let objectID = persistence.container.viewContext.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url) else {
+            self.logger.log("objectID is nil for url=\(url)")
+            return nil
+        }
+        return persistence.container.viewContext.object(with: objectID)
+    }
+    
 }
