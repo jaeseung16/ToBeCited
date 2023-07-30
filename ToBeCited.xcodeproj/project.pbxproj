@@ -27,7 +27,6 @@
 		9031FE0F278285FB005DADC8 /* EditRISView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9031FE0E278285FB005DADC8 /* EditRISView.swift */; };
 		9035E35A27F513F8007BCBD5 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9035E35927F513F8007BCBD5 /* StatsView.swift */; };
 		903F1C91284EC47F00F93982 /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 903F1C90284EC47F00F93982 /* Persistence */; };
-		9042BEB6284CF89800C3BBD5 /* HistoryToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9042BEB5284CF89800C3BBD5 /* HistoryToken.swift */; };
 		9042BEB8284CF8D800C3BBD5 /* ToBeCitedConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9042BEB7284CF8D800C3BBD5 /* ToBeCitedConstants.swift */; };
 		90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62040271E06BE005D0FEA /* RISReferenceType.swift */; };
 		90B62044271E06BE005D0FEA /* RISTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62041271E06BE005D0FEA /* RISTag.swift */; };
@@ -103,7 +102,6 @@
 		90306DCB28513F6500DEACB2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9031FE0E278285FB005DADC8 /* EditRISView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRISView.swift; sourceTree = "<group>"; };
 		9035E35927F513F8007BCBD5 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
-		9042BEB5284CF89800C3BBD5 /* HistoryToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryToken.swift; sourceTree = "<group>"; };
 		9042BEB7284CF8D800C3BBD5 /* ToBeCitedConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedConstants.swift; sourceTree = "<group>"; };
 		90B62040271E06BE005D0FEA /* RISReferenceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RISReferenceType.swift; sourceTree = "<group>"; };
 		90B62041271E06BE005D0FEA /* RISTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RISTag.swift; sourceTree = "<group>"; };
@@ -178,7 +176,6 @@
 				900B8F3B2741AE3500D40347 /* ToBeCitedViewModel.swift */,
 				900D77032745BB0C00F0416C /* ExportOrder.swift */,
 				90113C1D276BDD32007CE1D2 /* ContactDTO.swift */,
-				9042BEB5284CF89800C3BBD5 /* HistoryToken.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -486,7 +483,6 @@
 				9009B6712720B19F0023C316 /* PDFFilePickerViewController.swift in Sources */,
 				900B8F3E2741B12700D40347 /* EditCollectionView.swift in Sources */,
 				900B8F39274071B300D40347 /* EditOrderView.swift in Sources */,
-				9042BEB6284CF89800C3BBD5 /* HistoryToken.swift in Sources */,
 				90EDF323271C85BD0097F0E0 /* ContentView.swift in Sources */,
 				90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */,
 				9009B6732720B31A0023C316 /* PDFKitView.swift in Sources */,
@@ -700,7 +696,9 @@
 				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.tobecited;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -736,7 +734,9 @@
 				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.tobecited;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

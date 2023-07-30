@@ -31,7 +31,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private var subscriptions: Set<AnyCancellable> = []
     
     private var persistenceContainer: NSPersistentCloudKitContainer {
-        persistence.container
+        persistence.cloudContainer!
     }
     
     var yearOnlyDateFormatter: DateFormatter {
