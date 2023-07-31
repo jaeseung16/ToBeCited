@@ -51,4 +51,9 @@ class PersistenceHelper {
             }
         }
     }
+    
+    func delete(_ object: NSManagedObject) -> Void {
+        viewContext.delete(object)
+    }
+    
 }

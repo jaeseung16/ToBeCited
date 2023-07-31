@@ -72,7 +72,7 @@ struct CollectionListView: View {
     
     private func deleteCollections(offsets: IndexSet) {
         withAnimation {
-            viewModel.delete(offsets.map { filteredCollections[$0] }, viewContext: viewContext)
+            viewModel.delete(offsets.map { filteredCollections[$0] })
         }
     }
 }

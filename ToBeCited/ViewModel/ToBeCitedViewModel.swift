@@ -202,11 +202,12 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         articles = persistenceHelper.perform(fetchRequest)
     }
     
-    func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
+    private func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
         persistenceHelper.save { result in
             switch result {
             case .success(_):
                 DispatchQueue.main.async {
+                    // Fetch entities
                     self.toggle.toggle()
                     if let completionHandler = completionHandler {
                         completionHandler(true)
@@ -351,74 +352,70 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         save()
     }
     
-    func delete(_ articles: [Article], viewContext: NSManagedObjectContext) -> Void {
-        viewContext.perform {
-            articles.forEach { article in
-                article.collections?.forEach { collection in
-                    if let collection = collection as? Collection {
-                        article.removeFromCollections(collection)
-                    }
+    private func delete(_ object: NSManagedObject) -> Void {
+        persistenceHelper.delete(object)
+    }
+    
+    func delete(_ articles: [Article]) -> Void {
+        articles.forEach { article in
+            article.collections?.forEach { collection in
+                if let collection = collection as? Collection {
+                    article.removeFromCollections(collection)
                 }
-                      
-                // TODO: Reorder articles in collection
-                // TODO: Move these operations to viewModel
-                      
-                article.orders?.forEach { order in
-                    if let order = order as? OrderInCollection {
-                        article.removeFromOrders(order)
-                    }
+            }
+                  
+            // TODO: Reorder articles in collection
+            // TODO: Move these operations to viewModel
+                  
+            article.orders?.forEach { order in
+                if let order = order as? OrderInCollection {
+                    article.removeFromOrders(order)
                 }
-                
-                viewContext.delete(article)
             }
             
-            self.save { success in
-                self.logger.log("Delete data: success=\(success)")
-            }
+            delete(article)
+        }
+        
+        save { success in
+            self.logger.log("Delete data: success=\(success)")
         }
     }
     
-    func delete(_ authors: [Author], viewContext: NSManagedObjectContext) -> Void {
-        viewContext.perform {
-            authors.forEach {author in
-                if author.articles == nil || author.articles!.count == 0 {
-                    viewContext.delete(author)
-                }
+    func delete(_ authors: [Author]) -> Void {
+        authors.forEach {author in
+            if author.articles == nil || author.articles!.count == 0 {
+                persistenceHelper.delete(author)
             }
-            self.save()
         }
+        save()
     }
     
-    func delete(_ contacts: [AuthorContact], from author: Author, viewContext: NSManagedObjectContext) -> Void {
-        viewContext.perform {
-            contacts.forEach { contact in
-                author.removeFromContacts(contact)
-                viewContext.delete(contact)
-            }
-            self.save()
+    func delete(_ contacts: [AuthorContact], from author: Author) -> Void {
+        contacts.forEach { contact in
+            author.removeFromContacts(contact)
+            delete(contact)
         }
+        save()
     }
     
-    func delete(_ collections: [Collection], viewContext: NSManagedObjectContext) -> Void {
-        viewContext.perform {
-            collections.forEach { collection in
-                collection.articles?.forEach { article in
-                    if let article = article as? Article {
-                        article.removeFromCollections(collection)
-                    }
+    func delete(_ collections: [Collection]) -> Void {
+        collections.forEach { collection in
+            collection.articles?.forEach { article in
+                if let article = article as? Article {
+                    article.removeFromCollections(collection)
                 }
-                
-                collection.orders?.forEach { order in
-                    if let order = order as? OrderInCollection {
-                        viewContext.delete(order)
-                    }
-                }
-                
-                viewContext.delete(collection)
             }
             
-            self.save()
+            collection.orders?.forEach { order in
+                if let order = order as? OrderInCollection {
+                    delete(order)
+                }
+            }
+            
+            delete(collection)
         }
+        
+        save()
     }
     
     // MARK: - Persistence History Request

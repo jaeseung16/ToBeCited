@@ -289,7 +289,7 @@ struct AuthorDetailView: View {
     
     private func deleteContact(_ indexSet: IndexSet) -> Void {
         withAnimation {
-            viewModel.delete( indexSet.map { contacts[$0] }, from: author, viewContext: viewContext)
+            viewModel.delete( indexSet.map { contacts[$0] }, from: author)
         }
     }
 }
