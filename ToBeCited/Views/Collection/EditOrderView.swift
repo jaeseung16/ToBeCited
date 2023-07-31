@@ -57,7 +57,7 @@ struct EditOrderView: View {
             orders[k].order = Int64(k)
         }
         
-        viewModel.save(viewContext: viewContext, completionHandler: nil)
+        viewModel.save()
     }
 }
 

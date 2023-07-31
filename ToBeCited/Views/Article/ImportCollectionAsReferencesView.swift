@@ -128,7 +128,7 @@ struct ImportCollectionAsReferencesView: View {
             }
         }
         
-        viewModel.save(viewContext: viewContext) { success in
+        viewModel.save { success in
             if !success {
                 viewModel.log("ImportCollectionAsReferencesView: Failed to update")
             }

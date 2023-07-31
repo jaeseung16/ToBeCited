@@ -39,4 +39,16 @@ class PersistenceHelper {
         PersistenceHelper.logger.log("Returning nil")
         return nil
     }
+    
+    func save(completionHandler: @escaping (Result<Void,Error>) -> Void) -> Void {
+        persistence.save { result in
+            switch result {
+            case .success(_):
+                completionHandler(.success(()))
+            case .failure(let error):
+                PersistenceHelper.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
+                completionHandler(.failure(error))
+            }
+        }
+    }
 }

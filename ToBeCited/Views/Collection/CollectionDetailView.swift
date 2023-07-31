@@ -54,7 +54,7 @@ struct CollectionDetailView: View {
                 Button {
                     collection.name = collectionName
                     
-                    viewModel.save(viewContext: viewContext, completionHandler: nil)
+                    viewModel.save()
                     
                     edited = false
                 } label: {
@@ -172,7 +172,7 @@ struct CollectionDetailView: View {
                 })
             }
 
-            viewModel.save(viewContext: viewContext, completionHandler: nil)
+            viewModel.save()
         }
     }
 }

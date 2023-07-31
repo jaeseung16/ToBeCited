@@ -214,7 +214,7 @@ struct ArticleDetailView: View, DropDelegate {
     private func updatePDF() -> Void {
         if !pdfData.isEmpty {
             article.pdf = pdfData
-            viewModel.save(viewContext: viewContext) { success in
+            viewModel.save { success in
                 if !success {
                     viewModel.log("Failed to save pdf")
                 }
@@ -246,7 +246,7 @@ struct ArticleDetailView: View, DropDelegate {
     private func updateTitle() -> Void {
         if !title.isEmpty {
             article.title = title
-            viewModel.save(viewContext: viewContext) { success in
+            viewModel.save { success in
                 if !success {
                     viewModel.log("Failed to save title")
                 }
@@ -304,7 +304,7 @@ struct ArticleDetailView: View, DropDelegate {
     
     private func updatePublished() -> Void {
         article.published = published
-        viewModel.save(viewContext: viewContext) { success in
+        viewModel.save { success in
             if !success {
                 viewModel.log("Failed to save published")
             }

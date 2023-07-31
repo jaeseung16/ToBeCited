@@ -202,24 +202,22 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         articles = persistenceHelper.perform(fetchRequest)
     }
     
-    func save(viewContext: NSManagedObjectContext, completionHandler: ((Bool) -> Void)?) -> Void {
-        persistence.save { result in
+    func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
+        persistenceHelper.save { result in
             switch result {
             case .success(_):
                 DispatchQueue.main.async {
                     self.toggle.toggle()
-                    if completionHandler != nil {
-                        completionHandler!(true)
+                    if let completionHandler = completionHandler {
+                        completionHandler(true)
                     }
                 }
             case .failure(let error):
                 self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
-                self.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
-                print("Error while saving data: \(Thread.callStackSymbols)")
                 DispatchQueue.main.async {
                     self.showAlert.toggle()
-                    if completionHandler != nil {
-                        completionHandler!(false)
+                    if let completionHandler = completionHandler {
+                        completionHandler(false)
                     }
                 }
             }
@@ -289,7 +287,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             ris.article = newArticle
         }
         
-        save(viewContext: viewContext) { success in
+        save { success in
             self.logger.log("Saved data: success=\(success)")
         }
     }
@@ -327,7 +325,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         contactEntity.address = contact.address
         
         author.addToContacts(contactEntity)
-        save(viewContext: viewContext, completionHandler: nil)
+        save()
     }
     
     func addCollection(_ name: String, articles: [Article], viewContext: NSManagedObjectContext) -> Void {
@@ -350,7 +348,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             orderInCollection.article = articles[index]
         }
         
-        save(viewContext: viewContext, completionHandler: nil)
+        save()
     }
     
     func delete(_ articles: [Article], viewContext: NSManagedObjectContext) -> Void {
@@ -374,7 +372,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 viewContext.delete(article)
             }
             
-            self.save(viewContext: viewContext) { success in
+            self.save { success in
                 self.logger.log("Delete data: success=\(success)")
             }
         }
@@ -387,7 +385,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     viewContext.delete(author)
                 }
             }
-            self.save(viewContext: viewContext, completionHandler: nil)
+            self.save()
         }
     }
     
@@ -397,7 +395,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 author.removeFromContacts(contact)
                 viewContext.delete(contact)
             }
-            self.save(viewContext: viewContext, completionHandler: nil)
+            self.save()
         }
     }
     
@@ -419,7 +417,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 viewContext.delete(collection)
             }
             
-            self.save(viewContext: viewContext, completionHandler: nil)
+            self.save()
         }
     }
     
@@ -477,7 +475,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             viewContext.delete(authors[index])
         }
         
-        save(viewContext: viewContext, completionHandler: nil)
+        save()
     }
     
     func update(collection: Collection, with articles: [Article], viewContext: NSManagedObjectContext) -> Void {
@@ -505,7 +503,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             article.addToOrders(order)
         }
         
-        save(viewContext: viewContext, completionHandler: nil)
+        save()
         
     }
         
@@ -526,7 +524,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             }
         }
         
-        save(viewContext: viewContext, completionHandler: nil)
+        save()
     }
     
     func log(_ message: String) -> Void {

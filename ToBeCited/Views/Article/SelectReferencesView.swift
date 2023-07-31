@@ -162,7 +162,7 @@ struct SelectReferencesView: View {
                 reference.addToCited(article)
             }
             
-            viewModel.save(viewContext: viewContext) { success in
+            viewModel.save { success in
                 if !success {
                     viewModel.log("Failed to update references")
                 }
