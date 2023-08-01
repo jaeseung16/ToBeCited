@@ -202,7 +202,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         articles = persistenceHelper.perform(fetchRequest)
     }
     
-    private func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
+    func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
         persistenceHelper.save { result in
             switch result {
             case .success(_):
