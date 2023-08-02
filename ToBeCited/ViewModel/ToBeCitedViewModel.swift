@@ -225,97 +225,47 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
-    func save(risRecords: [RISRecord], viewContext: NSManagedObjectContext) -> Void {
+    func save(risRecords: [RISRecord]) -> Void {
         let created = Date()
-        
-        for record in risRecords {
-            let newArticle = Article(context: viewContext)
-            newArticle.created = created
-            newArticle.title = record.primaryTitle ?? record.title
-            newArticle.journal = record.periodicalNameFullFormat ?? record.secondaryTitle
-            newArticle.abstract = record.abstract
-            newArticle.doi = record.doi
-            newArticle.volume = record.volumeNumber
-            newArticle.issueNumber = record.issueNumber
-            newArticle.startPage = record.startPage
-            newArticle.endPage = record.endPage
-            newArticle.uuid = UUID()
-            
-            // Need to parse DA or PY, Y1
-            // newArticle.published = Date(from: record.date)
-            var published: Date?
-            if let date = record.date {
-                let splitDate = date.split(separator: "/")
-                if splitDate.count > 2 {
-                    published = getDate(from: splitDate)
-                }
-            } else if let pulbicationYear = record.pulbicationYear {
-                let splitPY = pulbicationYear.split(separator: "/")
-                if splitPY.count > 2 {
-                    published = getDate(from: splitPY)
-                }
-            } else if let primaryDate = record.primaryDate {
-                let splitPrimaryDate = primaryDate.split(separator: "/")
-                if splitPrimaryDate.count > 2 {
-                    published = getDate(from: splitPrimaryDate)
-                }
-            }
-            newArticle.published = published
-            
-            let parseStrategy = PersonNameComponents.ParseStrategy()
-            if let primaryAuthor = record.primaryAuthor, let name = try? parseStrategy.parse(primaryAuthor) {
-                createAuthorEntity(name, article: newArticle, viewContext: viewContext)
-            }
-            if let secondaryAuthor = record.secondaryAuthor, let name = try? parseStrategy.parse(secondaryAuthor) {
-                createAuthorEntity(name, article: newArticle, viewContext: viewContext)
-            }
-            if let tertiaryAuthor = record.tertiaryAuthor, let name = try? parseStrategy.parse(tertiaryAuthor) {
-                createAuthorEntity(name, article: newArticle, viewContext: viewContext)
-            }
-            if let subsidiaryAuthor = record.subsidiaryAuthor, let name = try? parseStrategy.parse(subsidiaryAuthor) {
-                createAuthorEntity(name, article: newArticle, viewContext: viewContext)
-            }
-            for author in record.authors {
-                if let name = try? parseStrategy.parse(author) {
-                    createAuthorEntity(name, article: newArticle, viewContext: viewContext)
-                }
-            }
-            
-            let writer = RISWriter(record: record)
-            let ris = RIS(context: viewContext)
-            ris.uuid = UUID()
-            ris.content = writer.toString()
-            ris.article = newArticle
-        }
-        
+        risRecords.forEach { createEntities(from: $0, created: created) }
         save { success in
             self.logger.log("Saved data: success=\(success)")
         }
     }
     
-    private func getDate(from yearMonthDate: [String.SubSequence]) -> Date? {
-        var date: Date? = nil
-        if let year = Int(yearMonthDate[0]), let month = Int(yearMonthDate[1]), let day = Int(yearMonthDate[2]) {
-            date = DateComponents(calendar: Calendar(identifier: .iso8601), year: year, month: month, day: day).date
+    private func createEntities(from record: RISRecord, created at: Date) -> Void {
+        let newArticle = persistenceHelper.createrticle(from: record, created: at)
+        
+        // Need to parse DA or PY, Y1
+        // newArticle.published = Date(from: record.date)
+        newArticle.published = persistenceHelper.determinePublished(recordDate: record.date, pulbicationYear: record.pulbicationYear, primaryDate: record.primaryDate)
+        
+        let parseStrategy = PersonNameComponents.ParseStrategy()
+        if let primaryAuthor = record.primaryAuthor, let name = try? parseStrategy.parse(primaryAuthor) {
+            let author = persistenceHelper.createAuthor(name)
+            author.addToArticles(newArticle)
         }
-        return date
-    }
-    
-    private func createAuthorEntity(_ authorName: PersonNameComponents, article: Article, viewContext: NSManagedObjectContext) -> Void {
-        let authorEntity = Author(context: viewContext)
-        authorEntity.created = Date()
-        authorEntity.uuid = UUID()
-
-        populate(author: authorEntity, with: authorName)
-
-        authorEntity.addToArticles(article)
-    }
-    
-    private func populate(author: Author, with components: PersonNameComponents) {
-        author.lastName = components.familyName
-        author.firstName = components.givenName
-        author.middleName = components.middleName
-        author.nameSuffix = components.nameSuffix
+        if let secondaryAuthor = record.secondaryAuthor, let name = try? parseStrategy.parse(secondaryAuthor) {
+            let author = persistenceHelper.createAuthor(name)
+            author.addToArticles(newArticle)
+        }
+        if let tertiaryAuthor = record.tertiaryAuthor, let name = try? parseStrategy.parse(tertiaryAuthor) {
+            let author = persistenceHelper.createAuthor(name)
+            author.addToArticles(newArticle)
+        }
+        if let subsidiaryAuthor = record.subsidiaryAuthor, let name = try? parseStrategy.parse(subsidiaryAuthor) {
+            let author = persistenceHelper.createAuthor(name)
+            author.addToArticles(newArticle)
+        }
+        for author in record.authors {
+            if let name = try? parseStrategy.parse(author) {
+                let author = persistenceHelper.createAuthor(name)
+                author.addToArticles(newArticle)
+            }
+        }
+        
+        let ris = persistenceHelper.createRIS(from: record)
+        ris.article = newArticle
     }
     
     func add(contact: ContactDTO, to author: Author, viewContext: NSManagedObjectContext) -> Void {

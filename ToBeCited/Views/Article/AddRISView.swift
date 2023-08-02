@@ -90,7 +90,7 @@ struct AddRISView: View, DropDelegate {
             }
         }
         
-        viewModel.save(risRecords: risRecords, viewContext: viewContext)
+        viewModel.save(risRecords: risRecords)
         
         risRecords.removeAll()
     }
@@ -119,11 +119,5 @@ struct AddRISView: View, DropDelegate {
             }
         }
         return true
-    }
-}
-
-struct AddRISView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddRISView()
     }
 }
