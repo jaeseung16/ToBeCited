@@ -48,29 +48,6 @@ struct AuthorDetailView: View {
         }
     }
     
-    private var authors: [Author] {
-        if let lastName = author.lastName, let firstLetterOfFirstName = author.firstName?.first {
-            let predicate = NSPredicate(format: "(lastName CONTAINS[cd] %@) AND (firstName BEGINSWITH[cd] %@)", argumentArray: [lastName, firstLetterOfFirstName.lowercased()])
-            let sortDesciptor = NSSortDescriptor(key: "firstName", ascending: true)
-            
-            let fetchRequest: NSFetchRequest<Author> = Author.fetchRequest()
-            fetchRequest.predicate = predicate
-            fetchRequest.sortDescriptors = [sortDesciptor]
-            
-            let fc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: viewContext, sectionNameKeyPath: nil, cacheName: nil)
-            
-            do {
-                try fc.performFetch()
-            } catch {
-                NSLog("Failed fetch authors with lastName = \(lastName)")
-            }
-            
-            return fc.fetchedObjects ?? [Author]()
-        }
-        
-        return [Author]()
-    }
-    
     private var orcidURL: URL? {
         if let orcid = author.orcid, let url = URL(string: "https://orcid.org/\(orcid)") {
             return url
@@ -124,8 +101,7 @@ struct AuthorDetailView: View {
             .frame(maxHeight: .infinity, alignment: .top)
             .padding()
             .sheet(isPresented: $presentAuthorMergeView) {
-                AuthorMergeView(authors: authors)
-                    .environment(\.managedObjectContext, viewContext)
+                AuthorMergeView(authors: viewModel.findAuthors(by: author))
                     .environmentObject(viewModel)
             }
             .sheet(isPresented: $presentAddContactView) {

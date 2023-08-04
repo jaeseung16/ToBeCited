@@ -9,19 +9,12 @@ import SwiftUI
 import CoreData
 
 struct AuthorListView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
-    
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
-                                    NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
-                                    NSSortDescriptor(keyPath: \Author.created, ascending: false)],
-                  animation: .default)
-    private var authors: FetchedResults<Author>
 
     @State private var lastNameToSearch = ""
     
     private var filteredAuthors: [Author] {
-        authors.filter { author in
+        viewModel.authors.filter { author in
             if lastNameToSearch == "" {
                 return true
             } else if let lastName = author.lastName {

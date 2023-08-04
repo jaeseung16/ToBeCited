@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AuthorContactView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var contact: AuthorContact

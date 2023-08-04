@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AddContactView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
@@ -52,8 +51,7 @@ struct AddContactView: View {
             Spacer()
             
             Button {
-                let contactDTO = ContactDTO(email: email, institution: institution, address: address)
-                viewModel.add(contact: contactDTO, to: author, viewContext: viewContext)
+                viewModel.add(contact: ContactDTO(email: email, institution: institution, address: address), to: author)
                 dismiss.callAsFunction()
             } label: {
                 Text("Save")

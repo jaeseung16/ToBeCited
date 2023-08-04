@@ -123,4 +123,23 @@ class PersistenceHelper {
         ris.content = writer.toString()
         return ris
     }
+    
+    func createAuthorContact(from dto: ContactDTO) -> AuthorContact {
+        let authorContact = AuthorContact(context: viewContext)
+        authorContact.created = Date()
+        authorContact.email = dto.email
+        authorContact.institution = dto.institution
+        authorContact.address = dto.address
+        return authorContact
+    }
+    
+    func createOrder(in collection: Collection, for article: Article, with count: Int64) -> OrderInCollection {
+        let order = OrderInCollection(context: viewContext)
+        order.collectionId = collection.uuid
+        order.articleId = article.uuid
+        order.order = count
+        collection.addToOrders(order)
+        article.addToOrders(order)
+        return order
+    }
 }

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AddAuthorToCollectionView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
@@ -76,7 +75,7 @@ struct AddAuthorToCollectionView: View {
             Spacer()
             
             Button {
-                viewModel.add(articles, to: collectionsToAdd, viewContext: viewContext)
+                viewModel.add(articles, to: collectionsToAdd)
                 dismiss.callAsFunction()
             } label: {
                 Text("Save")

@@ -82,7 +82,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             }
         }
         
-        fetchArticles()
+        fetchAll()
     }
     
     @objc private func defaultsChanged() -> Void {
@@ -193,7 +193,13 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     // MARK: - Persistence
-    @Published var articles = [Article]()
+    @Published var articles = [Article]() // TODO: May need separate allArticles?
+    @Published var authors = [Author]() // TODO: May need separate allAuthors?
+    
+    func fetchAll() {
+        fetchArticles()
+        fetchAuthors()
+    }
     
     func fetchArticles() {
         let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
@@ -202,25 +208,29 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         articles = persistenceHelper.perform(fetchRequest)
     }
     
+    func fetchAuthors() {
+        let fetchRequest = NSFetchRequest<Author>(entityName: "Author")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
+                                        NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
+                                        NSSortDescriptor(keyPath: \Author.created, ascending: false)]
+        authors = persistenceHelper.perform(fetchRequest)
+    }
+    
     func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
         persistenceHelper.save { result in
-            switch result {
-            case .success(_):
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                switch result {
+                case .success(_):
                     // Fetch entities
                     self.toggle.toggle()
-                    if let completionHandler = completionHandler {
-                        completionHandler(true)
-                    }
-                }
-            case .failure(let error):
-                self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
-                DispatchQueue.main.async {
+                    completionHandler?(true)
+                case .failure(let error):
+                    self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
                     self.showAlert.toggle()
-                    if let completionHandler = completionHandler {
-                        completionHandler(false)
-                    }
+                    completionHandler?(false)
                 }
+                
+                self.fetchAll()
             }
         }
     }
@@ -268,13 +278,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         ris.article = newArticle
     }
     
-    func add(contact: ContactDTO, to author: Author, viewContext: NSManagedObjectContext) -> Void {
-        let contactEntity = AuthorContact(context: viewContext)
-        contactEntity.created = Date()
-        contactEntity.email = contact.email
-        contactEntity.institution = contact.institution
-        contactEntity.address = contact.address
-        
+    func add(contact: ContactDTO, to author: Author) -> Void {
+        let contactEntity = persistenceHelper.createAuthorContact(from: contact)
         author.addToContacts(contactEntity)
         save()
     }
@@ -334,7 +339,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     func delete(_ authors: [Author]) -> Void {
         authors.forEach {author in
             if author.articles == nil || author.articles!.count == 0 {
-                persistenceHelper.delete(author)
+                delete(author)
             }
         }
         save()
@@ -397,7 +402,19 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         return count
     }
     
-    func merge(authors: [Author], viewContext: NSManagedObjectContext) -> Void {
+    func findAuthors(by example: Author) -> [Author] {
+        guard let lastName = example.lastName, let firstLetterOfFirstName = example.firstName?.first else {
+            return [Author]()
+        }
+        
+        let fetchRequest = Author.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "(lastName CONTAINS[cd] %@) AND (firstName BEGINSWITH[cd] %@)", argumentArray: [lastName, firstLetterOfFirstName.lowercased()])
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "firstName", ascending: true)]
+        
+        return persistenceHelper.perform(fetchRequest)
+    }
+    
+    func merge(authors: [Author]) -> Void {
         let toMerge = authors[0]
         
         for index in 1..<authors.count {
@@ -419,7 +436,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 toMerge.orcid = orcid
             }
             
-            viewContext.delete(authors[index])
+            delete(authors[index])
         }
         
         save()
@@ -454,23 +471,15 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         
     }
         
-    func add(_ articles: [Article], to collections: [Collection], viewContext: NSManagedObjectContext) -> Void {
-        for collection in collections {
+    func add(_ articles: [Article], to collections: [Collection]) -> Void {
+        collections.forEach { collection in
             var count = collection.articles == nil ? 0 : collection.articles!.count
-            
             for article in articles {
-                let order = OrderInCollection(context: viewContext)
-                order.collectionId = collection.uuid
-                order.articleId = article.uuid
-                order.order = Int64(count)
-                collection.addToOrders(order)
-                article.addToOrders(order)
-                
+                let order = persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
                 article.addToCollections(collection)
                 count += 1
             }
         }
-        
         save()
     }
     
