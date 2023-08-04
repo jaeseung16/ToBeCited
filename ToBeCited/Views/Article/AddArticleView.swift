@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AddArticleView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     
     @State private var title: String = ""
@@ -115,10 +114,4 @@ struct AddArticleView: View {
         }
     }
     
-}
-
-struct AddArticleView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddArticleView()
-    }
 }
