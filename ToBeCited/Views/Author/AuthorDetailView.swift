@@ -9,7 +9,6 @@ import SwiftUI
 import CoreData
 
 struct AuthorDetailView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
@@ -106,12 +105,10 @@ struct AuthorDetailView: View {
             }
             .sheet(isPresented: $presentAddContactView) {
                 AddContactView(author: author)
-                    .environment(\.managedObjectContext, viewContext)
                     .environmentObject(viewModel)
             }
             .sheet(isPresented: $presentAddToCollectionsView) {
                 AddAuthorToCollectionView(articles: articles)
-                    .environment(\.managedObjectContext, viewContext)
                     .environmentObject(viewModel)
             }
         }

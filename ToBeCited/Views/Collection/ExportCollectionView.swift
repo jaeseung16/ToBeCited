@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-struct ExportCollectionView: View {    @Environment(\.dismiss) private var dismiss
+struct ExportCollectionView: View {
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     var collection: Collection

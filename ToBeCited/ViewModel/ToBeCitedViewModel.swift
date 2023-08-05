@@ -193,9 +193,12 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     // MARK: - Persistence
-    @Published var articles = [Article]() // TODO: May need separate allArticles?
-    @Published var authors = [Author]() // TODO: May need separate allAuthors?
+    @Published var articles = [Article]()
+    @Published var allArticles = [Article]()
+    @Published var authors = [Author]()
+    @Published var allAuthors = [Author]()
     @Published var collections = [Collection]()
+    @Published var allCollections = [Collection]()
     
     func fetchAll() {
         fetchArticles()
@@ -210,6 +213,12 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         articles = persistenceHelper.perform(fetchRequest)
     }
     
+    func fetchAllArticles() {
+        let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Article.published, ascending: false)]
+        allArticles = persistenceHelper.perform(fetchRequest)
+    }
+    
     func fetchAuthors() {
         let fetchRequest = NSFetchRequest<Author>(entityName: "Author")
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
@@ -218,10 +227,24 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         authors = persistenceHelper.perform(fetchRequest)
     }
     
+    func fetchAllAuthors() {
+        let fetchRequest = NSFetchRequest<Author>(entityName: "Author")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
+                                        NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
+                                        NSSortDescriptor(keyPath: \Author.created, ascending: false)]
+        allAuthors = persistenceHelper.perform(fetchRequest)
+    }
+    
     func fetchCollections() {
         let fetchRequest = NSFetchRequest<Collection>(entityName: "Collection")
         fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Collection.name, ascending: true)]
         collections = persistenceHelper.perform(fetchRequest)
+    }
+    
+    func fetchAllColections() {
+        let fetchRequest = NSFetchRequest<Collection>(entityName: "Collection")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Collection.name, ascending: true)]
+        allCollections = persistenceHelper.perform(fetchRequest)
     }
     
     func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
@@ -301,6 +324,14 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
         
         save()
+    }
+    
+    func add(article: Article, to collections: [Collection]) -> Void {
+        for collection in collections {
+            let count = collection.articles == nil ? 0 : collection.articles!.count
+            let order = persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
+            article.addToCollections(collection)
+        }
     }
     
     private func delete(_ object: NSManagedObject) -> Void {

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ArticleListView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var presentAddArticleView = false
@@ -85,13 +84,10 @@ struct ArticleListView: View {
             viewModel.searchArticle(titleToSearch)
         }
         .sheet(isPresented: $presentAddArticleView) {
-            AddRISView()
-                .environment(\.managedObjectContext, viewContext)
-                .environmentObject(viewModel)
+            AddRISView()                .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentFilterArticleView) {
             FilterArticleView()
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
     }

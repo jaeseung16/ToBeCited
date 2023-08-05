@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CollectionListView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var presentAddCollectionView = false
@@ -60,7 +59,6 @@ struct CollectionListView: View {
         }
         .sheet(isPresented: $presentAddCollectionView) {
             AddCollectionView()
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
     }

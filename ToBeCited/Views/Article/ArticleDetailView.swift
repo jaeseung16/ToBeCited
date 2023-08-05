@@ -134,7 +134,6 @@ struct ArticleDetailView: View, DropDelegate {
         }
         .sheet(isPresented: $presentSelectReferenceView) {
             SelectReferencesView(article: article, references: references)
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentAddToCollectionsView) {
@@ -144,7 +143,6 @@ struct ArticleDetailView: View, DropDelegate {
         }
         .sheet(isPresented: $presentImportCollectionAsReferences) {
             ImportCollectionAsReferencesView(article: article)
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
         .alert("ERROR", isPresented: $showErrorAlert) {
@@ -400,12 +398,15 @@ struct ArticleDetailView: View, DropDelegate {
                 Spacer()
                 
                 Button {
+                    viewModel.fetchAllArticles()
+                    viewModel.fetchAllAuthors()
                     presentSelectReferenceView = true
                 } label: {
                     Label("edit", systemImage: "pencil.circle")
                 }
                 
                 Button {
+                    viewModel.fetchAllColections()
                     presentImportCollectionAsReferences = true
                 } label: {
                     Label("import from collections", systemImage: "square.and.arrow.down.on.square")

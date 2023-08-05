@@ -107,19 +107,7 @@ struct AddToCollectionsView: View {
     }
     
     private func update() -> Void {
-        for collection in collectionsToAdd {
-            let count = collection.articles == nil ? 0 : collection.articles!.count
-            
-            let order = OrderInCollection(context: viewContext)
-            order.collectionId = collection.uuid
-            order.articleId = article.uuid
-            order.order = Int64(count)
-            collection.addToOrders(order)
-            article.addToOrders(order)
-            
-            article.addToCollections(collection)
-        }
-        
+        viewModel.add(article: article, to: collectionsToAdd)
         viewModel.save { success in
             if !success {
                 viewModel.log("AddToCollectionsView: Failed to update")
