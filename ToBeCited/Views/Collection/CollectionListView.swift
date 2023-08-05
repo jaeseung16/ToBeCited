@@ -31,14 +31,12 @@ struct CollectionListView: View {
                 ForEach(filteredCollections) { collection in
                     if let name = collection.name, name != "" {
                         NavigationLink(destination: CollectionDetailView(collection: collection, collectionName: name)) {
-                            VStack {
-                                HStack {
-                                    Text(name)
-                                    Spacer()
-                                    Label("\(collection.articles?.count ?? 0)", systemImage: "doc.on.doc")
-                                        .font(.callout)
-                                        .foregroundColor(Color.secondary)
-                                }
+                            HStack {
+                                Text(name)
+                                Spacer()
+                                Label("\(collection.articles?.count ?? 0)", systemImage: "doc.on.doc")
+                                    .font(.callout)
+                                    .foregroundColor(Color.secondary)
                             }
                         }
                     }
