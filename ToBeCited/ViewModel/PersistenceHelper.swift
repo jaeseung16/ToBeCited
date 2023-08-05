@@ -153,7 +153,7 @@ class PersistenceHelper {
         viewContext.rollback()
     }
     
-    private func getCount(entityName: String) -> Int {
+    func getCount(entityName: String) -> Int {
         return persistence.count(entityName)
     }
 }
