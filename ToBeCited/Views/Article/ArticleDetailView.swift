@@ -17,7 +17,6 @@ struct ArticleDetailView: View, DropDelegate {
     @State private var presentEditAbstractView = false
     @State private var exportPDF = false
     @State private var pdfData = Data()
-    @State private var pdfURL: URL?
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
     @State private var presentSelectReferenceView = false
@@ -126,7 +125,7 @@ struct ArticleDetailView: View, DropDelegate {
         .fileExporter(isPresented: $exportPDF, documents: [PDFFile(pdfData: pdfData)], contentType: .pdf) { result in
             switch result {
             case .success(let url):
-                print("saved pdf at \(url)")
+                viewModel.log("Exported a pdf file to \(url)")
             case .failure(let error):
                 errorMessage = "Failed to export the pdf file: \(error.localizedDescription)"
                 showErrorAlert = true
