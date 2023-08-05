@@ -142,4 +142,25 @@ class PersistenceHelper {
         article.addToOrders(order)
         return order
     }
+    
+    func create(collection name: String, of articles: [Article]) -> Collection {
+        let date = Date()
+        let collection = Collection(context: viewContext)
+        collection.name = name != "" ? name : collectionDateFormatter.string(from: date)
+        collection.uuid = UUID()
+        collection.created = date
+        collection.lastupd = date
+        return collection
+    }
+    
+    private var collectionDateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .medium
+        return dateFormatter
+    }
+    
+    func rollback() {
+        viewContext.rollback()
+    }
 }

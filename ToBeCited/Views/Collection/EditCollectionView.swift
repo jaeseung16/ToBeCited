@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct EditCollectionView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
@@ -85,7 +84,7 @@ struct EditCollectionView: View {
             Spacer()
             
             Button(action: {
-                viewModel.update(collection: collection, with: articlesInCollection, viewContext: viewContext)
+                viewModel.update(collection: collection, with: articlesInCollection)
                 dismiss.callAsFunction()
             }, label: {
                 Text("Save")

@@ -11,16 +11,11 @@ struct CollectionListView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Collection.name, ascending: true)],
-        animation: .default)
-    private var collections: FetchedResults<Collection>
-    
     @State private var presentAddCollectionView = false
     @State private var titleToSearch = ""
     
     private var filteredCollections: [Collection] {
-        collections.filter { collection in
+        viewModel.collections.filter { collection in
             if titleToSearch == "" {
                 return true
             } else if let name = collection.name {

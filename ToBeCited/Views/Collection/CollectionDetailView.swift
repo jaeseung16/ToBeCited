@@ -125,17 +125,14 @@ struct CollectionDetailView: View {
         .padding()
         .sheet(isPresented: $presentEditOrderView) {
             EditOrderView(orders: ordersInCollection)
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentEditCollectionView) {
             EditCollectionView(collection: collection, articlesInCollection: articlesInCollection)
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentExportCollectionView) {
             ExportCollectionView(collection: collection)
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
     }
@@ -159,17 +156,15 @@ struct CollectionDetailView: View {
         withAnimation {
             offsets.map { ordersInCollection[$0] }.forEach { order in
                 order.article?.removeFromCollections(collection)
-                viewContext.delete(order)
+                viewModel.delete(order)
             }
             
             if let offset = offsets.first {
-                collection.orders?.forEach({ order in
-                    if let order = order as? OrderInCollection {
-                        if order.order > offset {
-                            order.order -= 1
-                        }
+                collection.orders?.forEach { order in
+                    if let order = order as? OrderInCollection, order.order > offset {
+                        order.order -= 1
                     }
-                })
+                }
             }
 
             viewModel.save()

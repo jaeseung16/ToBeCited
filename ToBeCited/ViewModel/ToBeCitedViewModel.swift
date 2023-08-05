@@ -195,10 +195,12 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     // MARK: - Persistence
     @Published var articles = [Article]() // TODO: May need separate allArticles?
     @Published var authors = [Author]() // TODO: May need separate allAuthors?
+    @Published var collections = [Collection]()
     
     func fetchAll() {
         fetchArticles()
         fetchAuthors()
+        fetchCollections()
     }
     
     func fetchArticles() {
@@ -214,6 +216,12 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                                         NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
                                         NSSortDescriptor(keyPath: \Author.created, ascending: false)]
         authors = persistenceHelper.perform(fetchRequest)
+    }
+    
+    func fetchCollections() {
+        let fetchRequest = NSFetchRequest<Collection>(entityName: "Collection")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Collection.name, ascending: true)]
+        collections = persistenceHelper.perform(fetchRequest)
     }
     
     func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
@@ -284,24 +292,12 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         save()
     }
     
-    func addCollection(_ name: String, articles: [Article], viewContext: NSManagedObjectContext) -> Void {
-        let date = Date()
-        
-        let collection = Collection(context: viewContext)
-        collection.name = name != "" ? name : collectionDateFormatter.string(from: date)
-        collection.uuid = UUID()
-        collection.created = date
-        collection.lastupd = date
+    func addCollection(_ name: String, articles: [Article]) -> Void {
+        let collection = persistenceHelper.create(collection: name, of: articles)
         
         for index in 0..<articles.count {
             collection.addToArticles(articles[index])
-            
-            let orderInCollection = OrderInCollection(context: viewContext)
-            orderInCollection.collectionId = collection.uuid
-            orderInCollection.articleId = articles[index].uuid
-            orderInCollection.order = Int64(index)
-            orderInCollection.collection = collection
-            orderInCollection.article = articles[index]
+            let _ = persistenceHelper.createOrder(in: collection, for: articles[index], with: Int64(index))
         }
         
         save()
@@ -373,6 +369,14 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         save()
     }
     
+    func delete(_ order: OrderInCollection) -> Void {
+        delete(order)
+    }
+    
+    func rollback() -> Void {
+        persistenceHelper.rollback()
+    }
+    
     // MARK: - Persistence History Request
     private lazy var historyRequestQueue = DispatchQueue(label: "history")
     private func fetchUpdates(_ notification: Notification) -> Void {
@@ -442,10 +446,10 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         save()
     }
     
-    func update(collection: Collection, with articles: [Article], viewContext: NSManagedObjectContext) -> Void {
+    func update(collection: Collection, with articles: [Article]) -> Void {
         collection.orders?.forEach { order in
             if let order = order as? OrderInCollection {
-                viewContext.delete(order)
+                delete(order)
             }
         }
         
@@ -459,12 +463,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             let article = articles[index]
             article.addToCollections(collection)
             
-            let order = OrderInCollection(context: viewContext)
-            order.collectionId = collection.uuid
-            order.articleId = article.uuid
-            order.order = Int64(index)
-            collection.addToOrders(order)
-            article.addToOrders(order)
+            let order = persistenceHelper.createOrder(in: collection, for: article, with: Int64(index))
         }
         
         save()
@@ -475,7 +474,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         collections.forEach { collection in
             var count = collection.articles == nil ? 0 : collection.articles!.count
             for article in articles {
-                let order = persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
+                let _ = persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
                 article.addToCollections(collection)
                 count += 1
             }

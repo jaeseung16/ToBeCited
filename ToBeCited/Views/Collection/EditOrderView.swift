@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct EditOrderView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
@@ -39,7 +38,7 @@ struct EditOrderView: View {
     private func header() -> some View {
         HStack {
             Button {
-                viewContext.rollback()
+                viewModel.rollback()
                 
                 dismiss.callAsFunction()
             } label: {
