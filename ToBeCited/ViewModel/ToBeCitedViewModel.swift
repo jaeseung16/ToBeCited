@@ -616,16 +616,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 self.logger.log("url is nil for item=\(item)")
                 return nil
             }
-            return find(for: url) as? T
+            return persistenceHelper.find(for: url) as? T
         }
-    }
-    
-    func find(for url: URL) -> NSManagedObject? {
-        guard let objectID = persistence.container.viewContext.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url) else {
-            self.logger.log("objectID is nil for url=\(url)")
-            return nil
-        }
-        return persistence.container.viewContext.object(with: objectID)
     }
     
 }

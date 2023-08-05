@@ -156,4 +156,12 @@ class PersistenceHelper {
     func getCount(entityName: String) -> Int {
         return persistence.count(entityName)
     }
+    
+    func find(for url: URL) -> NSManagedObject? {
+        guard let objectID = viewContext.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: url) else {
+            PersistenceHelper.logger.log("objectID is nil for url=\(url)")
+            return nil
+        }
+        return viewContext.object(with: objectID)
+    }
 }
