@@ -25,7 +25,6 @@ struct PDFFile: FileDocument {
     }
 
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-        print("fileWrapper: data = \(self.pdfData)")
         return FileWrapper(regularFileWithContents: self.pdfData)
     }
 }

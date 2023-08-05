@@ -95,8 +95,6 @@ struct AddRISView: View, DropDelegate {
     }
     
     func performDrop(info: DropInfo) -> Bool {
-        print("info = \(info)")
-        print("info.hasItemsConforming(to: [RISFilePickerViewController.risUTType] = \(info.hasItemsConforming(to: [.text]))")
         if info.hasItemsConforming(to: [.text]) {
             info.itemProviders(for: [.text]).forEach { itemProvider in
                 itemProvider.loadItem(forTypeIdentifier: UTType.text.identifier, options: nil) { data, error in

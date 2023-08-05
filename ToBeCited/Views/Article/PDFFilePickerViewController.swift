@@ -41,7 +41,6 @@ struct PDFFilePickerViewController: UIViewControllerRepresentable {
                 if url.absoluteString.lowercased().contains("pdf") {
                     if let data = try? Data(contentsOf: url) {
                         self.parent.pdfData = data
-                        print("data = \(data)")
                         break
                     }
                 }

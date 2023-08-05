@@ -17,9 +17,3 @@ struct StatsView: View {
         }
     }
 }
-
-struct StatsView_Previews: PreviewProvider {
-    static var previews: some View {
-        StatsView()
-    }
-}

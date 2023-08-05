@@ -36,12 +36,11 @@ struct ContentView: View {
                 //
             }
         }
-        .onChange(of: viewModel.risString, perform: { _ in
+        .onChange(of: viewModel.risString) { _ in
             presentAddRISView = true
-        })
+        }
         .sheet(isPresented: $presentAddRISView) {
             AddRISView(risString: viewModel.risString)
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
     }
