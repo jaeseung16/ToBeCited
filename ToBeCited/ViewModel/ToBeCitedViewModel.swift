@@ -237,7 +237,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                 case .success(_):
-                    // Fetch entities
                     self.toggle.toggle()
                     completionHandler?(true)
                 case .failure(let error):
@@ -254,9 +253,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     func save(risRecords: [RISRecord]) -> Void {
         let created = Date()
         risRecords.forEach { createEntities(from: $0, created: created) }
-        save { success in
-            self.logger.log("Saved data: success=\(success)")
-        }
+        save()
     }
     
     private func createEntities(from record: RISRecord, created at: Date) -> Void {
@@ -315,7 +312,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         for collection in collections {
             let count = collection.articles == nil ? 0 : collection.articles!.count
             let order = persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
-            article.addToCollections(collection)
+            collection.addToArticles(article)
         }
     }
     
@@ -403,7 +400,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func delete(_ order: OrderInCollection) -> Void {
-        delete(order)
+        persistenceHelper.delete(order)
     }
     
     func rollback() -> Void {
@@ -469,25 +466,26 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func update(collection: Collection, with articles: [Article]) -> Void {
+        logger.log("Updating collection=\(collection) with articles=\(articles)")
         collection.orders?.forEach { order in
             if let order = order as? OrderInCollection {
                 delete(order)
             }
         }
-        
+        logger.log("Deleted orders")
         collection.articles?.forEach { article in
             if let article = article as? Article {
                 article.removeFromCollections(collection)
             }
         }
-        
+        logger.log("Removed articles")
         for index in 0..<articles.count {
             let article = articles[index]
             article.addToCollections(collection)
             
             let order = persistenceHelper.createOrder(in: collection, for: article, with: Int64(index))
         }
-        
+        logger.log("Saving the update")
         save()
         
     }

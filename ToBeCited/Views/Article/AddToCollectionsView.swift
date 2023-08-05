@@ -11,11 +11,6 @@ struct AddToCollectionsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Collection.name, ascending: true)],
-        animation: .default)
-    private var collections: FetchedResults<Collection>
-    
     @State var article: Article
     @State var collectionsToAdd = [Collection]()
     
@@ -31,6 +26,8 @@ struct AddToCollectionsView: View {
                         Button {
                             if let index = collectionsToAdd.firstIndex(of: collection) {
                                 collectionsToAdd.remove(at: index)
+                            } else {
+                                collectionsToAdd.append(collection)
                             }
                         } label: {
                             VStack {
@@ -79,7 +76,7 @@ struct AddToCollectionsView: View {
     
     private func collectionListView() -> some View {
         List {
-            ForEach(collections) { collection in
+            ForEach(viewModel.allCollections) { collection in
                 if let name = collection.name, name != "" {
                     Button {
                         if let collections = article.collections, !collections.contains(collection) {

@@ -11,18 +11,13 @@ struct EditCollectionView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false)],
-        animation: .default)
-    private var articles: FetchedResults<Article>
-    
     var collection: Collection
     
     @State var articlesInCollection: [Article]
     @State var titleToSearch = ""
     
     private var filteredArticles: Array<Article> {
-        articles.filter {
+        viewModel.allArticles.filter {
             if titleToSearch == "" {
                 return true
             } else if let title = $0.title {

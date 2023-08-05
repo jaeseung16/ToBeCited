@@ -457,6 +457,7 @@ struct ArticleDetailView: View, DropDelegate {
                 Spacer()
                 
                 Button {
+                    viewModel.fetchAllColections()
                     presentAddToCollectionsView = true
                 } label: {
                     Text("Add to existing collections")
