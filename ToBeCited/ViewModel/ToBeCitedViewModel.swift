@@ -334,6 +334,23 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
+    func add(references collections: [Collection], to article: Article) -> Void {
+        for collection in collections {
+            collection.articles?.forEach { reference in
+                guard let reference = reference as? Article, reference != article else {
+                    return
+                }
+                
+                guard let references = reference.references, !references.contains(article) else {
+                    return
+                }
+                
+                reference.addToCited(article)
+                article.addToReferences(reference)
+            }
+        }
+    }
+    
     private func delete(_ object: NSManagedObject) -> Void {
         persistenceHelper.delete(object)
     }

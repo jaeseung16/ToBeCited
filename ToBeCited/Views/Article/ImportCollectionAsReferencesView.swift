@@ -105,22 +105,7 @@ struct ImportCollectionAsReferencesView: View {
     }
     
     private func update() -> Void {
-        for collection in collectionsToAdd {
-            collection.articles?.forEach { reference in
-                if let reference = reference as? Article {
-                    guard reference != article else {
-                        return
-                    }
-                    
-                    guard let references = reference.references, !references.contains(article) else {
-                        return
-                    }
-                    
-                    reference.addToCited(article)
-                    article.addToReferences(reference)
-                }
-            }
-        }
+        viewModel.add(references: collectionsToAdd, to: article)
         
         viewModel.save { success in
             if !success {
