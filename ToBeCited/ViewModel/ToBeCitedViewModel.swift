@@ -423,22 +423,11 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
 
     var articleCount: Int {
-        return getCount(entityName: "Article")
+        return persistenceHelper.getCount(entityName: "Article")
     }
     
     var authorCount: Int {
-        return getCount(entityName: "Author")
-    }
-    
-    private func getCount(entityName: String) -> Int {
-        var count = 0
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-        do {
-            count = try persistenceContainer.viewContext.count(for: fetchRequest)
-        } catch {
-            print("Can't count \(entityName): \(error.localizedDescription)")
-        }
-        return count
+        return persistenceHelper.getCount(entityName: "Author")
     }
     
     func findAuthors(by example: Author) -> [Author] {
