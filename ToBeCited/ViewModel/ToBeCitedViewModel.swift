@@ -94,9 +94,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         let articles = collection.orders?
             .map { $0 as! OrderInCollection }
             .sorted(by: { $0.order < $1.order })
-            .map { $0.article }
-            .filter { $0 != nil }
-            .map { $0! }
+            .flatMap { $0.article }
         
         guard let articles = articles else {
             return
@@ -507,7 +505,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func log(_ message: String) -> Void {
-        logger.log("\(message)")
+        logger.log("\(message, privacy: .public)")
     }
     
     // MARK: - Spotlight
