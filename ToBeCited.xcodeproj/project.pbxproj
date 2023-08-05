@@ -28,6 +28,7 @@
 		9035E35A27F513F8007BCBD5 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9035E35927F513F8007BCBD5 /* StatsView.swift */; };
 		903F1C91284EC47F00F93982 /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 903F1C90284EC47F00F93982 /* Persistence */; };
 		9042BEB8284CF8D800C3BBD5 /* ToBeCitedConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9042BEB7284CF8D800C3BBD5 /* ToBeCitedConstants.swift */; };
+		9080FBBD2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9080FBBC2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift */; };
 		90A7D5202A76E57600324970 /* ToBeCitedSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A7D51F2A76E57600324970 /* ToBeCitedSpotlight.swift */; };
 		90A7D5222A76F6B200324970 /* PersistenceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A7D5212A76F6B200324970 /* PersistenceHelper.swift */; };
 		90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62040271E06BE005D0FEA /* RISReferenceType.swift */; };
@@ -105,6 +106,7 @@
 		9031FE0E278285FB005DADC8 /* EditRISView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRISView.swift; sourceTree = "<group>"; };
 		9035E35927F513F8007BCBD5 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		9042BEB7284CF8D800C3BBD5 /* ToBeCitedConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedConstants.swift; sourceTree = "<group>"; };
+		9080FBBC2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedDateFormatter.swift; sourceTree = "<group>"; };
 		90A7D51F2A76E57600324970 /* ToBeCitedSpotlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedSpotlight.swift; sourceTree = "<group>"; };
 		90A7D5212A76F6B200324970 /* PersistenceHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceHelper.swift; sourceTree = "<group>"; };
 		90B62040271E06BE005D0FEA /* RISReferenceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RISReferenceType.swift; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 				90113C1D276BDD32007CE1D2 /* ContactDTO.swift */,
 				90A7D51F2A76E57600324970 /* ToBeCitedSpotlight.swift */,
 				90A7D5212A76F6B200324970 /* PersistenceHelper.swift */,
+				9080FBBC2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -519,6 +522,7 @@
 				90EF91EE27584F3300B1CD6F /* AuthorContactView.swift in Sources */,
 				90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */,
 				90113C20276BF163007CE1D2 /* AddToCollectionsView.swift in Sources */,
+				9080FBBD2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift in Sources */,
 				90113C22276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift in Sources */,
 				900D77042745BB0C00F0416C /* ExportOrder.swift in Sources */,
 				9009B6792721FB640023C316 /* AuthorMergeView.swift in Sources */,

@@ -57,7 +57,7 @@ struct CollectionSummaryView: View {
                                 Spacer()
                                     .frame(width: 20)
                                 
-                                Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
+                                Text("\(ToBeCitedDateFormatter.yearOnly.string(from: article.published ?? Date()))")
                             }
                         }
                     }

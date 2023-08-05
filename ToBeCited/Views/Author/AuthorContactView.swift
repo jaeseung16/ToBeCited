@@ -59,17 +59,10 @@ struct AuthorContactView: View {
             HStack {
                 Spacer()
                 
-                Text("Added on \(dateFormatter.string(from: contact.created ?? Date()))")
+                Text("Added on \(ToBeCitedDateFormatter.authorContact.string(from: contact.created ?? Date()))")
                     .font(.callout)
                     .foregroundColor(.secondary)
             }
         }
-    }
-    
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .none
-        return dateFormatter
     }
 }

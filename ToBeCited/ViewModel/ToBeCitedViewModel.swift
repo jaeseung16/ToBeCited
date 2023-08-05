@@ -41,19 +41,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     private let persistenceHelper: PersistenceHelper
     
-    var yearOnlyDateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy"
-        return dateFormatter
-    }
-    
-    private var collectionDateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .medium
-        return dateFormatter
-    }
-    
     init(persistence: Persistence) {
         self.persistence = persistence
         self.persistenceHelper = PersistenceHelper(persistence: persistence)
@@ -381,7 +368,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func delete(_ authors: [Author]) -> Void {
-        authors.forEach {author in
+        authors.forEach { author in
             if author.articles == nil || author.articles!.count == 0 {
                 delete(author)
             }

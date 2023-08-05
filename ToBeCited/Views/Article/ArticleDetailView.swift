@@ -309,10 +309,7 @@ struct ArticleDetailView: View, DropDelegate {
     }
     
     private var publicationDate: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .none
-        return dateFormatter.string(from: article.published!)
+        return ToBeCitedDateFormatter.publication.string(from: article.published!)
     }
     
     private func doiLinkView(url: URL) -> some View {

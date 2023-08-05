@@ -27,7 +27,7 @@ struct ArticleRowView: View {
                 Spacer()
                     .frame(width: 10)
                 
-                Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
+                Text("\(ToBeCitedDateFormatter.yearOnly.string(from: article.published ?? Date()))")
             }
             .font(.callout)
             .foregroundColor(.secondary)
