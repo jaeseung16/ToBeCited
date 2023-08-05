@@ -33,11 +33,7 @@ class PersistenceHelper {
     }
     
     func getSpotlightDelegate<T: NSCoreDataCoreSpotlightDelegate>() -> T? {
-        if let persistentStoreDescription = self.persistence.container.persistentStoreDescriptions.first {
-            return T(forStoreWith: persistentStoreDescription, coordinator: self.persistence.container.persistentStoreCoordinator)
-        }
-        PersistenceHelper.logger.log("Returning nil")
-        return nil
+        return persistence.createCoreSpotlightDelegate()
     }
     
     func save(completionHandler: @escaping (Result<Void,Error>) -> Void) -> Void {
