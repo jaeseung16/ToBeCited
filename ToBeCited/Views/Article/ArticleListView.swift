@@ -23,6 +23,8 @@ struct ArticleListView: View {
     }
     @State private var titleToSearch = ""
     
+    @State private var selectedArticle: Article?
+    
     private var filteredArticles: [Article] {
         viewModel.articles.filter { article in
             if viewModel.selectedAuthors == nil {
@@ -49,10 +51,11 @@ struct ArticleListView: View {
         NavigationView {
             List {
                 ForEach(filteredArticles) { article in
-                    NavigationLink(destination:
-                                    ArticleDetailView(article: article,
-                                                      title: article.title ?? "Title is not available",
-                                                      published: article.published ?? Date())) {
+                    NavigationLink(tag: article, selection: $selectedArticle) {
+                        ArticleDetailView(article: article,
+                                          title: article.title ?? "Title is not available",
+                                          published: article.published ?? Date())
+                    } label: {
                         ArticleRowView(article: article)
                     }
                 }
@@ -93,6 +96,7 @@ struct ArticleListView: View {
         .onContinueUserActivity(CSSearchableItemActionType) { activity in
             viewModel.continueActivity(activity) { article in
                 titleToSearch = article.title ?? ""
+                selectedArticle = article
             }
         }
     }
