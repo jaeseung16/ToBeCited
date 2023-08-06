@@ -106,11 +106,6 @@ struct ImportCollectionAsReferencesView: View {
     
     private func update() -> Void {
         viewModel.add(references: collectionsToAdd, to: article)
-        viewModel.save { success in
-            if !success {
-                viewModel.log("ImportCollectionAsReferencesView: Failed to update")
-            }
-        }
     }
 }
 

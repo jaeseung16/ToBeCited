@@ -154,20 +154,7 @@ struct CollectionDetailView: View {
     
     private func delete(offsets: IndexSet) {
         withAnimation {
-            offsets.map { ordersInCollection[$0] }.forEach { order in
-                order.article?.removeFromCollections(collection)
-                viewModel.delete(order)
-            }
-            
-            if let offset = offsets.first {
-                collection.orders?.forEach { order in
-                    if let order = order as? OrderInCollection, order.order > offset {
-                        order.order -= 1
-                    }
-                }
-            }
-
-            viewModel.save()
+            viewModel.delete(offsets.map { ordersInCollection[$0] }, at: offsets, in: collection)
         }
     }
 }

@@ -164,4 +164,8 @@ class PersistenceHelper {
         }
         return viewContext.object(with: objectID)
     }
+    
+    func perform(_ block: @escaping () -> Void) -> Void {
+        viewContext.perform(block)
+    }
 }

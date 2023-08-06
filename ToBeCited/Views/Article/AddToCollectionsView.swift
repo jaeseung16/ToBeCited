@@ -104,11 +104,6 @@ struct AddToCollectionsView: View {
     
     private func update() -> Void {
         viewModel.add(article: article, to: collectionsToAdd)
-        viewModel.save { success in
-            if !success {
-                viewModel.log("AddToCollectionsView: Failed to update")
-            }
-        }
     }
     
 }

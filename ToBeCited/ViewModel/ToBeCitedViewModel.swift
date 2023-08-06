@@ -253,8 +253,10 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     func save(risRecords: [RISRecord]) -> Void {
         let created = Date()
-        risRecords.forEach { createEntities(from: $0, created: created) }
-        save()
+        persistenceHelper.perform {
+            risRecords.forEach { self.createEntities(from: $0, created: created) }
+            self.save()
+        }
     }
     
     private func createEntities(from record: RISRecord, created at: Date) -> Void {
@@ -293,43 +295,63 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func add(contact: ContactDTO, to author: Author) -> Void {
-        let contactEntity = persistenceHelper.createAuthorContact(from: contact)
-        author.addToContacts(contactEntity)
-        save()
+        persistenceHelper.perform {
+            let contactEntity = self.persistenceHelper.createAuthorContact(from: contact)
+            author.addToContacts(contactEntity)
+            self.save()
+        }
     }
     
     func addCollection(_ name: String, articles: [Article]) -> Void {
-        let collection = persistenceHelper.create(collection: name, of: articles)
-        
-        for index in 0..<articles.count {
-            collection.addToArticles(articles[index])
-            let _ = persistenceHelper.createOrder(in: collection, for: articles[index], with: Int64(index))
+        persistenceHelper.perform {
+            let collection = self.persistenceHelper.create(collection: name, of: articles)
+            
+            for index in 0..<articles.count {
+                collection.addToArticles(articles[index])
+                let _ = self.persistenceHelper.createOrder(in: collection, for: articles[index], with: Int64(index))
+            }
+            
+            self.save()
         }
-        
-        save()
     }
     
     func add(article: Article, to collections: [Collection]) -> Void {
-        for collection in collections {
-            let count = collection.articles == nil ? 0 : collection.articles!.count
-            let _ = persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
-            collection.addToArticles(article)
+        persistenceHelper.perform {
+            collections.forEach { collection in
+                let count = collection.articles == nil ? 0 : collection.articles!.count
+                let _ = self.persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
+                collection.addToArticles(article)
+            }
+            
+            self.save { success in
+                if !success {
+                    self.logger.log("AddToCollectionsView: Failed to update")
+                }
+            }
         }
     }
     
     func add(references collections: [Collection], to article: Article) -> Void {
-        for collection in collections {
-            collection.articles?.forEach { reference in
-                guard let reference = reference as? Article, reference != article else {
-                    return
+        persistenceHelper.perform {
+            for collection in collections {
+                collection.articles?.forEach { reference in
+                    guard let reference = reference as? Article, reference != article else {
+                        return
+                    }
+                    
+                    guard let references = reference.references, !references.contains(article) else {
+                        return
+                    }
+                    
+                    reference.addToCited(article)
+                    article.addToReferences(reference)
                 }
-                
-                guard let references = reference.references, !references.contains(article) else {
-                    return
+            }
+            
+            self.save { success in
+                if !success {
+                    self.logger.log("ImportCollectionAsReferencesView: Failed to update")
                 }
-                
-                reference.addToCited(article)
-                article.addToReferences(reference)
             }
         }
     }
@@ -339,69 +361,92 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func delete(_ articles: [Article]) -> Void {
-        articles.forEach { article in
-            article.collections?.forEach { collection in
-                if let collection = collection as? Collection {
-                    article.removeFromCollections(collection)
+        persistenceHelper.perform {
+            articles.forEach { article in
+                article.collections?.forEach { collection in
+                    if let collection = collection as? Collection {
+                        article.removeFromCollections(collection)
+                    }
                 }
-            }
-                  
-            // TODO: Reorder articles in collection
-            // TODO: Move these operations to viewModel
-                  
-            article.orders?.forEach { order in
-                if let order = order as? OrderInCollection {
-                    article.removeFromOrders(order)
+                      
+                // TODO: Reorder articles in collection
+                // TODO: Move these operations to viewModel
+                      
+                article.orders?.forEach { order in
+                    if let order = order as? OrderInCollection {
+                        article.removeFromOrders(order)
+                    }
                 }
+                
+                self.delete(article)
             }
             
-            delete(article)
-        }
-        
-        save { success in
-            self.logger.log("Delete data: success=\(success)")
+            self.save { success in
+                self.logger.log("Delete data: success=\(success)")
+            }
         }
     }
     
     func delete(_ authors: [Author]) -> Void {
-        authors.forEach { author in
-            if author.articles == nil || author.articles!.count == 0 {
-                delete(author)
+        persistenceHelper.perform {
+            authors.forEach { author in
+                if author.articles == nil || author.articles!.count == 0 {
+                    self.delete(author)
+                }
             }
+            self.save()
         }
-        save()
     }
     
     func delete(_ contacts: [AuthorContact], from author: Author) -> Void {
-        contacts.forEach { contact in
-            author.removeFromContacts(contact)
-            delete(contact)
+        persistenceHelper.perform {
+            contacts.forEach { contact in
+                author.removeFromContacts(contact)
+                self.delete(contact)
+            }
+            self.save()
         }
-        save()
     }
     
     func delete(_ collections: [Collection]) -> Void {
-        collections.forEach { collection in
-            collection.articles?.forEach { article in
-                if let article = article as? Article {
-                    article.removeFromCollections(collection)
+        persistenceHelper.perform {
+            collections.forEach { collection in
+                collection.articles?.forEach { article in
+                    if let article = article as? Article {
+                        article.removeFromCollections(collection)
+                    }
                 }
+                
+                collection.orders?.forEach { order in
+                    if let order = order as? OrderInCollection {
+                        self.delete(order)
+                    }
+                }
+                
+                self.delete(collection)
             }
             
-            collection.orders?.forEach { order in
-                if let order = order as? OrderInCollection {
-                    delete(order)
-                }
-            }
-            
-            delete(collection)
+            self.save()
         }
-        
-        save()
     }
     
-    func delete(_ order: OrderInCollection) -> Void {
-        persistenceHelper.delete(order)
+    func delete(_ orders: [OrderInCollection], at offsets: IndexSet, in collection: Collection) -> Void {
+        persistenceHelper.perform {
+            orders.forEach { order in
+                order.article?.removeFromCollections(collection)
+                self.delete(order)
+            }
+            
+            if let offset = offsets.first {
+                collection.orders?.forEach { order in
+                    if let order = order as? OrderInCollection, order.order > offset {
+                        order.order -= 1
+                    }
+                }
+            }
+
+            self.save()
+        }
     }
     
     func rollback() -> Void {
