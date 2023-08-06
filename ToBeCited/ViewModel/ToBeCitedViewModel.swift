@@ -311,7 +311,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     func add(article: Article, to collections: [Collection]) -> Void {
         for collection in collections {
             let count = collection.articles == nil ? 0 : collection.articles!.count
-            let order = persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
+            let _ = persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
             collection.addToArticles(article)
         }
     }
