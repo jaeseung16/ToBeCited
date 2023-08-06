@@ -15,21 +15,24 @@ struct ContentView: View {
     @State private var presentAddRISView = false
     
     var body: some View {
-        TabView {
+        TabView(selection: $viewModel.selectedTab) {
             ArticleListView()
                 .tabItem {
                     Label("Articles", systemImage: "doc.on.doc")
                 }
+                .tag(ToBeCitedTab.articles)
             
             AuthorListView()
                 .tabItem {
                     Label("Authors", systemImage: "person.3")
                 }
+                .tag(ToBeCitedTab.authors)
             
             CollectionListView()
                 .tabItem {
                     Label("Collections", systemImage: "square.stack.3d.up")
                 }
+                .tag(ToBeCitedTab.collections)
         }
         .alert("Failed to save data", isPresented: $viewModel.showAlert) {
             Button("Dismiss", role: .cancel) {

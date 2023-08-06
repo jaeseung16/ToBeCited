@@ -26,6 +26,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     @Published var showAlert = false
     @Published var risString = ""
     
+    @Published var selectedTab = ToBeCitedTab.articles
     @Published var selectedAuthors: Set<Author>?
     @Published var selectedPublishedIn: Int?
     
@@ -94,7 +95,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         let articles = collection.orders?
             .map { $0 as! OrderInCollection }
             .sorted(by: { $0.order < $1.order })
-            .flatMap { $0.article }
+            .compactMap { $0.article }
         
         guard let articles = articles else {
             return
@@ -483,7 +484,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             let article = articles[index]
             article.addToCollections(collection)
             
-            let order = persistenceHelper.createOrder(in: collection, for: article, with: Int64(index))
+            let _ = persistenceHelper.createOrder(in: collection, for: article, with: Int64(index))
         }
         logger.log("Saving the update")
         save()
@@ -614,6 +615,30 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             }
             return persistenceHelper.find(for: url) as? T
         }
+    }
+    
+    func continueActivity(_ activity: NSUserActivity, completionHandler: @escaping (Article) -> Void) {
+        logger.log("continueActivity: \(activity)")
+        guard let info = activity.userInfo, let objectIdentifier = info[CSSearchableItemActivityIdentifier] as? String else {
+            return
+        }
+
+        guard let objectURI = URL(string: objectIdentifier), let entity = persistenceHelper.find(for: objectURI) else {
+            logger.log("Can't find an object with objectIdentifier=\(objectIdentifier)")
+            return
+        }
+        
+        logger.log("entity = \(entity)")
+        
+        DispatchQueue.main.async {
+            if let article = entity as? Article {
+                self.selectedTab = .articles
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    completionHandler(article)
+                }
+            }
+        }
+        
     }
     
 }

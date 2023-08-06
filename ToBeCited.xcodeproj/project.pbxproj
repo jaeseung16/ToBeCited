@@ -28,6 +28,7 @@
 		9035E35A27F513F8007BCBD5 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9035E35927F513F8007BCBD5 /* StatsView.swift */; };
 		903F1C91284EC47F00F93982 /* Persistence in Frameworks */ = {isa = PBXBuildFile; productRef = 903F1C90284EC47F00F93982 /* Persistence */; };
 		9042BEB8284CF8D800C3BBD5 /* ToBeCitedConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9042BEB7284CF8D800C3BBD5 /* ToBeCitedConstants.swift */; };
+		9044F6782A7FDF6A00EB06AE /* ToBeCitedTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9044F6772A7FDF6A00EB06AE /* ToBeCitedTab.swift */; };
 		9080FBBD2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9080FBBC2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift */; };
 		90A7D5202A76E57600324970 /* ToBeCitedSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A7D51F2A76E57600324970 /* ToBeCitedSpotlight.swift */; };
 		90A7D5222A76F6B200324970 /* PersistenceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A7D5212A76F6B200324970 /* PersistenceHelper.swift */; };
@@ -106,6 +107,7 @@
 		9031FE0E278285FB005DADC8 /* EditRISView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRISView.swift; sourceTree = "<group>"; };
 		9035E35927F513F8007BCBD5 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		9042BEB7284CF8D800C3BBD5 /* ToBeCitedConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedConstants.swift; sourceTree = "<group>"; };
+		9044F6772A7FDF6A00EB06AE /* ToBeCitedTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedTab.swift; sourceTree = "<group>"; };
 		9080FBBC2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedDateFormatter.swift; sourceTree = "<group>"; };
 		90A7D51F2A76E57600324970 /* ToBeCitedSpotlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedSpotlight.swift; sourceTree = "<group>"; };
 		90A7D5212A76F6B200324970 /* PersistenceHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceHelper.swift; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 				90A7D51F2A76E57600324970 /* ToBeCitedSpotlight.swift */,
 				90A7D5212A76F6B200324970 /* PersistenceHelper.swift */,
 				9080FBBC2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift */,
+				9044F6772A7FDF6A00EB06AE /* ToBeCitedTab.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -479,6 +482,7 @@
 				90113C1E276BDD32007CE1D2 /* ContactDTO.swift in Sources */,
 				90FD841E273C917E00929EF7 /* AddCollectionView.swift in Sources */,
 				90C8D7B22753E36D0063DE71 /* AuthorListView.swift in Sources */,
+				9044F6782A7FDF6A00EB06AE /* ToBeCitedTab.swift in Sources */,
 				90DEAF54274ADE8100058AAC /* ArticleListView.swift in Sources */,
 				90C8D7AE2753C7F70063DE71 /* CollectionSummaryView.swift in Sources */,
 				90FE9771271F68A1002A75C3 /* ArticleDetailView.swift in Sources */,

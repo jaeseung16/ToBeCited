@@ -11,6 +11,7 @@ import os
 import CloudKit
 import CoreData
 import Persistence
+import CoreSpotlight
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     private let logger = Logger()
@@ -24,6 +25,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     private var database: CKDatabase {
         CKContainer(identifier: ToBeCitedConstants.iCloudIdentifier.rawValue).privateCloudDatabase
+    }
+    
+    let persistence : Persistence
+    let viewModel : ToBeCitedViewModel
+    
+    override init() {
+        self.persistence = Persistence(name: ToBeCitedConstants.appName.rawValue, identifier: ToBeCitedConstants.iCloudIdentifier.rawValue)
+        self.viewModel = ToBeCitedViewModel(persistence: persistence)
+        
+        super.init()
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

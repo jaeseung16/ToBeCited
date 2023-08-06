@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreSpotlight
 
 struct ArticleListView: View {
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
@@ -77,9 +78,8 @@ struct ArticleListView: View {
                     }
                 }
             }
-            
+            .searchable(text: $titleToSearch)
         }
-        .searchable(text: $titleToSearch)
         .onChange(of: titleToSearch) { newValue in
             viewModel.searchArticle(titleToSearch)
         }
@@ -89,6 +89,11 @@ struct ArticleListView: View {
         .sheet(isPresented: $presentFilterArticleView) {
             FilterArticleView()
                 .environmentObject(viewModel)
+        }
+        .onContinueUserActivity(CSSearchableItemActionType) { activity in
+            viewModel.continueActivity(activity) { article in
+                titleToSearch = article.title ?? ""
+            }
         }
     }
     
