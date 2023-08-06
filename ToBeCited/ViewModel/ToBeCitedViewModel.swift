@@ -466,6 +466,21 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         save()
     }
     
+    func update(article: Article, with authors: [Author]) -> Void {
+        logger.log("Updating article=\(article) with authors=\(authors)")
+        article.authors?.forEach { author in
+            if let author = author as? Author {
+                author.removeFromArticles(article)
+            }
+        }
+        
+        authors.forEach { author in
+            author.addToArticles(article)
+        }
+
+        save()
+    }
+    
     func update(collection: Collection, with articles: [Article]) -> Void {
         logger.log("Updating collection=\(collection) with articles=\(articles)")
         collection.orders?.forEach { order in

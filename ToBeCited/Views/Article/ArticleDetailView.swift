@@ -347,6 +347,12 @@ struct ArticleDetailView: View, DropDelegate {
                     .foregroundColor(.secondary)
                 
                 Spacer()
+                
+                NavigationLink {
+                    EditAuthorsView(article: article, authors: authors)
+                } label: {
+                    Label("edit", systemImage: "pencil.circle")
+                }
             }
             
             ForEach(authors, id: \.uuid) { author in
