@@ -238,7 +238,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                 case .success(_):
-                    self.toggle.toggle()
                     completionHandler?(true)
                 case .failure(let error):
                     self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
@@ -246,7 +245,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     completionHandler?(false)
                 }
                 
-                self.fetchAll()
+                if self.searchString.isEmpty {
+                    self.fetchAll()
+                }
             }
         }
     }
@@ -570,6 +571,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     // MARK: - Spotlight
     private var spotlightFoundArticles: [CSSearchableItem] = []
     private var articleSearchQuery: CSSearchQuery?
+    @Published var searchString = ""
     
     private func toggleIndexing(_ indexer: NSCoreDataCoreSpotlightDelegate?, enabled: Bool) {
         guard let indexer = indexer else { return }
@@ -616,17 +618,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         return nil
     }
     
-    func searchArticle(_ text: String) -> Void {
-        if text.isEmpty {
+    func searchArticle() -> Void {
+        if searchString.isEmpty {
             articleSearchQuery?.cancel()
             fetchArticles()
         } else {
-            searchArticles(text)
+            searchArticles()
         }
     }
     
-    private func searchArticles(_ text: String) {
-        let escapedText = text.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+    private func searchArticles() {
+        let escapedText = searchString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
         let queryString = "(title == \"*\(escapedText)*\"cd) || (textContent == \"*\(escapedText)*\"cd)"
         
         articleSearchQuery = CSSearchQuery(queryString: queryString, attributes: ["title"])
@@ -639,7 +641,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         
         articleSearchQuery?.completionHandler = { error in
             if let error = error {
-                self.logger.log("Searching \(text) came back with error: \(error.localizedDescription, privacy: .public)")
+                self.logger.log("Searching \(self.searchString) came back with error: \(error.localizedDescription, privacy: .public)")
             } else {
                 DispatchQueue.main.async {
                     self.fetchArticles(self.spotlightFoundArticles)

@@ -21,7 +21,6 @@ struct ArticleListView: View {
             return ""
         }
     }
-    @State private var titleToSearch = ""
     
     @State private var selectedArticle: Article?
     
@@ -81,10 +80,10 @@ struct ArticleListView: View {
                     }
                 }
             }
-            .searchable(text: $titleToSearch)
+            .searchable(text: $viewModel.searchString)
         }
-        .onChange(of: titleToSearch) { newValue in
-            viewModel.searchArticle(titleToSearch)
+        .onChange(of: viewModel.searchString) { newValue in
+            viewModel.searchArticle()
         }
         .sheet(isPresented: $presentAddArticleView) {
             AddRISView()                .environmentObject(viewModel)
@@ -95,7 +94,7 @@ struct ArticleListView: View {
         }
         .onContinueUserActivity(CSSearchableItemActionType) { activity in
             viewModel.continueActivity(activity) { article in
-                titleToSearch = article.title ?? ""
+                viewModel.searchString = article.title ?? ""
                 selectedArticle = article
             }
         }
