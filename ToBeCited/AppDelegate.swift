@@ -75,7 +75,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     private func subscribe() {
         guard !UserDefaults.standard.bool(forKey: didCreateArticleSubscription) else {
-            logger.log("alredy true: didCreateArticleSubscription=\(UserDefaults.standard.bool(forKey: self.didCreateArticleSubscription))")
+            logger.log("already true: didCreateArticleSubscription=\(UserDefaults.standard.bool(forKey: self.didCreateArticleSubscription))")
             return
         }
         

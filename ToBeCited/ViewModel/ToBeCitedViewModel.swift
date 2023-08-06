@@ -22,7 +22,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private let parser = RISParser()
     
     @Published var ordersInCollection = [OrderInCollection]()
-    @Published var toggle = false
+    @Published var updated = false
     @Published var showAlert = false
     @Published var risString = ""
     
@@ -52,6 +52,14 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
           .publisher(for: .NSPersistentStoreRemoteChange)
           .sink { self.fetchUpdates($0) }
           .store(in: &subscriptions)
+        
+        $updated
+            .debounce(for: 5.0, scheduler: RunLoop.main)
+            .sink { _ in
+                self.logger.log("Remote updates in progress")
+                self.fetchAll()
+            }
+            .store(in: &subscriptions)
         
         self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         
@@ -459,7 +467,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private func fetchUpdates(_ notification: Notification) -> Void {
         persistence.fetchUpdates(notification) { _ in
             DispatchQueue.main.async {
-                self.toggle.toggle()
+                self.updated.toggle()
             }
         }
     }
