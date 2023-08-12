@@ -96,7 +96,7 @@ struct AuthorDetailView: View {
                 articlesView()
                     .frame(height: 400)
             }
-            .navigationTitle(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
+            .navigationTitle(ToBeCitedNameFormatHelper.formatName(of: author))
             .frame(maxHeight: .infinity, alignment: .top)
             .padding()
             .sheet(isPresented: $presentAuthorMergeView) {

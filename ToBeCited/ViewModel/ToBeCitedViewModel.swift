@@ -150,13 +150,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
 
     }
     
-    func nameComponents(of author: Author) -> PersonNameComponents {
-        return PersonNameComponents(givenName: author.firstName,
-                                    middleName: author.middleName,
-                                    familyName: author.lastName,
-                                    nameSuffix: author.nameSuffix)
-    }
-    
     func journalString(article: Article) -> String {
         guard let journalTitle = article.journal else {
             return "Journal title is not available"
