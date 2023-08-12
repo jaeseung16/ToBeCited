@@ -122,7 +122,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         stringToExport = result
     }
     
-    func populateOrders(from collection: Collection) -> Void {
+    private func populateOrders(from collection: Collection) -> [OrderInCollection] {
         var orders = [OrderInCollection]()
 
         collection.orders?.forEach { order in
@@ -131,16 +131,15 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             }
         }
         
-        ordersInCollection.removeAll()
-        ordersInCollection = orders.sorted { $0.order < $1.order }
-        
-        self.articlesInCollection = ordersInCollection.filter { $0.article != nil }.map { $0.article! }
-        self.collection = collection
+        return orders.sorted { $0.order < $1.order }
     }
     
     func check(article: Article, in collection: Collection) -> Bool {
         if collection != self.collection {
-            populateOrders(from: collection)
+            ordersInCollection.removeAll()
+            ordersInCollection = populateOrders(from: collection)
+            self.articlesInCollection = ordersInCollection.filter { $0.article != nil }.map { $0.article! }
+            self.collection = collection
         }
         
         if let articles = self.articlesInCollection {
