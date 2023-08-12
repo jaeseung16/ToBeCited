@@ -86,7 +86,8 @@ struct ArticleListView: View {
             viewModel.searchArticle()
         }
         .sheet(isPresented: $presentAddArticleView) {
-            AddRISView()                .environmentObject(viewModel)
+            AddRISView()
+                .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentFilterArticleView) {
             FilterArticleView()

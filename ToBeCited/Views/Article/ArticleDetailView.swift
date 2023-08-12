@@ -137,7 +137,6 @@ struct ArticleDetailView: View, DropDelegate {
         }
         .sheet(isPresented: $presentAddToCollectionsView) {
             AddToCollectionsView(article: article)
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentImportCollectionAsReferences) {
@@ -211,7 +210,7 @@ struct ArticleDetailView: View, DropDelegate {
     private func updatePDF() -> Void {
         if !pdfData.isEmpty {
             article.pdf = pdfData
-            viewModel.save { success in
+            viewModel.save(forceFetch: false) { success in
                 if !success {
                     viewModel.log("Failed to save pdf")
                 }

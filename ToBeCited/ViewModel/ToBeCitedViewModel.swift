@@ -22,7 +22,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private let parser = RISParser()
     
     @Published var ordersInCollection = [OrderInCollection]()
-    @Published var updated = false
     @Published var showAlert = false
     @Published var risString = ""
     
@@ -49,16 +48,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         super.init()
         
         NotificationCenter.default
-          .publisher(for: .NSPersistentStoreRemoteChange)
-          .sink { self.fetchUpdates($0) }
-          .store(in: &subscriptions)
-        
-        $updated
-            .debounce(for: 5.0, scheduler: RunLoop.main)
-            .sink { _ in
-                self.logger.log("Remote updates in progress")
-                self.fetchAll()
-            }
+            .publisher(for: .NSPersistentStoreRemoteChange)
+            .sink { self.fetchUpdates($0) }
             .store(in: &subscriptions)
         
         self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
@@ -71,6 +62,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
         }
         
+        logger.log("spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
         if !spotlightIndexing {
             DispatchQueue.main.async {
                 self.indexArticles()
@@ -82,8 +74,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     @objc private func defaultsChanged() -> Void {
-        logger.log("spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
-        
         if !self.spotlightIndexing {
             DispatchQueue.main.async {
                 self.toggleIndexing(self.articleIndexer, enabled: false)
@@ -241,7 +231,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         allCollections = persistenceHelper.perform(fetchRequest)
     }
     
-    func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
+    func save(forceFetch: Bool = true, completionHandler: ((Bool) -> Void)? = nil) -> Void {
         persistenceHelper.save { result in
             DispatchQueue.main.async {
                 switch result {
@@ -253,7 +243,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     completionHandler?(false)
                 }
                 
-                if self.searchString.isEmpty {
+                // TODO
+                if self.searchString.isEmpty || forceFetch {
                     self.fetchAll()
                 }
             }
@@ -463,11 +454,10 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     // MARK: - Persistence History Request
-    private lazy var historyRequestQueue = DispatchQueue(label: "history")
     private func fetchUpdates(_ notification: Notification) -> Void {
         persistence.fetchUpdates(notification) { _ in
             DispatchQueue.main.async {
-                self.updated.toggle()
+                self.logger.log("Called persistence.fetchUpdates")
             }
         }
     }
