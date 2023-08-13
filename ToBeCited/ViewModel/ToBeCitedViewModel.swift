@@ -449,10 +449,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             return [Author]()
         }
         
-        let fetchRequest = Author.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "(lastName CONTAINS[cd] %@) AND (firstName BEGINSWITH[cd] %@)", argumentArray: [lastName, firstLetterOfFirstName.lowercased()])
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "firstName", ascending: true)]
-        
+        let sortDescriptors = [NSSortDescriptor(key: "firstName", ascending: true)]
+        let predicate = NSPredicate(format: "(lastName CONTAINS[cd] %@) AND (firstName BEGINSWITH[cd] %@)", argumentArray: [lastName, firstLetterOfFirstName.lowercased()])
+        let fetchRequest = persistenceHelper.getFetchRequest(for: Author.self, entityName: "Author", sortDescriptors: sortDescriptors, predicate: predicate)
         return persistenceHelper.perform(fetchRequest)
     }
     
