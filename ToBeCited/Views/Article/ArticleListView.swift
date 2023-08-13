@@ -60,6 +60,7 @@ struct ArticleListView: View {
                 }
                 .onDelete(perform: deleteArticles)
             }
+            .searchable(text: $viewModel.searchString)
             .navigationTitle(Text("Articles"))
             .toolbar {
                 ToolbarItemGroup {
@@ -81,7 +82,6 @@ struct ArticleListView: View {
                 }
             }
         }
-        .searchable(text: $viewModel.searchString)
         .onChange(of: viewModel.searchString) { newValue in
             viewModel.searchArticle()
         }
