@@ -158,6 +158,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     @Published var collections = [Collection]()
     @Published var allCollections = [Collection]()
     
+    // read
     func fetchAll() {
         fetchArticles()
         fetchAuthors()
@@ -225,6 +226,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
+    // create
     func save(risRecords: [RISRecord]) -> Void {
         let created = Date()
         persistenceHelper.perform {
@@ -276,7 +278,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
-    func addCollection(_ name: String, articles: [Article]) -> Void {
+    func add(collection name: String, of articles: [Article]) -> Void {
         persistenceHelper.perform {
             let collection = self.persistenceHelper.create(collection: name, of: articles)
             
@@ -330,6 +332,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
+    // delete
     private func delete(_ object: NSManagedObject) -> Void {
         persistenceHelper.delete(object)
     }
@@ -427,34 +430,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         persistenceHelper.rollback()
     }
     
-    // MARK: - Persistence History Request
-    private func fetchUpdates(_ notification: Notification) -> Void {
-        persistence.fetchUpdates(notification) { _ in
-            DispatchQueue.main.async {
-                self.logger.log("Called persistence.fetchUpdates")
-            }
-        }
-    }
-
-    var articleCount: Int {
-        return persistenceHelper.getCount(entityName: "Article")
-    }
-    
-    var authorCount: Int {
-        return persistenceHelper.getCount(entityName: "Author")
-    }
-    
-    func findAuthors(by example: Author) -> [Author] {
-        guard let lastName = example.lastName, let firstLetterOfFirstName = example.firstName?.first else {
-            return [Author]()
-        }
-        
-        let sortDescriptors = [NSSortDescriptor(key: "firstName", ascending: true)]
-        let predicate = NSPredicate(format: "(lastName CONTAINS[cd] %@) AND (firstName BEGINSWITH[cd] %@)", argumentArray: [lastName, firstLetterOfFirstName.lowercased()])
-        let fetchRequest = persistenceHelper.getFetchRequest(for: Author.self, entityName: "Author", sortDescriptors: sortDescriptors, predicate: predicate)
-        return persistenceHelper.perform(fetchRequest)
-    }
-    
+    // update
     func merge(authors: [Author]) -> Void {
         let toMerge = authors[0]
         
@@ -522,7 +498,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         save()
         
     }
-        
+    
     func add(_ articles: [Article], to collections: [Collection]) -> Void {
         collections.forEach { collection in
             var count = collection.articles == nil ? 0 : collection.articles!.count
@@ -533,6 +509,34 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             }
         }
         save()
+    }
+    
+    var articleCount: Int {
+        return persistenceHelper.getCount(entityName: "Article")
+    }
+    
+    var authorCount: Int {
+        return persistenceHelper.getCount(entityName: "Author")
+    }
+    
+    func findAuthors(by example: Author) -> [Author] {
+        guard let lastName = example.lastName, let firstLetterOfFirstName = example.firstName?.first else {
+            return [Author]()
+        }
+        
+        let sortDescriptors = [NSSortDescriptor(key: "firstName", ascending: true)]
+        let predicate = NSPredicate(format: "(lastName CONTAINS[cd] %@) AND (firstName BEGINSWITH[cd] %@)", argumentArray: [lastName, firstLetterOfFirstName.lowercased()])
+        let fetchRequest = persistenceHelper.getFetchRequest(for: Author.self, entityName: "Author", sortDescriptors: sortDescriptors, predicate: predicate)
+        return persistenceHelper.perform(fetchRequest)
+    }
+    
+    // MARK: - Persistence History Request
+    private func fetchUpdates(_ notification: Notification) -> Void {
+        persistence.fetchUpdates(notification) { _ in
+            DispatchQueue.main.async {
+                self.logger.log("Called persistence.fetchUpdates")
+            }
+        }
     }
     
     func log(_ message: String) -> Void {

@@ -102,7 +102,7 @@ struct AddCollectionView: View {
                 Spacer()
                 
                 Button(action: {
-                    viewModel.addCollection(name, articles: articlesToAdd)
+                    viewModel.add(collection: name, of: articlesToAdd)
                     dismiss.callAsFunction()
                 }, label: {
                     Text("Save")
