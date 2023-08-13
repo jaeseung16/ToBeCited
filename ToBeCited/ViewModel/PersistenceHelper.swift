@@ -169,8 +169,8 @@ class PersistenceHelper {
         viewContext.perform(block)
     }
     
-    func getFetchRequest<T: NSFetchRequestResult>(for type: T.Type, entityName: String, sortDescriptors: [NSSortDescriptor]) -> NSFetchRequest<T> {
-        let fetchRequest = NSFetchRequest<T>(entityName: entityName)
+    func getFetchRequest<Entity: NSFetchRequestResult>(for type: Entity.Type, entityName: String, sortDescriptors: [NSSortDescriptor]) -> NSFetchRequest<Entity> {
+        let fetchRequest = NSFetchRequest<Entity>(entityName: entityName)
         if !sortDescriptors.isEmpty {
             fetchRequest.sortDescriptors = sortDescriptors
         }
