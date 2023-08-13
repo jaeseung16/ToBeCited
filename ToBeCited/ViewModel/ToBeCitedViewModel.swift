@@ -165,43 +165,43 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func fetchArticles() {
-        let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Article.published, ascending: false),
-                                        NSSortDescriptor(keyPath: \Article.title, ascending: true)]
+        let sortDescriptors = [NSSortDescriptor(keyPath: \Article.published, ascending: false),
+                               NSSortDescriptor(keyPath: \Article.title, ascending: true)]
+        let fetchRequest = persistenceHelper.getFetchRequest(for: Article.self, entityName: "Article", sortDescriptors: sortDescriptors)
         articles = persistenceHelper.perform(fetchRequest)
     }
     
     func fetchAllArticles() {
-        let fetchRequest = NSFetchRequest<Article>(entityName: "Article")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Article.published, ascending: false)]
+        let sortDescriptors = [NSSortDescriptor(keyPath: \Article.published, ascending: false)]
+        let fetchRequest = persistenceHelper.getFetchRequest(for: Article.self, entityName: "Article", sortDescriptors: sortDescriptors)
         allArticles = persistenceHelper.perform(fetchRequest)
     }
     
     func fetchAuthors() {
-        let fetchRequest = NSFetchRequest<Author>(entityName: "Author")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
-                                        NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
-                                        NSSortDescriptor(keyPath: \Author.created, ascending: false)]
+        let sortDescriptors = [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
+                               NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
+                               NSSortDescriptor(keyPath: \Author.created, ascending: false)]
+        let fetchRequest = persistenceHelper.getFetchRequest(for: Author.self, entityName: "Author", sortDescriptors: sortDescriptors)
         authors = persistenceHelper.perform(fetchRequest)
     }
     
     func fetchAllAuthors() {
-        let fetchRequest = NSFetchRequest<Author>(entityName: "Author")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
-                                        NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
-                                        NSSortDescriptor(keyPath: \Author.created, ascending: false)]
+        let sortDescriptors = [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
+                               NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
+                               NSSortDescriptor(keyPath: \Author.created, ascending: false)]
+        let fetchRequest = persistenceHelper.getFetchRequest(for: Author.self, entityName: "Author", sortDescriptors: sortDescriptors)
         allAuthors = persistenceHelper.perform(fetchRequest)
     }
     
     func fetchCollections() {
-        let fetchRequest = NSFetchRequest<Collection>(entityName: "Collection")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Collection.name, ascending: true)]
+        let sortDescriptors = [NSSortDescriptor(keyPath: \Collection.name, ascending: true)]
+        let fetchRequest = persistenceHelper.getFetchRequest(for: Collection.self, entityName: "Collection", sortDescriptors: sortDescriptors)
         collections = persistenceHelper.perform(fetchRequest)
     }
     
     func fetchAllColections() {
-        let fetchRequest = NSFetchRequest<Collection>(entityName: "Collection")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Collection.name, ascending: true)]
+        let sortDescriptors = [NSSortDescriptor(keyPath: \Collection.name, ascending: true)]
+        let fetchRequest = persistenceHelper.getFetchRequest(for: Collection.self, entityName: "Collection", sortDescriptors: sortDescriptors)
         allCollections = persistenceHelper.perform(fetchRequest)
     }
     

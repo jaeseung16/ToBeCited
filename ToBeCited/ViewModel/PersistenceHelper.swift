@@ -168,4 +168,13 @@ class PersistenceHelper {
     func perform(_ block: @escaping () -> Void) -> Void {
         viewContext.perform(block)
     }
+    
+    func getFetchRequest<T: NSFetchRequestResult>(for type: T.Type, entityName: String, sortDescriptors: [NSSortDescriptor]) -> NSFetchRequest<T> {
+        let fetchRequest = NSFetchRequest<T>(entityName: entityName)
+        if !sortDescriptors.isEmpty {
+            fetchRequest.sortDescriptors = sortDescriptors
+        }
+        return fetchRequest
+    }
+    
 }
