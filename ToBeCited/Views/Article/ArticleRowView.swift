@@ -21,8 +21,8 @@ struct ArticleRowView: View {
             
             HStack {
                 Spacer()
-                
-                Text(viewModel.journalString(article: article))
+               
+                JournalTitleView(article: article)
                 
                 Spacer()
                     .frame(width: 10)

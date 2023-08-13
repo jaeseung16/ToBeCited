@@ -30,6 +30,8 @@
 		9042BEB8284CF8D800C3BBD5 /* ToBeCitedConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9042BEB7284CF8D800C3BBD5 /* ToBeCitedConstants.swift */; };
 		9044F6782A7FDF6A00EB06AE /* ToBeCitedTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9044F6772A7FDF6A00EB06AE /* ToBeCitedTab.swift */; };
 		9044F67A2A8032A200EB06AE /* EditAuthorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9044F6792A8032A200EB06AE /* EditAuthorsView.swift */; };
+		90760B472A89167A00E1536F /* JournalTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90760B462A89167A00E1536F /* JournalTitleView.swift */; };
+		90760B492A8917ED00E1536F /* ToBeCitedJournalTitleFormatHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90760B482A8917ED00E1536F /* ToBeCitedJournalTitleFormatHelper.swift */; };
 		907CC2D02A884033001FE531 /* ToBeCitedNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907CC2CF2A884033001FE531 /* ToBeCitedNameFormatter.swift */; };
 		9080FBBD2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9080FBBC2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift */; };
 		90A7D5202A76E57600324970 /* ToBeCitedSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A7D51F2A76E57600324970 /* ToBeCitedSpotlight.swift */; };
@@ -111,6 +113,8 @@
 		9042BEB7284CF8D800C3BBD5 /* ToBeCitedConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedConstants.swift; sourceTree = "<group>"; };
 		9044F6772A7FDF6A00EB06AE /* ToBeCitedTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedTab.swift; sourceTree = "<group>"; };
 		9044F6792A8032A200EB06AE /* EditAuthorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAuthorsView.swift; sourceTree = "<group>"; };
+		90760B462A89167A00E1536F /* JournalTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalTitleView.swift; sourceTree = "<group>"; };
+		90760B482A8917ED00E1536F /* ToBeCitedJournalTitleFormatHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedJournalTitleFormatHelper.swift; sourceTree = "<group>"; };
 		907CC2CF2A884033001FE531 /* ToBeCitedNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedNameFormatter.swift; sourceTree = "<group>"; };
 		9080FBBC2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedDateFormatter.swift; sourceTree = "<group>"; };
 		90A7D51F2A76E57600324970 /* ToBeCitedSpotlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedSpotlight.swift; sourceTree = "<group>"; };
@@ -193,6 +197,7 @@
 				9080FBBC2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift */,
 				9044F6772A7FDF6A00EB06AE /* ToBeCitedTab.swift */,
 				907CC2CF2A884033001FE531 /* ToBeCitedNameFormatter.swift */,
+				90760B482A8917ED00E1536F /* ToBeCitedJournalTitleFormatHelper.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -237,6 +242,7 @@
 				901086B1275AA5590067A1E2 /* ArticleRowView.swift */,
 				90113C1F276BF163007CE1D2 /* AddToCollectionsView.swift */,
 				90113C21276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift */,
+				90760B462A89167A00E1536F /* JournalTitleView.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -512,6 +518,7 @@
 				9035E35A27F513F8007BCBD5 /* StatsView.swift in Sources */,
 				90EB0CE7275BD6A0002106B2 /* AuthorNameView.swift in Sources */,
 				90FD8419273C5F6B00929EF7 /* SelectReferencesView.swift in Sources */,
+				90760B492A8917ED00E1536F /* ToBeCitedJournalTitleFormatHelper.swift in Sources */,
 				90D89A632725A9440079EBD2 /* UpdateTextView.swift in Sources */,
 				90EDF321271C85BD0097F0E0 /* ToBeCitedApp.swift in Sources */,
 				90EADA21274855D10001E150 /* TextDocument.swift in Sources */,
@@ -536,6 +543,7 @@
 				90113C20276BF163007CE1D2 /* AddToCollectionsView.swift in Sources */,
 				9080FBBD2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift in Sources */,
 				90113C22276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift in Sources */,
+				90760B472A89167A00E1536F /* JournalTitleView.swift in Sources */,
 				900D77042745BB0C00F0416C /* ExportOrder.swift in Sources */,
 				9009B6792721FB640023C316 /* AuthorMergeView.swift in Sources */,
 				9031FE0F278285FB005DADC8 /* EditRISView.swift in Sources */,

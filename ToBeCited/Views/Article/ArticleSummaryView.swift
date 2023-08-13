@@ -51,7 +51,7 @@ struct ArticleSummaryView: View {
                 .multilineTextAlignment(.center)
                 .padding()
             
-            Text(viewModel.journalString(article: article))
+            JournalTitleView(article: article)
             
             if article.published != nil {
                 publishedView()

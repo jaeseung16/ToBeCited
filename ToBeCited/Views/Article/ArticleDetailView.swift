@@ -9,7 +9,6 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ArticleDetailView: View, DropDelegate {
-    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var importPdf = false
@@ -254,7 +253,7 @@ struct ArticleDetailView: View, DropDelegate {
         VStack {
             titleView()
             
-            Text(viewModel.journalString(article: article))
+            JournalTitleView(article: article)
             
             publishedView()
         
