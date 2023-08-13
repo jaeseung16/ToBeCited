@@ -22,7 +22,7 @@ class PersistenceHelper {
         self.persistence = persistence
     }
     
-    func perform<Element>(_ fetchRequest: NSFetchRequest<Element>) -> [Element] {
+    func fetch<Element>(_ fetchRequest: NSFetchRequest<Element>) -> [Element] {
         var fetchedEntities = [Element]()
         do {
             fetchedEntities = try viewContext.fetch(fetchRequest)

@@ -169,13 +169,13 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         let sortDescriptors = [NSSortDescriptor(keyPath: \Article.published, ascending: false),
                                NSSortDescriptor(keyPath: \Article.title, ascending: true)]
         let fetchRequest = persistenceHelper.getFetchRequest(for: Article.self, entityName: "Article", sortDescriptors: sortDescriptors)
-        articles = persistenceHelper.perform(fetchRequest)
+        articles = persistenceHelper.fetch(fetchRequest)
     }
     
     func fetchAllArticles() {
         let sortDescriptors = [NSSortDescriptor(keyPath: \Article.published, ascending: false)]
         let fetchRequest = persistenceHelper.getFetchRequest(for: Article.self, entityName: "Article", sortDescriptors: sortDescriptors)
-        allArticles = persistenceHelper.perform(fetchRequest)
+        allArticles = persistenceHelper.fetch(fetchRequest)
     }
     
     func fetchAuthors() {
@@ -183,7 +183,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                                NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
                                NSSortDescriptor(keyPath: \Author.created, ascending: false)]
         let fetchRequest = persistenceHelper.getFetchRequest(for: Author.self, entityName: "Author", sortDescriptors: sortDescriptors)
-        authors = persistenceHelper.perform(fetchRequest)
+        authors = persistenceHelper.fetch(fetchRequest)
     }
     
     func fetchAllAuthors() {
@@ -191,19 +191,19 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                                NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
                                NSSortDescriptor(keyPath: \Author.created, ascending: false)]
         let fetchRequest = persistenceHelper.getFetchRequest(for: Author.self, entityName: "Author", sortDescriptors: sortDescriptors)
-        allAuthors = persistenceHelper.perform(fetchRequest)
+        allAuthors = persistenceHelper.fetch(fetchRequest)
     }
     
     func fetchCollections() {
         let sortDescriptors = [NSSortDescriptor(keyPath: \Collection.name, ascending: true)]
         let fetchRequest = persistenceHelper.getFetchRequest(for: Collection.self, entityName: "Collection", sortDescriptors: sortDescriptors)
-        collections = persistenceHelper.perform(fetchRequest)
+        collections = persistenceHelper.fetch(fetchRequest)
     }
     
     func fetchAllColections() {
         let sortDescriptors = [NSSortDescriptor(keyPath: \Collection.name, ascending: true)]
         let fetchRequest = persistenceHelper.getFetchRequest(for: Collection.self, entityName: "Collection", sortDescriptors: sortDescriptors)
-        allCollections = persistenceHelper.perform(fetchRequest)
+        allCollections = persistenceHelper.fetch(fetchRequest)
     }
     
     func save(forceFetch: Bool = true, completionHandler: ((Bool) -> Void)? = nil) -> Void {
@@ -527,7 +527,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         let sortDescriptors = [NSSortDescriptor(key: "firstName", ascending: true)]
         let predicate = NSPredicate(format: "(lastName CONTAINS[cd] %@) AND (firstName BEGINSWITH[cd] %@)", argumentArray: [lastName, firstLetterOfFirstName.lowercased()])
         let fetchRequest = persistenceHelper.getFetchRequest(for: Author.self, entityName: "Author", sortDescriptors: sortDescriptors, predicate: predicate)
-        return persistenceHelper.perform(fetchRequest)
+        return persistenceHelper.fetch(fetchRequest)
     }
     
     // MARK: - Persistence History Request
