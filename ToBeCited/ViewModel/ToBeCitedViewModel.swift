@@ -633,13 +633,13 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         let fetched: [Article] = fetch(items)
         logger.log("fetched.count=\(fetched.count)")
         articles = fetched.sorted(by: { article1, article2 in
-            guard let created1 = article1.created else {
+            guard let published1 = article1.published else {
                 return false
             }
-            guard let created2 = article2.created else {
+            guard let published2 = article2.published else {
                 return true
             }
-            return created1 > created2
+            return published1 > published2
         })
         logger.log("Found \(self.articles.count) articles")
     }
