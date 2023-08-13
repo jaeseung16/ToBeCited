@@ -630,7 +630,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     private func fetchArticles(_ items: [CSSearchableItem]) {
         logger.log("Fetching \(items.count) articles")
-        let fetched: [Article] = fetch(items)
+        let fetched = fetch(Article.self, items)
         logger.log("fetched.count=\(fetched.count)")
         articles = fetched.sorted(by: { article1, article2 in
             guard let published1 = article1.published else {
@@ -644,13 +644,13 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         logger.log("Found \(self.articles.count) articles")
     }
     
-    private func fetch<T: NSManagedObject>(_ items: [CSSearchableItem]) -> [T] {
-        return items.compactMap { (item: CSSearchableItem) -> T? in
+    private func fetch<Element>(_ type: Element.Type, _ items: [CSSearchableItem]) -> [Element] where Element: NSManagedObject {
+        return items.compactMap { (item: CSSearchableItem) -> Element? in
             guard let url = URL(string: item.uniqueIdentifier) else {
                 self.logger.log("url is nil for item=\(item)")
                 return nil
             }
-            return persistenceHelper.find(for: url) as? T
+            return persistenceHelper.find(for: url) as? Element
         }
     }
     
@@ -675,7 +675,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 }
             }
         }
-        
     }
     
 }
