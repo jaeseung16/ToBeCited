@@ -80,8 +80,8 @@ struct ArticleListView: View {
                     }
                 }
             }
-            .searchable(text: $viewModel.searchString)
         }
+        .searchable(text: $viewModel.searchString)
         .onChange(of: viewModel.searchString) { newValue in
             viewModel.searchArticle()
         }
