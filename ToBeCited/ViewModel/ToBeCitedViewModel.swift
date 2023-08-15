@@ -500,15 +500,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func add(_ articles: [Article], to collections: [Collection]) -> Void {
-        collections.forEach { collection in
-            var count = collection.articles == nil ? 0 : collection.articles!.count
-            for article in articles {
-                let _ = persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
-                article.addToCollections(collection)
-                count += 1
+        if !articles.isEmpty {
+            collections.forEach { collection in
+                var count = collection.articles == nil ? 0 : collection.articles!.count
+                for article in articles {
+                    let _ = persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
+                    article.addToCollections(collection)
+                    count += 1
+                }
             }
+            save()
         }
-        save()
     }
     
     var articleCount: Int {
