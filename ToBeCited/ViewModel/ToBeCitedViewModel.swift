@@ -206,7 +206,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         allCollections = persistenceHelper.fetch(fetchRequest)
     }
     
-    func save(forceFetch: Bool = true, completionHandler: ((Bool) -> Void)? = nil) -> Void {
+    func saveAndFetch(completionHandler: ((Bool) -> Void)? = nil) -> Void {
+        save() { success in
+            completionHandler?(success)
+            
+            if self.searchString.isEmpty {
+                self.fetchAll()
+            }
+        }
+    }
+    
+    func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
         persistenceHelper.save { result in
             DispatchQueue.main.async {
                 switch result {
@@ -217,11 +227,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     self.showAlert.toggle()
                     completionHandler?(false)
                 }
-                
-                // TODO
-                if self.searchString.isEmpty || forceFetch {
-                    self.fetchAll()
-                }
             }
         }
     }
@@ -231,7 +236,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         let created = Date()
         persistenceHelper.perform {
             risRecords.forEach { self.createEntities(from: $0, created: created) }
-            self.save()
+            self.saveAndFetch()
         }
     }
     
@@ -287,7 +292,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 let _ = self.persistenceHelper.createOrder(in: collection, for: articles[index], with: Int64(index))
             }
             
-            self.save()
+            self.saveAndFetch()
         }
     }
     
@@ -299,7 +304,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 collection.addToArticles(article)
             }
             
-            self.save { success in
+            self.saveAndFetch() { success in
                 if !success {
                     self.logger.log("AddToCollectionsView: Failed to update")
                 }
@@ -324,7 +329,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 }
             }
             
-            self.save { success in
+            self.saveAndFetch() { success in
                 if !success {
                     self.logger.log("ImportCollectionAsReferencesView: Failed to update")
                 }
@@ -358,7 +363,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 self.delete(article)
             }
             
-            self.save { success in
+            self.saveAndFetch() { success in
                 self.logger.log("Delete data: success=\(success)")
             }
         }
@@ -371,7 +376,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     self.delete(author)
                 }
             }
-            self.save()
+            self.saveAndFetch()
         }
     }
     
@@ -381,7 +386,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 author.removeFromContacts(contact)
                 self.delete(contact)
             }
-            self.save()
+            self.saveAndFetch()
         }
     }
     
@@ -403,7 +408,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 self.delete(collection)
             }
             
-            self.save()
+            self.saveAndFetch()
         }
     }
     
@@ -422,7 +427,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 }
             }
 
-            self.save()
+            self.saveAndFetch()
         }
     }
     
@@ -456,7 +461,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             delete(authors[index])
         }
         
-        save()
+        saveAndFetch()
     }
     
     func update(article: Article, with authors: [Author]) -> Void {
@@ -471,7 +476,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             author.addToArticles(article)
         }
 
-        save()
+        saveAndFetch()
     }
     
     func update(collection: Collection, with articles: [Article]) -> Void {
@@ -495,7 +500,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             let _ = persistenceHelper.createOrder(in: collection, for: article, with: Int64(index))
         }
         logger.log("Saving the update")
-        save()
+        saveAndFetch()
         
     }
     

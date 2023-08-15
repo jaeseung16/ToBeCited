@@ -76,7 +76,7 @@ struct AuthorDetailView: View {
                     TextField("orcid", text: $orcid, prompt: nil)
                         .onSubmit {
                             author.orcid = orcid
-                            viewModel.save()
+                            viewModel.saveAndFetch()
                         }
                     
                     if let orcidURL = orcidURL {
@@ -146,7 +146,7 @@ struct AuthorDetailView: View {
                 TextField("last name", text: $lastName, prompt: nil)
                     .onSubmit {
                         author.lastName = lastName
-                        viewModel.save()
+                        viewModel.saveAndFetch()
                     }
             }
             
@@ -162,7 +162,7 @@ struct AuthorDetailView: View {
                 TextField("fist name", text: $firstName, prompt: nil)
                     .onSubmit {
                         author.firstName = firstName
-                        viewModel.save()
+                        viewModel.saveAndFetch()
                     }
             }
             
@@ -178,7 +178,7 @@ struct AuthorDetailView: View {
                 TextField("middle name", text: $middleName, prompt: nil)
                     .onSubmit {
                         author.middleName = middleName
-                        viewModel.save()
+                        viewModel.saveAndFetch()
                     }
             }
             
@@ -194,7 +194,7 @@ struct AuthorDetailView: View {
                 TextField("suffix", text: $nameSuffix, prompt: nil)
                     .onSubmit {
                         author.nameSuffix = nameSuffix
-                        viewModel.save()
+                        viewModel.saveAndFetch()
                     }
             }
             

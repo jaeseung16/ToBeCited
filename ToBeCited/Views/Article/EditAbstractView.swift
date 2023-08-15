@@ -65,7 +65,7 @@ struct EditAbstractView: View {
     
     private func update() -> Void {
         article.abstract = abstract
-        viewModel.save { success in
+        viewModel.saveAndFetch() { success in
             if !success {
                 viewModel.log("Failed to update abstract")
             }

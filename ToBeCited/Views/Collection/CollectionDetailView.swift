@@ -53,7 +53,7 @@ struct CollectionDetailView: View {
                 Button {
                     collection.name = collectionName
                     
-                    viewModel.save()
+                    viewModel.saveAndFetch()
                     
                     edited = false
                 } label: {

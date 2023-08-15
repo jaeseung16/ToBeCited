@@ -56,7 +56,7 @@ struct EditOrderView: View {
             orders[k].order = Int64(k)
         }
         
-        viewModel.save()
+        viewModel.saveAndFetch()
     }
 }
 
