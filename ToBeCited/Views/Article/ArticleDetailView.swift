@@ -27,13 +27,7 @@ struct ArticleDetailView: View, DropDelegate {
     @State var published: Date
     
     private var authors: [Author] {
-        var authors = [Author]()
-        article.authors?.forEach { author in
-            if let author = author as? Author {
-                authors.append(author)
-            }
-        }
-        return authors
+        return article.authors?.compactMap { $0 as? Author } ?? [Author]()
     }
     
     private var abstractExists: Bool {
@@ -53,33 +47,15 @@ struct ArticleDetailView: View, DropDelegate {
     }
     
     private var references: [Article] {
-        var references = [Article]()
-        article.references?.forEach { reference in
-            if let reference = reference as? Article {
-                references.append(reference)
-            }
-        }
-        return references
+        return article.references?.compactMap { $0 as? Article } ?? [Article]()
     }
     
     private var cited: [Article] {
-        var cited = [Article]()
-        article.cited?.forEach { article in
-            if let article = article as? Article {
-                cited.append(article)
-            }
-        }
-        return cited
+        return article.cited?.compactMap { $0 as? Article } ?? [Article]()
     }
     
     private var collections: [Collection] {
-        var collections = [Collection]()
-        article.collections?.forEach { collection in
-            if let collection = collection as? Collection {
-                collections.append(collection)
-            }
-        }
-        return collections
+        return article.collections?.compactMap { $0 as? Collection } ?? [Collection]()
     }
     
     var body: some View {

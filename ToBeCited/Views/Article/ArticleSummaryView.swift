@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct ArticleSummaryView: View {
-    @EnvironmentObject private var viewModel: ToBeCitedViewModel
-    
     @State var article: Article
     
     private var authors: [Author] {
