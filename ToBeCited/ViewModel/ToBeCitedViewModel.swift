@@ -209,10 +209,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     func saveAndFetch(completionHandler: ((Bool) -> Void)? = nil) -> Void {
         save() { success in
             completionHandler?(success)
-            
-            if self.searchString.isEmpty {
-                self.fetchAll()
-            }
+            self.searchString = ""
+            self.fetchAll()
         }
     }
     
