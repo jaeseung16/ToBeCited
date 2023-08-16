@@ -11,13 +11,7 @@ struct ArticleSummaryView: View {
     @State var article: Article
     
     private var authors: [Author] {
-        var authors = [Author]()
-        article.authors?.forEach { author in
-            if let author = author as? Author {
-                authors.append(author)
-            }
-        }
-        return authors
+        return article.authors?.compactMap { $0 as? Author } ?? [Author]()
     }
     
     private var abstractExists: Bool {

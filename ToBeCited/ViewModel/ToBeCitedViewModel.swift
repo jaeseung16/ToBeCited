@@ -123,14 +123,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     private func populateOrders(from collection: Collection) -> [OrderInCollection] {
-        var orders = [OrderInCollection]()
-
-        collection.orders?.forEach { order in
-            if let order = order as? OrderInCollection {
-                orders.append(order)
-            }
-        }
-        
+        let orders = collection.orders?.compactMap { $0 as? OrderInCollection } ?? [OrderInCollection]()
         return orders.sorted { $0.order < $1.order }
     }
     
@@ -438,12 +431,12 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         let toMerge = authors[0]
         
         for index in 1..<authors.count {
-            authors[index].articles?.forEach({ article in
+            authors[index].articles?.forEach { article in
                 if let article = article as? Article {
                     toMerge.addToArticles(article)
                     authors[index].removeFromArticles(article)
                 }
-            })
+            }
             
             authors[index].contacts?.forEach { contact in
                 if let contact = contact as? AuthorContact {

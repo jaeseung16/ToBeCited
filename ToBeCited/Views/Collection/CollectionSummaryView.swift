@@ -13,14 +13,7 @@ struct CollectionSummaryView: View {
     @State var collection: Collection
     
     private var ordersInCollection: [OrderInCollection] {
-        var orders = [OrderInCollection]()
-        
-        collection.orders?.forEach { order in
-            if let order = order as? OrderInCollection {
-                orders.append(order)
-            }
-        }
-        
+        let orders = collection.orders?.compactMap { $0 as? OrderInCollection } ?? [OrderInCollection]()
         return orders.sorted { $0.order < $1.order }
     }
     

@@ -32,12 +32,7 @@ struct AuthorDetailView: View {
     @State private var presentAddToCollectionsView = false
     
     private var articles: [Article] {
-        var articles = [Article]()
-        author.articles?.forEach { article in
-            if let article = article as? Article {
-                articles.append(article)
-            }
-        }
+        let articles = author.articles?.compactMap { $0 as? Article} ?? [Article]()
         return articles.sorted {
             if let date1 = $0.published, let date2 = $1.published {
                 return date1 > date2
