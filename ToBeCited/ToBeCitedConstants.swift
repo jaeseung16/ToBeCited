@@ -12,4 +12,5 @@ enum ToBeCitedConstants: String {
     case iCloudIdentifier = "iCloud.com.resonance.jlee.ToBeCited"
     case domainIdentifier = "com.resonance.jlee.ToBeCited"
     case articleIndexName = "tobecited-article-index"
+    case authorIndexName = "tobecited-author-index"
 }

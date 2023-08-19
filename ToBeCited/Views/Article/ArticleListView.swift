@@ -60,7 +60,7 @@ struct ArticleListView: View {
                 }
                 .onDelete(perform: deleteArticles)
             }
-            .searchable(text: $viewModel.searchString)
+            .searchable(text: $viewModel.articleSearchString)
             .navigationTitle(Text("Articles"))
             .toolbar {
                 ToolbarItemGroup {
@@ -82,7 +82,7 @@ struct ArticleListView: View {
                 }
             }
         }
-        .onChange(of: viewModel.searchString) { newValue in
+        .onChange(of: viewModel.articleSearchString) { newValue in
             viewModel.searchArticle()
         }
         .sheet(isPresented: $presentAddArticleView) {
@@ -94,9 +94,11 @@ struct ArticleListView: View {
                 .environmentObject(viewModel)
         }
         .onContinueUserActivity(CSSearchableItemActionType) { activity in
-            viewModel.continueActivity(activity) { article in
-                viewModel.searchString = article.title ?? ""
-                selectedArticle = article
+            viewModel.continueActivity(activity) { entity in
+                if let article = entity as? Article {
+                    viewModel.articleSearchString = article.title ?? ""
+                    selectedArticle = article
+                }
             }
         }
     }

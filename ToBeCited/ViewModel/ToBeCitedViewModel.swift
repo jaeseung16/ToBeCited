@@ -16,7 +16,8 @@ import CoreSpotlight
 class ToBeCitedViewModel: NSObject, ObservableObject {
     let logger = Logger()
     
-    @AppStorage("ToBeCited.spotlightIndexing") private var spotlightIndexing: Bool = false
+    @AppStorage("ToBeCited.spotlightArticleIndexing") private var spotlightArticleIndexing: Bool = false
+    @AppStorage("ToBeCited.spotlightAuthorIndexing") private var spotlightAuthorIndexing: Bool = false
     
     private var persistence: Persistence
     private let parser = RISParser()
@@ -35,6 +36,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private var subscriptions: Set<AnyCancellable> = []
     
     private(set) var articleIndexer: ArticleSpotlightDelegate?
+    private(set) var authorIndexer: AuthorSpotlightDelegate?
     
     private var persistenceContainer: NSPersistentCloudKitContainer {
         persistence.cloudContainer!
@@ -54,19 +56,33 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         
         self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         
-        self.spotlightIndexing = UserDefaults.standard.bool(forKey: "spotlight_indexing")
+        self.spotlightArticleIndexing = UserDefaults.standard.bool(forKey: "ToBeCited.spotlightArticleIndexing")
+        self.spotlightAuthorIndexing = UserDefaults.standard.bool(forKey: "ToBeCited.spotlightAuthorIndexing")
         
-        if let articleIndexer: ArticleSpotlightDelegate = self.persistenceHelper.getSpotlightDelegate() {
+        
+        if let articleIndexer: ArticleSpotlightDelegate = self.persistenceHelper.getSpotlightDelegate(), let authorIndexer: AuthorSpotlightDelegate = self.persistenceHelper.getSpotlightDelegate() {
             self.articleIndexer = articleIndexer
+            self.authorIndexer = authorIndexer
             self.toggleIndexing(self.articleIndexer, enabled: true)
+            self.toggleIndexing(self.authorIndexer, enabled: true)
             NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
         }
         
-        logger.log("spotlightIndexing=\(self.spotlightIndexing, privacy: .public)")
-        if !spotlightIndexing {
+        logger.log("spotlightArticleIndexing=\(self.spotlightArticleIndexing, privacy: .public)")
+        if !spotlightArticleIndexing {
             DispatchQueue.main.async {
                 self.indexArticles()
-                self.spotlightIndexing.toggle()
+                self.spotlightArticleIndexing.toggle()
+                
+            }
+        }
+        
+        logger.log("spotlightAuthorIndexing=\(self.spotlightAuthorIndexing, privacy: .public)")
+        if !spotlightAuthorIndexing {
+            DispatchQueue.main.async {
+                self.indexAuthors()
+                self.spotlightAuthorIndexing.toggle()
+                
             }
         }
         
@@ -74,11 +90,18 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     @objc private func defaultsChanged() -> Void {
-        if !self.spotlightIndexing {
+        if !self.spotlightAuthorIndexing {
             DispatchQueue.main.async {
                 self.toggleIndexing(self.articleIndexer, enabled: false)
                 self.toggleIndexing(self.articleIndexer, enabled: true)
-                self.spotlightIndexing.toggle()
+                self.spotlightArticleIndexing.toggle()
+            }
+        }
+        if !self.spotlightAuthorIndexing {
+            DispatchQueue.main.async {
+                self.toggleIndexing(self.authorIndexer, enabled: false)
+                self.toggleIndexing(self.authorIndexer, enabled: true)
+                self.spotlightAuthorIndexing.toggle()
             }
         }
     }
@@ -202,7 +225,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     func saveAndFetch(completionHandler: ((Bool) -> Void)? = nil) -> Void {
         save() { success in
             completionHandler?(success)
-            self.searchString = ""
+            self.articleSearchString = ""
+            self.authorSearchString = ""
             self.fetchAll()
         }
     }
@@ -543,8 +567,11 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     // MARK: - Spotlight
     private var spotlightFoundArticles: [CSSearchableItem] = []
+    private var spotlightFoundAuthors: [CSSearchableItem] = []
     private var articleSearchQuery: CSSearchQuery?
-    @Published var searchString = ""
+    private var authorSearchQuery: CSSearchQuery?
+    @Published var articleSearchString = ""
+    @Published var authorSearchString = ""
     
     private func toggleIndexing(_ indexer: NSCoreDataCoreSpotlightDelegate?, enabled: Bool) {
         guard let indexer = indexer else { return }
@@ -558,6 +585,11 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private func indexArticles() -> Void {
         logger.log("Indexing \(self.articles.count, privacy: .public) articles")
         index<Article>(articles, indexName: ToBeCitedConstants.articleIndexName.rawValue)
+    }
+    
+    private func indexAuthors() -> Void {
+        logger.log("Indexing \(self.authors.count, privacy: .public) authors")
+        index<Author>(authors, indexName: ToBeCitedConstants.authorIndexName.rawValue)
     }
     
     private func index<T: NSManagedObject>(_ entities: [T], indexName: String) {
@@ -588,11 +620,18 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             attributeSet.contentDescription = article.journal
             return attributeSet
         }
+        if let author = object as? Author {
+            let authorName = ToBeCitedNameFormatHelper.formatName(of: author)
+            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
+            attributeSet.title = authorName
+            attributeSet.displayName = authorName
+            return attributeSet
+        }
         return nil
     }
     
     func searchArticle() -> Void {
-        if searchString.isEmpty {
+        if articleSearchString.isEmpty {
             articleSearchQuery?.cancel()
             fetchArticles()
         } else {
@@ -601,10 +640,10 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     private func searchArticles() {
-        let escapedText = searchString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+        let escapedText = articleSearchString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
         let queryString = "(title == \"*\(escapedText)*\"cd) || (textContent == \"*\(escapedText)*\"cd)"
         
-        articleSearchQuery = CSSearchQuery(queryString: queryString, attributes: ["title"])
+        articleSearchQuery = CSSearchQuery(queryString: queryString, attributes: ["title", "textContent"])
         
         articleSearchQuery?.foundItemsHandler = { items in
             DispatchQueue.main.async {
@@ -614,7 +653,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         
         articleSearchQuery?.completionHandler = { error in
             if let error = error {
-                self.logger.log("Searching \(self.searchString) came back with error: \(error.localizedDescription, privacy: .public)")
+                self.logger.log("Searching \(self.articleSearchString) came back with error: \(error.localizedDescription, privacy: .public)")
             } else {
                 DispatchQueue.main.async {
                     self.fetchArticles(self.spotlightFoundArticles)
@@ -642,6 +681,49 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         logger.log("Found \(self.articles.count) articles")
     }
     
+    func searchAuthor() -> Void {
+        if authorSearchString.isEmpty {
+            authorSearchQuery?.cancel()
+            fetchAuthors()
+        } else {
+            searchAuthors()
+        }
+    }
+    
+    private func searchAuthors() {
+        let escapedText = authorSearchString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+        let queryString = "(title == \"*\(escapedText)*\"cd)"
+        logger.log("searchAuthors: \(queryString, privacy: .public)")
+        authorSearchQuery = CSSearchQuery(queryString: queryString, attributes: ["title"])
+        
+        authorSearchQuery?.foundItemsHandler = { items in
+            DispatchQueue.main.async {
+                self.spotlightFoundAuthors += items
+            }
+        }
+        
+        authorSearchQuery?.completionHandler = { error in
+            if let error = error {
+                self.logger.log("Searching \(self.authorSearchString) came back with error: \(error.localizedDescription, privacy: .public)")
+            } else {
+                DispatchQueue.main.async {
+                    self.fetchAuthors(self.spotlightFoundAuthors)
+                    self.spotlightFoundAuthors.removeAll()
+                }
+            }
+        }
+        
+        authorSearchQuery?.start()
+    }
+    
+    private func fetchAuthors(_ items: [CSSearchableItem]) {
+        logger.log("Fetching \(items.count) authors")
+        let fetched = fetch(Author.self, items)
+        logger.log("fetched.count=\(fetched.count)")
+        authors = fetched.sorted(by: < )
+        logger.log("Found \(self.authors.count) authors")
+    }
+    
     private func fetch<Element>(_ type: Element.Type, _ items: [CSSearchableItem]) -> [Element] where Element: NSManagedObject {
         return items.compactMap { (item: CSSearchableItem) -> Element? in
             guard let url = URL(string: item.uniqueIdentifier) else {
@@ -652,7 +734,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
-    func continueActivity(_ activity: NSUserActivity, completionHandler: @escaping (Article) -> Void) {
+    // TODO:
+    func continueActivity(_ activity: NSUserActivity, completionHandler: @escaping (NSManagedObject) -> Void) {
         logger.log("continueActivity: \(activity)")
         guard let info = activity.userInfo, let objectIdentifier = info[CSSearchableItemActivityIdentifier] as? String else {
             return
@@ -670,6 +753,11 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 self.selectedTab = .articles
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     completionHandler(article)
+                }
+            } else if let author = entity as? Author {
+                self.selectedTab = .authors
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    completionHandler(author)
                 }
             }
         }
