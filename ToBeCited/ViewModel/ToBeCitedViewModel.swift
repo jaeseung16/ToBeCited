@@ -377,8 +377,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     }
                 }
                 
-                self.delete(article)
                 self.deleteFromIndex(article: article)
+                self.delete(article)
             }
             
             self.saveAndFetch() { success in
@@ -391,8 +391,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         persistenceHelper.perform {
             authors.forEach { author in
                 if author.articles == nil || author.articles!.count == 0 {
-                    self.delete(author)
                     self.deleteFromIndex(author: author)
+                    self.delete(author)
                 }
             }
             self.saveAndFetch()
@@ -477,6 +477,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 toMerge.orcid = orcid
             }
             
+            deleteFromIndex(author: authors[index])
             delete(authors[index])
         }
         
