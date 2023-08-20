@@ -374,8 +374,6 @@ struct ArticleDetailView: View, DropDelegate {
                 Spacer()
                 
                 Button {
-                    viewModel.fetchAllArticles()
-                    viewModel.fetchAllAuthors()
                     presentSelectReferenceView = true
                 } label: {
                     Label("edit", systemImage: "pencil.circle")

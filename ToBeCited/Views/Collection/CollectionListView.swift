@@ -48,7 +48,6 @@ struct CollectionListView: View {
             .toolbar {
                 ToolbarItem {
                     Button(action: {
-                        viewModel.fetchAllArticles()
                         presentAddCollectionView = true
                     }) {
                         Label("Add Collection", systemImage: "plus")

@@ -179,6 +179,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         fetchArticles()
         fetchAuthors()
         fetchCollections()
+        fetchAllArticles()
+        fetchAllAuthors()
     }
     
     func fetchArticles() {
@@ -566,9 +568,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func articles(titleIncluding string: String) -> [Article] {
-        if allArticles.isEmpty {
-            fetchAllArticles()
-        }
         return allArticles.filter {
             if string == "" {
                 return true
@@ -581,9 +580,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func authors(lastNameIncluding string: String) -> [Author] {
-        if allAuthors.isEmpty {
-            fetchAllAuthors()
-        }
         return allAuthors.filter { author in
             if string == "" {
                 return true

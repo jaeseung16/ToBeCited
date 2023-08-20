@@ -79,7 +79,6 @@ struct CollectionDetailView: View {
                 Text("EDIT")
                 
                 Button {
-                    viewModel.fetchAllArticles()
                     presentEditCollectionView = true
                 } label: {
                     Label("ARTICLES", systemImage: "doc.on.doc")

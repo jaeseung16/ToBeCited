@@ -66,7 +66,6 @@ struct ArticleListView: View {
                 ToolbarItemGroup {
                     HStack {
                         Button {
-                            viewModel.fetchAllAuthors()
                             reset()
                             presentFilterArticleView = true
                         } label: {
