@@ -577,6 +577,18 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
+    func authors(lastNameIncluding string: String) -> [Author] {
+        return allAuthors.filter { author in
+            if string == "" {
+                return true
+            } else if let lastName = author.lastName {
+                return lastName.range(of: string, options: .caseInsensitive) != nil
+            } else {
+                return false
+            }
+        }
+    }
+    
     // MARK: - Spotlight
     private var spotlightFoundArticles: [CSSearchableItem] = []
     private var spotlightFoundAuthors: [CSSearchableItem] = []

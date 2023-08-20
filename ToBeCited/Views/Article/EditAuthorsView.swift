@@ -17,15 +17,7 @@ struct EditAuthorsView: View {
     @State private var lastNameToSearch = ""
     
     private var filteredAuthors: [Author] {
-        viewModel.authors.filter { author in
-            if lastNameToSearch == "" {
-                return true
-            } else if let lastName = author.lastName {
-                return lastName.range(of: lastNameToSearch, options: .caseInsensitive) != nil
-            } else {
-                return false
-            }
-        }
+        viewModel.authors(lastNameIncluding: lastNameToSearch)
     }
     
     var body: some View {

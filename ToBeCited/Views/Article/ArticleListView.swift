@@ -65,11 +65,12 @@ struct ArticleListView: View {
             .toolbar {
                 ToolbarItemGroup {
                     HStack {
-                        Button(action: {
+                        Button {
+                            viewModel.fetchAllAuthors()
                             viewModel.selectedAuthors = nil
                             viewModel.selectedPublishedIn = nil
                             presentFilterArticleView = true
-                        }) {
+                        } label: {
                             Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
                         }
                         
