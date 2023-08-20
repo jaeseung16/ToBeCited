@@ -17,7 +17,7 @@ struct EditCollectionView: View {
     @State var titleToSearch = ""
     
     private var filteredArticles: [Article] {
-        return viewModel.articlesWithTitle(including: titleToSearch)
+        return viewModel.articles(titleIncluding: titleToSearch)
     }
     
     var body: some View {

@@ -565,7 +565,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         logger.log("\(message, privacy: .public)")
     }
     
-    func articlesWithTitle(including string: String) -> [Article] {
+    func articles(titleIncluding string: String) -> [Article] {
         return allArticles.filter {
             if string == "" {
                 return true

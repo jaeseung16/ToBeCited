@@ -20,15 +20,7 @@ struct SelectReferencesView: View {
     @State private var titleToSearch = ""
     
     private var filteredArticles: [Article] {
-        viewModel.allArticles.filter {
-            if titleToSearch.isEmpty {
-                return true
-            } else if let title = $0.title {
-                return title.range(of: titleToSearch, options: .caseInsensitive) != nil
-            } else {
-                return false
-            }
-        }
+        return viewModel.articles(titleIncluding: titleToSearch)
     }
     
     var body: some View {
