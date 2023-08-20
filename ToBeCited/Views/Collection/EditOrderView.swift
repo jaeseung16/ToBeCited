@@ -39,13 +39,19 @@ struct EditOrderView: View {
         HStack {
             Button {
                 viewModel.rollback()
-                
                 dismiss.callAsFunction()
             } label: {
                 Text("Dismiss")
             }
         
             Spacer()
+            
+            Button {
+                viewModel.saveAndFetch()
+                dismiss.callAsFunction()
+            } label: {
+                Text("Save")
+            }
         }
     }
     
@@ -55,8 +61,6 @@ struct EditOrderView: View {
         for k in 0..<orders.count {
             orders[k].order = Int64(k)
         }
-        
-        viewModel.saveAndFetch()
     }
 }
 
