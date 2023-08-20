@@ -22,10 +22,10 @@
     </entity>
     <entity name="Author" representedClassName="Author" syncable="YES" codeGenerationType="class">
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="firstName" optional="YES" attributeType="String"/>
-        <attribute name="lastName" optional="YES" attributeType="String"/>
-        <attribute name="middleName" optional="YES" attributeType="String"/>
-        <attribute name="nameSuffix" optional="YES" attributeType="String"/>
+        <attribute name="firstName" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
+        <attribute name="lastName" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
+        <attribute name="middleName" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
+        <attribute name="nameSuffix" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="orcid" optional="YES" attributeType="String"/>
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="articles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Article" inverseName="authors" inverseEntity="Article"/>
