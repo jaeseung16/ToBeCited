@@ -67,16 +67,16 @@ struct ArticleListView: View {
                     HStack {
                         Button {
                             viewModel.fetchAllAuthors()
-                            viewModel.selectedAuthors = nil
-                            viewModel.selectedPublishedIn = nil
+                            reset()
                             presentFilterArticleView = true
                         } label: {
                             Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
                         }
                         
-                        Button(action: {
+                        Button {
+                            reset()
                             presentAddArticleView = true
-                        }) {
+                        } label: {
                             Label("Add Item", systemImage: "plus")
                         }
                     }
@@ -108,5 +108,11 @@ struct ArticleListView: View {
         withAnimation {
             viewModel.delete(offsets.map { filteredArticles[$0] } )
         }
+    }
+    
+    private func reset() {
+        viewModel.articleSearchString = ""
+        viewModel.selectedAuthors = nil
+        viewModel.selectedPublishedIn = nil
     }
 }
