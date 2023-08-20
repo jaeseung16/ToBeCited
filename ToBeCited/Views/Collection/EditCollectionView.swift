@@ -16,16 +16,8 @@ struct EditCollectionView: View {
     @State var articlesInCollection: [Article]
     @State var titleToSearch = ""
     
-    private var filteredArticles: Array<Article> {
-        viewModel.allArticles.filter {
-            if titleToSearch == "" {
-                return true
-            } else if let title = $0.title {
-                return title.range(of: titleToSearch, options: .caseInsensitive) != nil
-            } else {
-                return false
-            }
-        }
+    private var filteredArticles: [Article] {
+        return viewModel.articlesWithTitle(including: titleToSearch)
     }
     
     var body: some View {

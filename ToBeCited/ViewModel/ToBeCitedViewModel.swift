@@ -565,6 +565,18 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         logger.log("\(message, privacy: .public)")
     }
     
+    func articlesWithTitle(including string: String) -> [Article] {
+        return allArticles.filter {
+            if string == "" {
+                return true
+            } else if let title = $0.title {
+                return title.range(of: string, options: .caseInsensitive) != nil
+            } else {
+                return false
+            }
+        }
+    }
+    
     // MARK: - Spotlight
     private var spotlightFoundArticles: [CSSearchableItem] = []
     private var spotlightFoundAuthors: [CSSearchableItem] = []

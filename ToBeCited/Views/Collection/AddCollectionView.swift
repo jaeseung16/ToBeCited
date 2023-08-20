@@ -11,25 +11,12 @@ struct AddCollectionView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false)],
-        animation: .default)
-    private var articles: FetchedResults<Article>
-    
     @State private var name: String = ""
     @State private var articlesToAdd = [Article]()
     @State private var titleToSearch = ""
     
-    private var filteredArticles: Array<Article> {
-        articles.filter {
-            if titleToSearch.isEmpty {
-                return true
-            } else if let title = $0.title {
-                return title.range(of: titleToSearch, options: .caseInsensitive) != nil
-            } else {
-                return false
-            }
-        }
+    private var filteredArticles: [Article] {
+        return viewModel.articlesWithTitle(including: titleToSearch)
     }
     
     var body: some View {
