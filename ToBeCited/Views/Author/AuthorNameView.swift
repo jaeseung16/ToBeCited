@@ -13,6 +13,6 @@ struct AuthorNameView: View {
     @State var author: Author
     
     var body: some View {
-        Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
+        Text(ToBeCitedNameFormatHelper.nameComponents(of: author), format: ToBeCitedNameFormatHelper.format(style: .long))
     }
 }

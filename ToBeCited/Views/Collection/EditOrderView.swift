@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct EditOrderView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
@@ -39,14 +38,20 @@ struct EditOrderView: View {
     private func header() -> some View {
         HStack {
             Button {
-                viewContext.rollback()
-                
+                viewModel.rollback()
                 dismiss.callAsFunction()
             } label: {
                 Text("Dismiss")
             }
         
             Spacer()
+            
+            Button {
+                viewModel.saveAndFetch()
+                dismiss.callAsFunction()
+            } label: {
+                Text("Save")
+            }
         }
     }
     
@@ -56,8 +61,6 @@ struct EditOrderView: View {
         for k in 0..<orders.count {
             orders[k].order = Int64(k)
         }
-        
-        viewModel.save(viewContext: viewContext, completionHandler: nil)
     }
 }
 

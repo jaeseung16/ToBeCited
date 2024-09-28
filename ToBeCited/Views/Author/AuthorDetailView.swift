@@ -9,7 +9,6 @@ import SwiftUI
 import CoreData
 
 struct AuthorDetailView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
@@ -33,12 +32,7 @@ struct AuthorDetailView: View {
     @State private var presentAddToCollectionsView = false
     
     private var articles: [Article] {
-        var articles = [Article]()
-        author.articles?.forEach { article in
-            if let article = article as? Article {
-                articles.append(article)
-            }
-        }
+        let articles = author.articles?.compactMap { $0 as? Article} ?? [Article]()
         return articles.sorted {
             if let date1 = $0.published, let date2 = $1.published {
                 return date1 > date2
@@ -46,29 +40,6 @@ struct AuthorDetailView: View {
                 return false
             }
         }
-    }
-    
-    private var authors: [Author] {
-        if let lastName = author.lastName, let firstLetterOfFirstName = author.firstName?.first {
-            let predicate = NSPredicate(format: "(lastName CONTAINS[cd] %@) AND (firstName BEGINSWITH[cd] %@)", argumentArray: [lastName, firstLetterOfFirstName.lowercased()])
-            let sortDesciptor = NSSortDescriptor(key: "firstName", ascending: true)
-            
-            let fetchRequest: NSFetchRequest<Author> = Author.fetchRequest()
-            fetchRequest.predicate = predicate
-            fetchRequest.sortDescriptors = [sortDesciptor]
-            
-            let fc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: viewContext, sectionNameKeyPath: nil, cacheName: nil)
-            
-            do {
-                try fc.performFetch()
-            } catch {
-                NSLog("Failed fetch authors with lastName = \(lastName)")
-            }
-            
-            return fc.fetchedObjects ?? [Author]()
-        }
-        
-        return [Author]()
     }
     
     private var orcidURL: URL? {
@@ -100,7 +71,7 @@ struct AuthorDetailView: View {
                     TextField("orcid", text: $orcid, prompt: nil)
                         .onSubmit {
                             author.orcid = orcid
-                            viewModel.save(viewContext: viewContext, completionHandler: nil)
+                            viewModel.saveAndFetch()
                         }
                     
                     if let orcidURL = orcidURL {
@@ -120,22 +91,19 @@ struct AuthorDetailView: View {
                 articlesView()
                     .frame(height: 400)
             }
-            .navigationTitle(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
+            .navigationTitle(ToBeCitedNameFormatHelper.formatName(of: author))
             .frame(maxHeight: .infinity, alignment: .top)
             .padding()
             .sheet(isPresented: $presentAuthorMergeView) {
-                AuthorMergeView(authors: authors)
-                    .environment(\.managedObjectContext, viewContext)
+                AuthorMergeView(authors: viewModel.findAuthors(by: author))
                     .environmentObject(viewModel)
             }
             .sheet(isPresented: $presentAddContactView) {
                 AddContactView(author: author)
-                    .environment(\.managedObjectContext, viewContext)
                     .environmentObject(viewModel)
             }
             .sheet(isPresented: $presentAddToCollectionsView) {
                 AddAuthorToCollectionView(articles: articles)
-                    .environment(\.managedObjectContext, viewContext)
                     .environmentObject(viewModel)
             }
         }
@@ -173,7 +141,7 @@ struct AuthorDetailView: View {
                 TextField("last name", text: $lastName, prompt: nil)
                     .onSubmit {
                         author.lastName = lastName
-                        viewModel.save(viewContext: viewContext, completionHandler: nil)
+                        viewModel.saveAndFetch()
                     }
             }
             
@@ -189,7 +157,7 @@ struct AuthorDetailView: View {
                 TextField("fist name", text: $firstName, prompt: nil)
                     .onSubmit {
                         author.firstName = firstName
-                        viewModel.save(viewContext: viewContext, completionHandler: nil)
+                        viewModel.saveAndFetch()
                     }
             }
             
@@ -205,7 +173,7 @@ struct AuthorDetailView: View {
                 TextField("middle name", text: $middleName, prompt: nil)
                     .onSubmit {
                         author.middleName = middleName
-                        viewModel.save(viewContext: viewContext, completionHandler: nil)
+                        viewModel.saveAndFetch()
                     }
             }
             
@@ -221,7 +189,7 @@ struct AuthorDetailView: View {
                 TextField("suffix", text: $nameSuffix, prompt: nil)
                     .onSubmit {
                         author.nameSuffix = nameSuffix
-                        viewModel.save(viewContext: viewContext, completionHandler: nil)
+                        viewModel.saveAndFetch()
                     }
             }
             
@@ -289,7 +257,7 @@ struct AuthorDetailView: View {
     
     private func deleteContact(_ indexSet: IndexSet) -> Void {
         withAnimation {
-            viewModel.delete( indexSet.map { contacts[$0] }, from: author, viewContext: viewContext)
+            viewModel.delete( indexSet.map { contacts[$0] }, from: author)
         }
     }
 }

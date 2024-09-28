@@ -8,19 +8,13 @@
 import SwiftUI
 
 struct CollectionListView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
-    
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Collection.name, ascending: true)],
-        animation: .default)
-    private var collections: FetchedResults<Collection>
     
     @State private var presentAddCollectionView = false
     @State private var titleToSearch = ""
     
     private var filteredCollections: [Collection] {
-        collections.filter { collection in
+        viewModel.collections.filter { collection in
             if titleToSearch == "" {
                 return true
             } else if let name = collection.name {
@@ -37,14 +31,12 @@ struct CollectionListView: View {
                 ForEach(filteredCollections) { collection in
                     if let name = collection.name, name != "" {
                         NavigationLink(destination: CollectionDetailView(collection: collection, collectionName: name)) {
-                            VStack {
-                                HStack {
-                                    Text(name)
-                                    Spacer()
-                                    Label("\(collection.articles?.count ?? 0)", systemImage: "doc.on.doc")
-                                        .font(.callout)
-                                        .foregroundColor(Color.secondary)
-                                }
+                            HStack {
+                                Text(name)
+                                Spacer()
+                                Label("\(collection.articles?.count ?? 0)", systemImage: "doc.on.doc")
+                                    .font(.callout)
+                                    .foregroundColor(Color.secondary)
                             }
                         }
                     }
@@ -65,14 +57,13 @@ struct CollectionListView: View {
         }
         .sheet(isPresented: $presentAddCollectionView) {
             AddCollectionView()
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
     }
     
     private func deleteCollections(offsets: IndexSet) {
         withAnimation {
-            viewModel.delete(offsets.map { filteredCollections[$0] }, viewContext: viewContext)
+            viewModel.delete(offsets.map { filteredCollections[$0] })
         }
     }
 }

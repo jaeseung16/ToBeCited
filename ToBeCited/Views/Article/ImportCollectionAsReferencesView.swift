@@ -8,14 +8,8 @@
 import SwiftUI
 
 struct ImportCollectionAsReferencesView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
-    
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Collection.name, ascending: true)],
-        animation: .default)
-    private var collections: FetchedResults<Collection>
     
     @State var article: Article
     @State var collectionsToAdd = [Collection]()
@@ -80,7 +74,7 @@ struct ImportCollectionAsReferencesView: View {
     
     private func collectionListView() -> some View {
         List {
-            ForEach(collections) { collection in
+            ForEach(viewModel.allCollections) { collection in
                 if let name = collection.name, name != "" {
                     Button {
                         if collectionsToAdd.contains(collection) {
@@ -111,28 +105,7 @@ struct ImportCollectionAsReferencesView: View {
     }
     
     private func update() -> Void {
-        for collection in collectionsToAdd {
-            collection.articles?.forEach { reference in
-                if let reference = reference as? Article {
-                    guard reference != article else {
-                        return
-                    }
-                    
-                    guard let references = reference.references, !references.contains(article) else {
-                        return
-                    }
-                    
-                    reference.addToCited(article)
-                    article.addToReferences(reference)
-                }
-            }
-        }
-        
-        viewModel.save(viewContext: viewContext) { success in
-            if !success {
-                viewModel.log("ImportCollectionAsReferencesView: Failed to update")
-            }
-        }
+        viewModel.add(references: collectionsToAdd, to: article)
     }
 }
 

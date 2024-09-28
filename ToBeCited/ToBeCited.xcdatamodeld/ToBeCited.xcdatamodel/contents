@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19461" systemVersion="21A559" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F82" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="Article" representedClassName="Article" syncable="YES" codeGenerationType="class">
-        <attribute name="abstract" optional="YES" attributeType="String"/>
+        <attribute name="abstract" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="doi" optional="YES" attributeType="String"/>
         <attribute name="endPage" optional="YES" attributeType="String"/>
@@ -10,7 +10,7 @@
         <attribute name="pdf" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
         <attribute name="published" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="startPage" optional="YES" attributeType="String"/>
-        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="volume" optional="YES" attributeType="String"/>
         <relationship name="authors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Author" inverseName="articles" inverseEntity="Author"/>
@@ -22,10 +22,10 @@
     </entity>
     <entity name="Author" representedClassName="Author" syncable="YES" codeGenerationType="class">
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="firstName" optional="YES" attributeType="String"/>
-        <attribute name="lastName" optional="YES" attributeType="String"/>
-        <attribute name="middleName" optional="YES" attributeType="String"/>
-        <attribute name="nameSuffix" optional="YES" attributeType="String"/>
+        <attribute name="firstName" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
+        <attribute name="lastName" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
+        <attribute name="middleName" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
+        <attribute name="nameSuffix" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="orcid" optional="YES" attributeType="String"/>
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="articles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Article" inverseName="authors" inverseEntity="Article"/>
@@ -64,13 +64,4 @@
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="article" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Article" inverseName="ris" inverseEntity="Article"/>
     </entity>
-    <elements>
-        <element name="Article" positionX="-36" positionY="18" width="128" height="299"/>
-        <element name="Author" positionX="-54" positionY="45" width="128" height="164"/>
-        <element name="AuthorContact" positionX="-36" positionY="108" width="128" height="119"/>
-        <element name="Citation" positionX="-18" positionY="117" width="128" height="74"/>
-        <element name="Collection" positionX="-27" positionY="135" width="128" height="119"/>
-        <element name="OrderInCollection" positionX="-36" positionY="153" width="128" height="104"/>
-        <element name="RIS" positionX="-36" positionY="90" width="128" height="74"/>
-    </elements>
 </model>

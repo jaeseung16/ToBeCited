@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct EditAbstractView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
@@ -66,7 +65,7 @@ struct EditAbstractView: View {
     
     private func update() -> Void {
         article.abstract = abstract
-        viewModel.save(viewContext: viewContext) { success in
+        viewModel.saveAndFetch() { success in
             if !success {
                 viewModel.log("Failed to update abstract")
             }

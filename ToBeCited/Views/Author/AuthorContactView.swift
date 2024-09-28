@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AuthorContactView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var contact: AuthorContact
@@ -27,7 +26,7 @@ struct AuthorContactView: View {
                 TextField("email", text: $email, prompt: nil)
                     .onSubmit {
                         contact.email = email
-                        viewModel.save(viewContext: viewContext, completionHandler: nil)
+                        viewModel.save()
                     }
             }
             
@@ -40,7 +39,7 @@ struct AuthorContactView: View {
                 TextField("institution", text: $institution, prompt: nil)
                     .onSubmit {
                         contact.institution = institution
-                        viewModel.save(viewContext: viewContext, completionHandler: nil)
+                        viewModel.save()
                     }
             }
             
@@ -53,24 +52,17 @@ struct AuthorContactView: View {
                 TextField("address", text: $address, prompt: nil)
                     .onSubmit {
                         contact.address = address
-                        viewModel.save(viewContext: viewContext, completionHandler: nil)
+                        viewModel.save()
                     }
             }
             
             HStack {
                 Spacer()
                 
-                Text("Added on \(dateFormatter.string(from: contact.created ?? Date()))")
+                Text("Added on \(ToBeCitedDateFormatter.authorContact.string(from: contact.created ?? Date()))")
                     .font(.callout)
                     .foregroundColor(.secondary)
             }
         }
-    }
-    
-    private var dateFormatter: DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .none
-        return dateFormatter
     }
 }

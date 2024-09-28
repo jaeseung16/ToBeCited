@@ -17,7 +17,6 @@ struct ShareActivityView: UIViewControllerRepresentable {
     var completionHandler: Callback? = nil
     
     func makeUIViewController(context: Context) -> UIActivityViewController {
-        print("activityItems = \(activityItems)")
         let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: applicationActivities)
         activityViewController.excludedActivityTypes = excludedActivityTypes
         activityViewController.completionWithItemsHandler = completionHandler

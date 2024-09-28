@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AuthorMergeView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
@@ -65,7 +64,7 @@ struct AuthorMergeView: View {
             Spacer()
             
             Button {
-                viewModel.merge(authors: selected, viewContext: viewContext)
+                viewModel.merge(authors: selected)
                 dismiss.callAsFunction()
             } label: {
                 Text("Merge")

@@ -6,16 +6,10 @@
 //
 
 import SwiftUI
+import CoreSpotlight
 
 struct ArticleListView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false),
-                          NSSortDescriptor(keyPath: \Article.title, ascending: true)],
-        animation: .default)
-    private var articles: FetchedResults<Article>
     
     @State private var presentAddArticleView = false
     @State private var presentFilterArticleView = false
@@ -27,10 +21,11 @@ struct ArticleListView: View {
             return ""
         }
     }
-    @State private var titleToSearch = ""
+    
+    @State private var selectedArticle: Article?
     
     private var filteredArticles: [Article] {
-        articles.filter { article in
+        viewModel.articles.filter { article in
             if viewModel.selectedAuthors == nil {
                 return true
             } else if let authors = article.authors as? Set<Author>, let selectedAuthors = viewModel.selectedAuthors {
@@ -49,74 +44,74 @@ struct ArticleListView: View {
                 return false
             }
         }
-        .filter { article in
-            if titleToSearch == "" {
-                return true
-            } else if let title = article.title {
-                return title.range(of: titleToSearch, options: .caseInsensitive) != nil
-            } else {
-                return false
-            }
-        }
     }
     
     var body: some View {
         NavigationView {
             List {
                 ForEach(filteredArticles) { article in
-                    NavigationLink(destination:
-                                    ArticleDetailView(article: article,
-                                                      title: article.title ?? "Title is not available",
-                                                      published: article.published ?? Date())) {
+                    NavigationLink(tag: article, selection: $selectedArticle) {
+                        ArticleDetailView(article: article,
+                                          title: article.title ?? "Title is not available",
+                                          published: article.published ?? Date())
+                    } label: {
                         ArticleRowView(article: article)
                     }
                 }
                 .onDelete(perform: deleteArticles)
             }
+            .searchable(text: $viewModel.articleSearchString)
             .navigationTitle(Text("Articles"))
             .toolbar {
                 ToolbarItemGroup {
                     HStack {
-                        Button(action: {
-                            viewModel.selectedAuthors = nil
-                            viewModel.selectedPublishedIn = nil
+                        Button {
+                            reset()
                             presentFilterArticleView = true
-                        }) {
+                        } label: {
                             Label("Filter", systemImage: "line.horizontal.3.decrease.circle")
                         }
                         
-                        Button(action: {
+                        Button {
+                            reset()
                             presentAddArticleView = true
-                        }) {
+                        } label: {
                             Label("Add Item", systemImage: "plus")
                         }
                     }
                 }
             }
-            
         }
-        .searchable(text: $titleToSearch)
+        .onChange(of: viewModel.articleSearchString) { newValue in
+            viewModel.searchArticle()
+        }
         .sheet(isPresented: $presentAddArticleView) {
             AddRISView()
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentFilterArticleView) {
             FilterArticleView()
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
+        }
+        .onContinueUserActivity(CSSearchableItemActionType) { activity in
+            viewModel.continueActivity(activity) { entity in
+                if let article = entity as? Article {
+                    viewModel.articleSearchString = article.title ?? ""
+                    selectedArticle = article
+                }
+            }
         }
     }
     
     private func deleteArticles(offsets: IndexSet) {
         withAnimation {
-            viewModel.delete(offsets.map { filteredArticles[$0] }, viewContext: viewContext)
+            viewModel.delete(offsets.map { filteredArticles[$0] } )
         }
     }
-}
-
-struct ArticleListView_Previews: PreviewProvider {
-    static var previews: some View {
-        ArticleListView()
+    
+    private func reset() {
+        viewModel.articleSearchString = ""
+        viewModel.selectedAuthors = nil
+        viewModel.selectedPublishedIn = nil
     }
 }

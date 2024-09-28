@@ -9,7 +9,6 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ArticleDetailView: View, DropDelegate {
-    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var importPdf = false
@@ -17,7 +16,6 @@ struct ArticleDetailView: View, DropDelegate {
     @State private var presentEditAbstractView = false
     @State private var exportPDF = false
     @State private var pdfData = Data()
-    @State private var pdfURL: URL?
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
     @State private var presentSelectReferenceView = false
@@ -29,13 +27,7 @@ struct ArticleDetailView: View, DropDelegate {
     @State var published: Date
     
     private var authors: [Author] {
-        var authors = [Author]()
-        article.authors?.forEach { author in
-            if let author = author as? Author {
-                authors.append(author)
-            }
-        }
-        return authors
+        return article.authors?.compactMap { $0 as? Author } ?? [Author]()
     }
     
     private var abstractExists: Bool {
@@ -55,33 +47,15 @@ struct ArticleDetailView: View, DropDelegate {
     }
     
     private var references: [Article] {
-        var references = [Article]()
-        article.references?.forEach { reference in
-            if let reference = reference as? Article {
-                references.append(reference)
-            }
-        }
-        return references
+        return article.references?.compactMap { $0 as? Article } ?? [Article]()
     }
     
     private var cited: [Article] {
-        var cited = [Article]()
-        article.cited?.forEach { article in
-            if let article = article as? Article {
-                cited.append(article)
-            }
-        }
-        return cited
+        return article.cited?.compactMap { $0 as? Article } ?? [Article]()
     }
     
     private var collections: [Collection] {
-        var collections = [Collection]()
-        article.collections?.forEach { collection in
-            if let collection = collection as? Collection {
-                collections.append(collection)
-            }
-        }
-        return collections
+        return article.collections?.compactMap { $0 as? Collection } ?? [Collection]()
     }
     
     var body: some View {
@@ -126,7 +100,7 @@ struct ArticleDetailView: View, DropDelegate {
         .fileExporter(isPresented: $exportPDF, documents: [PDFFile(pdfData: pdfData)], contentType: .pdf) { result in
             switch result {
             case .success(let url):
-                print("saved pdf at \(url)")
+                viewModel.log("Exported a pdf file to \(url)")
             case .failure(let error):
                 errorMessage = "Failed to export the pdf file: \(error.localizedDescription)"
                 showErrorAlert = true
@@ -134,17 +108,14 @@ struct ArticleDetailView: View, DropDelegate {
         }
         .sheet(isPresented: $presentSelectReferenceView) {
             SelectReferencesView(article: article, references: references)
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentAddToCollectionsView) {
             AddToCollectionsView(article: article)
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
         .sheet(isPresented: $presentImportCollectionAsReferences) {
             ImportCollectionAsReferencesView(article: article)
-                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
         }
         .alert("ERROR", isPresented: $showErrorAlert) {
@@ -214,7 +185,7 @@ struct ArticleDetailView: View, DropDelegate {
     private func updatePDF() -> Void {
         if !pdfData.isEmpty {
             article.pdf = pdfData
-            viewModel.save(viewContext: viewContext) { success in
+            viewModel.save() { success in
                 if !success {
                     viewModel.log("Failed to save pdf")
                 }
@@ -246,7 +217,7 @@ struct ArticleDetailView: View, DropDelegate {
     private func updateTitle() -> Void {
         if !title.isEmpty {
             article.title = title
-            viewModel.save(viewContext: viewContext) { success in
+            viewModel.saveAndFetch() { success in
                 if !success {
                     viewModel.log("Failed to save title")
                 }
@@ -258,7 +229,7 @@ struct ArticleDetailView: View, DropDelegate {
         VStack {
             titleView()
             
-            Text(viewModel.journalString(article: article))
+            JournalTitleView(article: article)
             
             publishedView()
         
@@ -304,7 +275,7 @@ struct ArticleDetailView: View, DropDelegate {
     
     private func updatePublished() -> Void {
         article.published = published
-        viewModel.save(viewContext: viewContext) { success in
+        viewModel.save() { success in
             if !success {
                 viewModel.log("Failed to save published")
             }
@@ -312,10 +283,7 @@ struct ArticleDetailView: View, DropDelegate {
     }
     
     private var publicationDate: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .none
-        return dateFormatter.string(from: article.published!)
+        return ToBeCitedDateFormatter.publication.string(from: article.published!)
     }
     
     private func doiLinkView(url: URL) -> some View {
@@ -353,6 +321,12 @@ struct ArticleDetailView: View, DropDelegate {
                     .foregroundColor(.secondary)
                 
                 Spacer()
+                
+                NavigationLink {
+                    EditAuthorsView(article: article, authors: authors)
+                } label: {
+                    Label("edit", systemImage: "pencil.circle")
+                }
             }
             
             ForEach(authors, id: \.uuid) { author in
@@ -406,6 +380,7 @@ struct ArticleDetailView: View, DropDelegate {
                 }
                 
                 Button {
+                    viewModel.fetchAllColections()
                     presentImportCollectionAsReferences = true
                 } label: {
                     Label("import from collections", systemImage: "square.and.arrow.down.on.square")
@@ -460,6 +435,7 @@ struct ArticleDetailView: View, DropDelegate {
                 Spacer()
                 
                 Button {
+                    viewModel.fetchAllColections()
                     presentAddToCollectionsView = true
                 } label: {
                     Text("Add to existing collections")

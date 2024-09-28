@@ -1,23 +1,23 @@
 //
-//  EditCollectionView.swift
+//  EditAuthorsView.swift
 //  ToBeCited
 //
-//  Created by Jae Seung Lee on 11/14/21.
+//  Created by Jae Seung Lee on 8/6/23.
 //
 
 import SwiftUI
 
-struct EditCollectionView: View {
+struct EditAuthorsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
-    var collection: Collection
+    var article: Article
+    @State var authors: [Author]
+    @State private var enableSaveButton = false
+    @State private var lastNameToSearch = ""
     
-    @State var articlesInCollection: [Article]
-    @State var titleToSearch = ""
-    
-    private var filteredArticles: [Article] {
-        return viewModel.articles(titleIncluding: titleToSearch)
+    private var filteredAuthors: [Author] {
+        viewModel.authors(lastNameIncluding: lastNameToSearch)
     }
     
     var body: some View {
@@ -26,17 +26,15 @@ struct EditCollectionView: View {
                 header()
                 
                 Divider()
-                
-                Text("The collection contains \(articlesInCollection.count) \(articlesInCollection.count == 1 ? "article" : "articles")")
-                
+ 
                 List {
-                    ForEach(articlesInCollection) { article in
+                    ForEach(authors) { author in
                         Button {
-                            if let index = articlesInCollection.firstIndex(of: article) {
-                                articlesInCollection.remove(at: index)
+                            if let index = authors.firstIndex(of: author) {
+                                authors.remove(at: index)
                             }
                         } label: {
-                            ArticleRowView(article: article)
+                            AuthorNameView(author: author)
                         }
                     }
                 }
@@ -45,15 +43,15 @@ struct EditCollectionView: View {
                 Divider()
                 
                 HStack {
-                    Label("Articles (\(filteredArticles.count))", systemImage: "doc.on.doc")
+                    Label("Authors (\(filteredAuthors.count))", systemImage: "doc.on.doc")
                     Image(systemName: "magnifyingglass")
-                    TextField("WORDS IN TITLE", text: $titleToSearch, prompt: Text("WORDS IN TITLE"))
+                    TextField("LASTNAME", text: $lastNameToSearch, prompt: Text("LASTNAME"))
                         .background(RoundedRectangle(cornerRadius: 8.0).stroke())
                 }
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
                 
-                filteredArticlesView()
+                filteredAuthorsView()
                     .frame(height: 0.3 * geometry.size.height)
             }
             .padding()
@@ -71,7 +69,7 @@ struct EditCollectionView: View {
             Spacer()
             
             Button(action: {
-                viewModel.update(collection: collection, with: articlesInCollection)
+                viewModel.update(article: article, with: authors)
                 dismiss.callAsFunction()
             }, label: {
                 Text("Save")
@@ -79,20 +77,24 @@ struct EditCollectionView: View {
         }
     }
     
-    private func filteredArticlesView() -> some View {
+    private func filteredAuthorsView() -> some View {
         VStack {
             List {
-                ForEach(filteredArticles) { article in
+                ForEach(filteredAuthors) { author in
                     Button {
-                        if articlesInCollection.contains(article) {
-                            if let index = articlesInCollection.firstIndex(of: article) {
-                                articlesInCollection.remove(at: index)
+                        if authors.contains(author) {
+                            if let index = authors.firstIndex(of: author) {
+                                authors.remove(at: index)
                             }
                         } else {
-                            articlesInCollection.append(article)
+                            authors.append(author)
                         }
                     } label: {
-                        ArticleRowView(article: article)
+                        AuthorNameView(author: author)
+                        Spacer()
+                        Label("\(author.articles?.count ?? 0)", systemImage: "doc.on.doc")
+                            .font(.callout)
+                            .foregroundColor(Color.secondary)
                     }
                 }
             }
@@ -101,4 +103,3 @@ struct EditCollectionView: View {
     }
      
 }
-

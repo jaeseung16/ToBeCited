@@ -7,41 +7,25 @@
 
 import SwiftUI
 import CoreData
+import CoreSpotlight
 
 struct AuthorListView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
-    
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
-                                    NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
-                                    NSSortDescriptor(keyPath: \Author.created, ascending: false)],
-                  animation: .default)
-    private var authors: FetchedResults<Author>
 
-    @State private var lastNameToSearch = ""
-    
-    private var filteredAuthors: [Author] {
-        authors.filter { author in
-            if lastNameToSearch == "" {
-                return true
-            } else if let lastName = author.lastName {
-                return lastName.range(of: lastNameToSearch, options: .caseInsensitive) != nil
-            } else {
-                return false
-            }
-        }
-    }
+    @State private var selectedAuthor: Author?
     
     var body: some View {
         NavigationView {
             List {
-                ForEach(filteredAuthors) { author in
-                    NavigationLink(destination: AuthorDetailView(author: author,
-                                                                 firstName: author.firstName ?? "",
-                                                                 middleName: author.middleName ?? "",
-                                                                 lastName: author.lastName ?? "",
-                                                                 nameSuffix: author.nameSuffix ?? "",
-                                                                 orcid: author.orcid ?? "")) {
+                ForEach(viewModel.authors) { author in
+                    NavigationLink(tag: author, selection: $selectedAuthor) {
+                        AuthorDetailView(author: author,
+                                         firstName: author.firstName ?? "",
+                                         middleName: author.middleName ?? "",
+                                         lastName: author.lastName ?? "",
+                                         nameSuffix: author.nameSuffix ?? "",
+                                         orcid: author.orcid ?? "")
+                    } label: {
                         HStack {
                             AuthorNameView(author: author)
                             Spacer()
@@ -54,13 +38,24 @@ struct AuthorListView: View {
                 .onDelete(perform: deleteAuthors)
             }
             .navigationTitle(Text("Authors"))
-            .searchable(text: $lastNameToSearch)
+            .searchable(text: $viewModel.authorSearchString)
+        }
+        .onChange(of: viewModel.authorSearchString) { newValue in
+            viewModel.searchAuthor()
+        }
+        .onContinueUserActivity(CSSearchableItemActionType) { activity in
+            viewModel.continueActivity(activity) { entity in
+                if let author = entity as? Author {
+                    viewModel.authorSearchString = ToBeCitedNameFormatHelper.formatName(of: author)
+                    selectedAuthor = author
+                }
+            }
         }
     }
     
     private func deleteAuthors(offsets: IndexSet) {
         withAnimation {
-            viewModel.delete(offsets.map { filteredAuthors[$0] }, viewContext: viewContext)
+            viewModel.delete(offsets.map { viewModel.authors[$0] } )
         }
     }
 }

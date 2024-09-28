@@ -21,13 +21,13 @@ struct ArticleRowView: View {
             
             HStack {
                 Spacer()
-                
-                Text(viewModel.journalString(article: article))
+               
+                JournalTitleView(article: article)
                 
                 Spacer()
                     .frame(width: 10)
                 
-                Text("\(viewModel.yearOnlyDateFormatter.string(from: article.published ?? Date()))")
+                Text("\(ToBeCitedDateFormatter.yearOnly.string(from: article.published ?? Date()))")
             }
             .font(.callout)
             .foregroundColor(.secondary)

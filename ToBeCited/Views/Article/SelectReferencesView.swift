@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SelectReferencesView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
@@ -17,31 +16,11 @@ struct SelectReferencesView: View {
     @State var showAlertSameArticle = false
     @State var showAlertCitedArticle = false
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Article.published, ascending: false)],
-        animation: .default)
-    private var articles: FetchedResults<Article>
-    
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
-                          NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
-                          NSSortDescriptor(keyPath: \Author.created, ascending: false)],
-        animation: .default)
-    private var authors: FetchedResults<Author>
-    
     @State var references: [Article]
     @State private var titleToSearch = ""
     
     private var filteredArticles: [Article] {
-        articles.filter {
-            if titleToSearch.isEmpty {
-                return true
-            } else if let title = $0.title {
-                return title.range(of: titleToSearch, options: .caseInsensitive) != nil
-            } else {
-                return false
-            }
-        }
+        return viewModel.articles(titleIncluding: titleToSearch)
     }
     
     var body: some View {
@@ -110,7 +89,7 @@ struct SelectReferencesView: View {
                 .font(.callout)
             
             List {
-                ForEach(authors) { author in
+                ForEach(viewModel.allAuthors) { author in
                     Button {
                         selectedAuthor = author
                     } label: {
@@ -162,7 +141,7 @@ struct SelectReferencesView: View {
                 reference.addToCited(article)
             }
             
-            viewModel.save(viewContext: viewContext) { success in
+            viewModel.saveAndFetch() { success in
                 if !success {
                     viewModel.log("Failed to update references")
                 }

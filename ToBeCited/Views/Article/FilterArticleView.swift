@@ -8,16 +8,8 @@
 import SwiftUI
 
 struct FilterArticleView: View {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
-    
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Author.lastName, ascending: true),
-                          NSSortDescriptor(keyPath: \Author.firstName, ascending: true),
-                          NSSortDescriptor(keyPath: \Author.created, ascending: false)],
-        animation: .default)
-    private var authors: FetchedResults<Author>
     
     @State private var lastNameToSearch: String = ""
     @State var publishedIn: String = ""
@@ -30,14 +22,10 @@ struct FilterArticleView: View {
     }
     
     private var filteredAuthors: [Author] {
-        authors.filter { author in
-            if lastNameToSearch == "" {
-                return false
-            } else if let lastName = author.lastName {
-                return lastName.range(of: lastNameToSearch, options: .caseInsensitive) != nil
-            } else {
-                return false
-            }
+        if lastNameToSearch.isEmpty {
+            return [Author]()
+        } else {
+            return viewModel.authors(lastNameIncluding: lastNameToSearch)
         }
     }
     

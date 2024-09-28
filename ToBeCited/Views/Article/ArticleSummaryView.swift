@@ -8,18 +8,10 @@
 import SwiftUI
 
 struct ArticleSummaryView: View {
-    @EnvironmentObject private var viewModel: ToBeCitedViewModel
-    
     @State var article: Article
     
     private var authors: [Author] {
-        var authors = [Author]()
-        article.authors?.forEach { author in
-            if let author = author as? Author {
-                authors.append(author)
-            }
-        }
-        return authors
+        return article.authors?.compactMap { $0 as? Author } ?? [Author]()
     }
     
     private var abstractExists: Bool {
@@ -51,7 +43,7 @@ struct ArticleSummaryView: View {
                 .multilineTextAlignment(.center)
                 .padding()
             
-            Text(viewModel.journalString(article: article))
+            JournalTitleView(article: article)
             
             if article.published != nil {
                 publishedView()
@@ -66,10 +58,7 @@ struct ArticleSummaryView: View {
     }
     
     private var publicationDate: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .none
-        return dateFormatter.string(from: article.published!)
+        return ToBeCitedDateFormatter.publication.string(from: article.published!)
     }
     
     private func publishedView() -> some View {
@@ -139,7 +128,7 @@ struct ArticleSummaryView: View {
             ForEach(authors, id: \.uuid) { author in
                 HStack {
                     Spacer()
-                    Text(viewModel.nameComponents(of: author).formatted(.name(style: .long)))
+                    AuthorNameView(author: author)
                     Spacer()
                 }
             }

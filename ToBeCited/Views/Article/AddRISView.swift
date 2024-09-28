@@ -9,7 +9,6 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct AddRISView: View, DropDelegate {
-    @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
@@ -90,14 +89,12 @@ struct AddRISView: View, DropDelegate {
             }
         }
         
-        viewModel.save(risRecords: risRecords, viewContext: viewContext)
+        viewModel.save(risRecords: risRecords)
         
         risRecords.removeAll()
     }
     
     func performDrop(info: DropInfo) -> Bool {
-        print("info = \(info)")
-        print("info.hasItemsConforming(to: [RISFilePickerViewController.risUTType] = \(info.hasItemsConforming(to: [.text]))")
         if info.hasItemsConforming(to: [.text]) {
             info.itemProviders(for: [.text]).forEach { itemProvider in
                 itemProvider.loadItem(forTypeIdentifier: UTType.text.identifier, options: nil) { data, error in
@@ -119,11 +116,5 @@ struct AddRISView: View, DropDelegate {
             }
         }
         return true
-    }
-}
-
-struct AddRISView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddRISView()
     }
 }
