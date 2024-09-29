@@ -116,5 +116,6 @@ struct ArticleListView: View {
         viewModel.articleSearchString = ""
         viewModel.selectedAuthors = nil
         viewModel.selectedPublishedIn = nil
+        viewModel.selectedTab = .articles
     }
 }
