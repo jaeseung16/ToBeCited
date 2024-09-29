@@ -20,7 +20,7 @@ struct ToBeCitedApp: App {
                 .onOpenURL { url in
                     if url.absoluteString.lowercased().contains("ris") {
                         let _ = url.startAccessingSecurityScopedResource()
-                        if let risString = try? String(contentsOf: url) {
+                        if let risString = try? String(contentsOf: url, encoding: .utf8) {
                             if !risString.isEmpty {
                                 appDelegate.viewModel.risString = risString
                             }

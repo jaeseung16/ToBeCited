@@ -47,9 +47,10 @@ struct CollectionListView: View {
             .searchable(text: $titleToSearch)
             .toolbar {
                 ToolbarItem {
-                    Button(action: {
+                    Button {
+                        viewModel.selectedTab = .collections
                         presentAddCollectionView = true
-                    }) {
+                    } label: {
                         Label("Add Collection", systemImage: "plus")
                     }
                 }
@@ -64,6 +65,7 @@ struct CollectionListView: View {
             AddCollectionView()
                 .environmentObject(viewModel)
         }
+
     }
     
     private func deleteCollections(offsets: IndexSet) {
