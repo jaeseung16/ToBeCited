@@ -25,19 +25,19 @@ struct CollectionListView: View {
         }
     }
     
+    @State private var selectedCollection: Collection?
+    
     var body: some View {
-        NavigationView {
-            List {
+        NavigationSplitView {
+            List(selection: $selectedCollection) {
                 ForEach(filteredCollections) { collection in
-                    if let name = collection.name, name != "" {
-                        NavigationLink(destination: CollectionDetailView(collection: collection, collectionName: name)) {
-                            HStack {
-                                Text(name)
-                                Spacer()
-                                Label("\(collection.articles?.count ?? 0)", systemImage: "doc.on.doc")
-                                    .font(.callout)
-                                    .foregroundColor(Color.secondary)
-                            }
+                    NavigationLink(value: collection) {
+                        HStack {
+                            Text(collection.name ?? "")
+                            Spacer()
+                            Label("\(collection.articles?.count ?? 0)", systemImage: "doc.on.doc")
+                                .font(.callout)
+                                .foregroundColor(Color.secondary)
                         }
                     }
                 }
@@ -53,6 +53,11 @@ struct CollectionListView: View {
                         Label("Add Collection", systemImage: "plus")
                     }
                 }
+            }
+        } detail: {
+            if let collection = selectedCollection {
+                CollectionDetailView(collection: collection, collectionName: collection.name ?? "")
+                    .id(collection)
             }
         }
         .sheet(isPresented: $presentAddCollectionView) {

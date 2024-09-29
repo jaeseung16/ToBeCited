@@ -28,16 +28,15 @@ struct ContentView: View {
                 CollectionListView()
             }
         }
-        //.tabViewStyle(.sidebarAdaptable)
         .alert("Failed to save data", isPresented: $viewModel.showAlert) {
             Button("Dismiss", role: .cancel) {
                 //
             }
         }
-        .onChange(of: viewModel.risString) { _ in
+        .onChange(of: viewModel.risString) {
             presentAddRISView = true
         }
-        .onChange(of: viewModel.selectedTab) { _ in
+        .onChange(of: viewModel.selectedTab) {
             viewModel.fetchAll()
         }
         .sheet(isPresented: $presentAddRISView) {
