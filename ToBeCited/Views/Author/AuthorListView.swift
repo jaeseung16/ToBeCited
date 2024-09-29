@@ -15,17 +15,10 @@ struct AuthorListView: View {
     @State private var selectedAuthor: Author?
     
     var body: some View {
-        NavigationView {
-            List {
+        NavigationSplitView {
+            List(selection: $selectedAuthor) {
                 ForEach(viewModel.authors) { author in
-                    NavigationLink(tag: author, selection: $selectedAuthor) {
-                        AuthorDetailView(author: author,
-                                         firstName: author.firstName ?? "",
-                                         middleName: author.middleName ?? "",
-                                         lastName: author.lastName ?? "",
-                                         nameSuffix: author.nameSuffix ?? "",
-                                         orcid: author.orcid ?? "")
-                    } label: {
+                    NavigationLink(value: author) {
                         HStack {
                             AuthorNameView(author: author)
                             Spacer()
@@ -39,8 +32,18 @@ struct AuthorListView: View {
             }
             .navigationTitle(Text("Authors"))
             .searchable(text: $viewModel.authorSearchString)
+        } detail: {
+            if let author = selectedAuthor {
+                AuthorDetailView(author: author,
+                                 firstName: author.firstName ?? "",
+                                 middleName: author.middleName ?? "",
+                                 lastName: author.lastName ?? "",
+                                 nameSuffix: author.nameSuffix ?? "",
+                                 orcid: author.orcid ?? "")
+                .id(author)
+            }
         }
-        .onChange(of: viewModel.authorSearchString) { newValue in
+        .onChange(of: viewModel.authorSearchString) {
             viewModel.searchAuthor()
         }
         .onContinueUserActivity(CSSearchableItemActionType) { activity in

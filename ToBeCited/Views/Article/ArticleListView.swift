@@ -47,14 +47,10 @@ struct ArticleListView: View {
     }
     
     var body: some View {
-        NavigationView {
-            List {
+        NavigationSplitView {
+            List(selection: $selectedArticle) {
                 ForEach(filteredArticles) { article in
-                    NavigationLink(tag: article, selection: $selectedArticle) {
-                        ArticleDetailView(article: article,
-                                          title: article.title ?? "Title is not available",
-                                          published: article.published ?? Date())
-                    } label: {
+                    NavigationLink(value: article) {
                         ArticleRowView(article: article)
                     }
                 }
@@ -81,8 +77,15 @@ struct ArticleListView: View {
                     }
                 }
             }
+        } detail: {
+            if let article = selectedArticle {
+                ArticleDetailView(article: article,
+                                  title: article.title ?? "Title is not available",
+                                  published: article.published ?? Date())
+                .id(article)
+            }
         }
-        .onChange(of: viewModel.articleSearchString) { newValue in
+        .onChange(of: viewModel.articleSearchString) {
             viewModel.searchArticle()
         }
         .sheet(isPresented: $presentAddArticleView) {
