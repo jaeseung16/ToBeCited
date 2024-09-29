@@ -16,24 +16,19 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $viewModel.selectedTab) {
-            ArticleListView()
-                .tabItem {
-                    Label("Articles", systemImage: "doc.on.doc")
-                }
-                .tag(ToBeCitedTab.articles)
+            Tab("Articles", systemImage: "doc.on.doc", value: .articles) {
+                ArticleListView()
+            }
             
-            AuthorListView()
-                .tabItem {
-                    Label("Authors", systemImage: "person.3")
-                }
-                .tag(ToBeCitedTab.authors)
+            Tab("Authors", systemImage: "person.3", value: .authors) {
+                AuthorListView()
+            }
             
-            CollectionListView()
-                .tabItem {
-                    Label("Collections", systemImage: "square.stack.3d.up")
-                }
-                .tag(ToBeCitedTab.collections)
+            Tab("Collections", systemImage: "square.stack.3d.up", value: .collections) {
+                CollectionListView()
+            }
         }
+        //.tabViewStyle(.sidebarAdaptable)
         .alert("Failed to save data", isPresented: $viewModel.showAlert) {
             Button("Dismiss", role: .cancel) {
                 //
