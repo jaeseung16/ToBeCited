@@ -49,6 +49,7 @@
 		90C8D7B22753E36D0063DE71 /* AuthorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C8D7B12753E36D0063DE71 /* AuthorListView.swift */; };
 		90D89A632725A9440079EBD2 /* UpdateTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D89A622725A9440079EBD2 /* UpdateTextView.swift */; };
 		90D89A652725F18E0079EBD2 /* AddContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D89A642725F18E0079EBD2 /* AddContactView.swift */; };
+		90DBDCCC2CACB340002504D3 /* PDFReadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DBDCCB2CACB340002504D3 /* PDFReadView.swift */; };
 		90DEAF54274ADE8100058AAC /* ArticleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DEAF53274ADE8100058AAC /* ArticleListView.swift */; };
 		90DEAF56274AE2C300058AAC /* FilterArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DEAF55274AE2C300058AAC /* FilterArticleView.swift */; };
 		90EADA21274855D10001E150 /* TextDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EADA20274855D10001E150 /* TextDocument.swift */; };
@@ -132,6 +133,7 @@
 		90C8D7B12753E36D0063DE71 /* AuthorListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorListView.swift; sourceTree = "<group>"; };
 		90D89A622725A9440079EBD2 /* UpdateTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateTextView.swift; sourceTree = "<group>"; };
 		90D89A642725F18E0079EBD2 /* AddContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactView.swift; sourceTree = "<group>"; };
+		90DBDCCB2CACB340002504D3 /* PDFReadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFReadView.swift; sourceTree = "<group>"; };
 		90DEAF53274ADE8100058AAC /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
 		90DEAF55274AE2C300058AAC /* FilterArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterArticleView.swift; sourceTree = "<group>"; };
 		90EADA20274855D10001E150 /* TextDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDocument.swift; sourceTree = "<group>"; };
@@ -233,6 +235,7 @@
 				90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */,
 				90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */,
 				9009B6702720B19F0023C316 /* PDFFilePickerViewController.swift */,
+				90DBDCCB2CACB340002504D3 /* PDFReadView.swift */,
 				9009B6722720B31A0023C316 /* PDFKitView.swift */,
 				90FD8418273C5F6B00929EF7 /* SelectReferencesView.swift */,
 				90F9793F2749A6A8008AD083 /* PDFDocument.swift */,
@@ -527,6 +530,7 @@
 				90DEAF56274AE2C300058AAC /* FilterArticleView.swift in Sources */,
 				9044F67A2A8032A200EB06AE /* EditAuthorsView.swift in Sources */,
 				90B62044271E06BE005D0FEA /* RISTag.swift in Sources */,
+				90DBDCCC2CACB340002504D3 /* PDFReadView.swift in Sources */,
 				90FD841C273C8B9200929EF7 /* CollectionDetailView.swift in Sources */,
 				902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */,
 				9009B6752720B8220023C316 /* EditAbstractView.swift in Sources */,
