@@ -169,7 +169,7 @@ struct ArticleDetailView: View, DropDelegate {
                 .disabled(!pdfExists)
                 
                 NavigationLink {
-                    PDFKitView(pdfData: article.pdf ?? Data())
+                    PDFReadView(pdfData: article.pdf ?? Data())
                         .navigationTitle(title)
                 } label: {
                     Label("Open", systemImage: "eye")
