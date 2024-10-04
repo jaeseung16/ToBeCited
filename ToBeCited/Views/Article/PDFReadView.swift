@@ -23,7 +23,7 @@ struct PDFReadView: View {
                     Button {
                         dismiss.callAsFunction()
                     } label: {
-                        Text("Dismiss")
+                        Label("Dismiss", systemImage: "xmark.square")
                     }
                 }
             }
