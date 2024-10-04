@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ArticleSummaryView: View {
+    @Environment(\.dismiss) private var dismiss
+    
     @State var article: Article
     
     private var authors: [Author] {
@@ -34,6 +36,15 @@ struct ArticleSummaryView: View {
         }
         .navigationTitle(article.title ?? "Title is not available")
         .padding()
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    dismiss.callAsFunction()
+                } label: {
+                    Text("Dismiss")
+                }
+            }
+        }
     }
     
     private func citation() -> some View {
