@@ -13,6 +13,7 @@ import Persistence
 import SwiftUI
 import CoreSpotlight
 
+@MainActor
 class ToBeCitedViewModel: NSObject, ObservableObject {
     let logger = Logger()
     
@@ -234,16 +235,14 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
-        persistenceHelper.save { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(_):
-                    completionHandler?(true)
-                case .failure(let error):
-                    self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
-                    self.showAlert.toggle()
-                    completionHandler?(false)
-                }
+        Task {
+            do {
+                try await persistenceHelper.save()
+                completionHandler?(true)
+            } catch {
+                logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
+                showAlert.toggle()
+                completionHandler?(false)
             }
         }
     }
