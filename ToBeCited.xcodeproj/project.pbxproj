@@ -44,6 +44,7 @@
 		90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */; };
 		90B6204D271E2C96005D0FEA /* RISWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B6204C271E2C96005D0FEA /* RISWriter.swift */; };
 		90BE389B2750350A005B98C7 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90BE389A2750350A005B98C7 /* CloudKit.framework */; };
+		90C609C52CB1B7C500FDDF11 /* CollectionSummaryRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C609C42CB1B7C500FDDF11 /* CollectionSummaryRowView.swift */; };
 		90C8D7AE2753C7F70063DE71 /* CollectionSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C8D7AD2753C7F70063DE71 /* CollectionSummaryView.swift */; };
 		90C8D7B02753C99A0063DE71 /* ArticleSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C8D7AF2753C99A0063DE71 /* ArticleSummaryView.swift */; };
 		90C8D7B22753E36D0063DE71 /* AuthorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C8D7B12753E36D0063DE71 /* AuthorListView.swift */; };
@@ -128,6 +129,7 @@
 		90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RISFilePickerViewController.swift; sourceTree = "<group>"; };
 		90B6204C271E2C96005D0FEA /* RISWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RISWriter.swift; sourceTree = "<group>"; };
 		90BE389A2750350A005B98C7 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		90C609C42CB1B7C500FDDF11 /* CollectionSummaryRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionSummaryRowView.swift; sourceTree = "<group>"; };
 		90C8D7AD2753C7F70063DE71 /* CollectionSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionSummaryView.swift; sourceTree = "<group>"; };
 		90C8D7AF2753C99A0063DE71 /* ArticleSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSummaryView.swift; sourceTree = "<group>"; };
 		90C8D7B12753E36D0063DE71 /* AuthorListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorListView.swift; sourceTree = "<group>"; };
@@ -354,6 +356,7 @@
 				90EADA20274855D10001E150 /* TextDocument.swift */,
 				90F27EE7275171F80072BAA1 /* CollectionListView.swift */,
 				90C8D7AD2753C7F70063DE71 /* CollectionSummaryView.swift */,
+				90C609C42CB1B7C500FDDF11 /* CollectionSummaryRowView.swift */,
 			);
 			path = Collection;
 			sourceTree = "<group>";
@@ -544,6 +547,7 @@
 				9012D32028038FDB00860731 /* AddAuthorToCollectionView.swift in Sources */,
 				90EF91EE27584F3300B1CD6F /* AuthorContactView.swift in Sources */,
 				90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */,
+				90C609C52CB1B7C500FDDF11 /* CollectionSummaryRowView.swift in Sources */,
 				90113C20276BF163007CE1D2 /* AddToCollectionsView.swift in Sources */,
 				9080FBBD2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift in Sources */,
 				90113C22276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift in Sources */,

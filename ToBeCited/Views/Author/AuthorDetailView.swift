@@ -232,16 +232,19 @@ struct AuthorDetailView: View {
                 }
             }
             
-            List {
-                ForEach(articles) { article in
-                    NavigationLink {
-                        ArticleSummaryView(article: article)
-                    } label: {
-                        ArticleRowView(article: article)
+            NavigationStack {
+                List {
+                    ForEach(articles) { article in
+                        NavigationLink(value: article) {
+                            ArticleRowView(article: article)
+                        }
                     }
                 }
+                .navigationDestination(for: Article.self) { article in
+                    ArticleSummaryView(article: article)
+                }
+                .listStyle(PlainListStyle())
             }
-            .listStyle(PlainListStyle())
         }
     }
     
