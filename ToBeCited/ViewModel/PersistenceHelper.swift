@@ -36,15 +36,26 @@ class PersistenceHelper {
         return persistence.createCoreSpotlightDelegate()
     }
     
+    @available(*, renamed: "save()")
     func save(completionHandler: @escaping (Result<Void,Error>) -> Void) -> Void {
-        persistence.save { result in
-            switch result {
-            case .success(_):
+        Task {
+            do {
+                try await save()
                 completionHandler(.success(()))
-            case .failure(let error):
-                PersistenceHelper.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
+            } catch {
                 completionHandler(.failure(error))
             }
+        }
+    }
+    
+    
+    func save() async throws {
+        do {
+            try await persistence.save()
+            return
+        } catch let error {
+            PersistenceHelper.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
+            throw error
         }
     }
     
