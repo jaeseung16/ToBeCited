@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CollectionSummaryView: View {
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var collection: Collection
@@ -59,5 +60,17 @@ struct CollectionSummaryView: View {
         }
         .navigationTitle(collection.name ?? "")
         .padding()
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss.callAsFunction()
+                } label: {
+                    HStack {
+                        Image(systemName: "chevron.backward")
+                        Text("Back")
+                    }
+                }
+            }
+        }
     }
 }
