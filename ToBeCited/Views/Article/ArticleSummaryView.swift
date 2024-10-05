@@ -37,11 +37,14 @@ struct ArticleSummaryView: View {
         .navigationTitle(article.title ?? "Title is not available")
         .padding()
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .navigationBarLeading) {
                 Button {
                     dismiss.callAsFunction()
                 } label: {
-                    Label("Dismiss", systemImage: "xmark.square")
+                    HStack {
+                        Image(systemName: "chevron.backward")
+                        Text("Back")
+                    }
                 }
             }
         }
