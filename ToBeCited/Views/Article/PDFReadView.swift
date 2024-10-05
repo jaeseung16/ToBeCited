@@ -18,15 +18,6 @@ struct PDFReadView: View {
                 PDFKitView(pdfData: pdfData)
             }
             .padding()
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        dismiss.callAsFunction()
-                    } label: {
-                        Label("Dismiss", systemImage: "xmark.square")
-                    }
-                }
-            }
         }
 
     }
