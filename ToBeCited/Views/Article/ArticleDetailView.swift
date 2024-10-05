@@ -442,22 +442,20 @@ struct ArticleDetailView: View, DropDelegate {
                 }
             }
             
-            List {
-                ForEach(collections) { collection in
-                    NavigationLink {
-                        CollectionSummaryView(collection: collection)
-                    } label: {
-                        HStack {
-                            Text(collection.name ?? "No title")
-                            Spacer()
-                            Text(collection.created ?? Date(), style: .date)
-                                .font(.callout)
-                                .foregroundColor(.secondary)
+            NavigationStack {
+                List {
+                    ForEach(collections) { collection in
+                        NavigationLink(value: collection) {
+                            CollectionSummaryRowView(collection: collection)
                         }
                     }
                 }
+                .navigationDestination(for: Collection.self) { collection in
+                    CollectionSummaryView(collection: collection)
+                }
+                .listStyle(PlainListStyle())
             }
-            .listStyle(PlainListStyle())
+            .navigationTitle(title)
         }
         .frame(height: 200.0)
     }

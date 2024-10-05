@@ -60,17 +60,5 @@ struct CollectionSummaryView: View {
         }
         .navigationTitle(collection.name ?? "")
         .padding()
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss.callAsFunction()
-                } label: {
-                    HStack {
-                        Image(systemName: "chevron.backward")
-                        Text("Back")
-                    }
-                }
-            }
-        }
     }
 }

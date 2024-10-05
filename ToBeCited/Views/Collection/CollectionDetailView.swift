@@ -33,6 +33,86 @@ struct CollectionDetailView: View {
             
             Divider()
             
+            info()
+            
+            Divider()
+            
+            HStack {
+                Spacer()
+                Text("EDIT")
+                
+                Button {
+                    presentEditCollectionView = true
+                } label: {
+                    Label("ARTICLES", systemImage: "doc.on.doc")
+                }
+                
+                Button {
+                    presentEditOrderView = true
+                } label: {
+                    Label("ORDER", systemImage: "123.rectangle")
+                }
+            }
+
+            NavigationStack {
+                List {
+                    ForEach(ordersInCollection) { order in
+                        if let article = order.article {
+                            NavigationLink(value: order) {
+                                HStack {
+                                    Text("\(order.order + 1)")
+                                    
+                                    Spacer()
+                                        .frame(width: 20)
+                                    
+                                    ArticleRowView(article: article)
+                                }
+                            }
+                        }
+                    }
+                    .onDelete(perform: delete)
+                }
+                .navigationDestination(for: OrderInCollection.self) { order in
+                    if let article = order.article {
+                        ArticleSummaryView(article: article)
+                    }
+                }
+                .listStyle(PlainListStyle())
+            }
+        }
+        .navigationTitle(collection.name ?? "")
+        .padding()
+        .sheet(isPresented: $presentEditOrderView) {
+            EditOrderView(orders: ordersInCollection)
+                .environmentObject(viewModel)
+        }
+        .sheet(isPresented: $presentEditCollectionView) {
+            EditCollectionView(collection: collection, articlesInCollection: articlesInCollection)
+                .environmentObject(viewModel)
+        }
+        .sheet(isPresented: $presentExportCollectionView) {
+            ExportCollectionView(collection: collection)
+                .environmentObject(viewModel)
+        }
+    }
+    
+    private func header() -> some View {
+        VStack {
+            HStack {
+                Spacer()
+                
+                Button {
+                    viewModel.export(collection: collection)
+                    presentExportCollectionView = true
+                } label: {
+                    Label("EXPORT", systemImage: "square.and.arrow.up")
+                }
+            }
+        }
+    }
+    
+    private func info() -> some View {
+        VStack {
             HStack {
                 Button {
                     collectionName = collection.name ?? ""
@@ -70,76 +150,6 @@ struct CollectionDetailView: View {
                             edited = true
                         }
                     }
-            }
-            
-            Divider()
-            
-            HStack {
-                Spacer()
-                Text("EDIT")
-                
-                Button {
-                    presentEditCollectionView = true
-                } label: {
-                    Label("ARTICLES", systemImage: "doc.on.doc")
-                }
-                
-                Button {
-                    presentEditOrderView = true
-                } label: {
-                    Label("ORDER", systemImage: "123.rectangle")
-                }
-            }
-
-            List {
-                ForEach(ordersInCollection) { order in
-                    if let article = order.article {
-                        NavigationLink {
-                            if let article = order.article {
-                                ArticleSummaryView(article: article)
-                            }
-                        } label: {
-                            HStack {
-                                Text("\(order.order + 1)")
-                                
-                                Spacer()
-                                    .frame(width: 20)
-                                
-                                ArticleRowView(article: article)
-                            }
-                        }
-                    }
-                }
-                .onDelete(perform: delete)
-            }
-        }
-        .navigationTitle(collection.name ?? "")
-        .padding()
-        .sheet(isPresented: $presentEditOrderView) {
-            EditOrderView(orders: ordersInCollection)
-                .environmentObject(viewModel)
-        }
-        .sheet(isPresented: $presentEditCollectionView) {
-            EditCollectionView(collection: collection, articlesInCollection: articlesInCollection)
-                .environmentObject(viewModel)
-        }
-        .sheet(isPresented: $presentExportCollectionView) {
-            ExportCollectionView(collection: collection)
-                .environmentObject(viewModel)
-        }
-    }
-    
-    private func header() -> some View {
-        VStack {
-            HStack {
-                Spacer()
-                
-                Button {
-                    viewModel.export(collection: collection)
-                    presentExportCollectionView = true
-                } label: {
-                    Label("EXPORT", systemImage: "square.and.arrow.up")
-                }
             }
         }
     }

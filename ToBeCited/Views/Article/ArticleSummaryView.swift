@@ -36,18 +36,6 @@ struct ArticleSummaryView: View {
         }
         .navigationTitle(article.title ?? "Title is not available")
         .padding()
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss.callAsFunction()
-                } label: {
-                    HStack {
-                        Image(systemName: "chevron.backward")
-                        Text("Back")
-                    }
-                }
-            }
-        }
     }
     
     private func citation() -> some View {
