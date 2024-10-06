@@ -22,9 +22,9 @@ struct EditAbstractView: View {
             Divider()
             
             TextEditor(text: $abstract)
-                .onChange(of: abstract, perform: { _ in
+                .onChange(of: abstract) {
                     enableSaveButton = true
-                })
+                }
                 .disableAutocorrection(true)
                 .multilineTextAlignment(.leading)
                 .lineSpacing(10)

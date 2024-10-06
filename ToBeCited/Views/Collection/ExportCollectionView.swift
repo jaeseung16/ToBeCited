@@ -93,7 +93,7 @@ struct ExportCollectionView: View {
                 }
             }
             .pickerStyle(InlinePickerStyle())
-            .onChange(of: exportOrder) { _ in
+            .onChange(of: exportOrder) {
                 viewModel.export(collection: collection, with: exportOrder)
             }
         }

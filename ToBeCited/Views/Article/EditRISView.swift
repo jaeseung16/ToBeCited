@@ -22,9 +22,9 @@ struct EditRISView: View {
             Divider()
             
             TextEditor(text: $content)
-                .onChange(of: content, perform: { _ in
+                .onChange(of: content) {
                     enableSaveButton = true
-                })
+                }
                 .disableAutocorrection(true)
                 .multilineTextAlignment(.leading)
                 .lineSpacing(10)

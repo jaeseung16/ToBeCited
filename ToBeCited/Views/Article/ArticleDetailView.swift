@@ -267,7 +267,7 @@ struct ArticleDetailView: View, DropDelegate {
             DatePicker("", selection: $published, displayedComponents: [.date])
                 .datePickerStyle(DefaultDatePickerStyle())
                 .labelsHidden()
-                .onChange(of: published) { _ in
+                .onChange(of: published) {
                     updatePublished()
                 }
         }
