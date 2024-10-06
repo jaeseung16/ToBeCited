@@ -18,14 +18,17 @@ struct ContentView: View {
         TabView(selection: $viewModel.selectedTab) {
             Tab("Articles", systemImage: "doc.on.doc", value: .articles) {
                 ArticleListView()
+                    .environmentObject(viewModel)
             }
             
             Tab("Authors", systemImage: "person.3", value: .authors) {
                 AuthorListView()
+                    .environmentObject(viewModel)
             }
             
             Tab("Collections", systemImage: "square.stack.3d.up", value: .collections) {
                 CollectionListView()
+                    .environmentObject(viewModel)
             }
         }
         .alert("Failed to save data", isPresented: $viewModel.showAlert) {
