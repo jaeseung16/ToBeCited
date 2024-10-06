@@ -36,30 +36,22 @@ struct EditRISView: View {
     }
     
     private func header() -> some View {
-        ZStack {
-            HStack {
-                Spacer()
-                Text("Edit RIS")
-                Spacer()
+        HStack {
+            Button {
+                dismiss.callAsFunction()
+            } label: {
+                Text("Cancel")
             }
             
-            HStack {
-                Button {
-                    dismiss.callAsFunction()
-                } label: {
-                    Text("Cancel")
-                }
-                
-                Spacer()
-                
-                Button {
-                    update()
-                    dismiss.callAsFunction()
-                } label: {
-                    Text("Save")
-                }
-                .disabled(!enableSaveButton)
+            Spacer()
+            
+            Button {
+                update()
+                dismiss.callAsFunction()
+            } label: {
+                Text("Save")
             }
+            .disabled(!enableSaveButton)
         }
     }
     
