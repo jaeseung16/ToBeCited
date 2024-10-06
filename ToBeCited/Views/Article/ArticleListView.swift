@@ -13,7 +13,6 @@ struct ArticleListView: View {
     
     @State private var presentAddArticleView = false
     @State private var presentFilterArticleView = false
-    @State private var searchString: String = ""
     
     private var publishedIn: String {
         if let selectedPublishedIn = viewModel.selectedPublishedIn {
@@ -85,9 +84,8 @@ struct ArticleListView: View {
                 .id(article)
             }
         }
-        .searchable(text: $searchString)
-        .onChange(of: searchString) {
-            viewModel.articleSearchString = searchString
+        .searchable(text: $viewModel.articleSearchString)
+        .onChange(of: viewModel.articleSearchString) {
             viewModel.searchArticle()
         }
         .sheet(isPresented: $presentAddArticleView) {
@@ -101,7 +99,7 @@ struct ArticleListView: View {
         .onContinueUserActivity(CSSearchableItemActionType) { activity in
             Task(priority: .userInitiated) {
                 if let article = await viewModel.continueActivity(activity) as? Article {
-                    searchString = article.title ?? ""
+                    viewModel.articleSearchString = article.title ?? ""
                     selectedArticle = article
                 }
             }
