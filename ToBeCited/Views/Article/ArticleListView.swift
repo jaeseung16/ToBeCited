@@ -97,8 +97,8 @@ struct ArticleListView: View {
                 .environmentObject(viewModel)
         }
         .onContinueUserActivity(CSSearchableItemActionType) { activity in
-            viewModel.continueActivity(activity) { entity in
-                if let article = entity as? Article {
+            Task(priority: .userInitiated) {
+                if let article = await viewModel.continueActivity(activity) as? Article {
                     viewModel.articleSearchString = article.title ?? ""
                     selectedArticle = article
                 }

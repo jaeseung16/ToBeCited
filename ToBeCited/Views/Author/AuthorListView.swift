@@ -47,8 +47,8 @@ struct AuthorListView: View {
             viewModel.searchAuthor()
         }
         .onContinueUserActivity(CSSearchableItemActionType) { activity in
-            viewModel.continueActivity(activity) { entity in
-                if let author = entity as? Author {
+            Task(priority: .userInitiated) {
+                if let author = await viewModel.continueActivity(activity) as? Author {
                     viewModel.authorSearchString = ToBeCitedNameFormatHelper.formatName(of: author)
                     selectedAuthor = author
                 }

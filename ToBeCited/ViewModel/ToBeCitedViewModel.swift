@@ -785,29 +785,37 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     // TODO:
-    func continueActivity(_ activity: NSUserActivity, completionHandler: @escaping (NSManagedObject) -> Void) {
+    @available(*, renamed: "continueActivity(_:)")
+    func continueActivity(_ activity: NSUserActivity, completionHandler: @escaping (NSManagedObject?) -> Void) {
+        Task {
+            let result = await continueActivity(activity)
+            completionHandler(result)
+        }
+    }
+    
+    func continueActivity(_ activity: NSUserActivity) async -> NSManagedObject? {
         logger.log("continueActivity: \(activity)")
         guard let info = activity.userInfo, let objectIdentifier = info[CSSearchableItemActivityIdentifier] as? String else {
-            return
+            return nil
         }
-
+        
         guard let objectURI = URL(string: objectIdentifier), let entity = persistenceHelper.find(for: objectURI) else {
             logger.log("Can't find an object with objectIdentifier=\(objectIdentifier)")
-            return
+            return nil
         }
         
         logger.log("entity = \(entity)")
         
-        DispatchQueue.main.async {
+        return await withCheckedContinuation { continuation in
             if let article = entity as? Article {
                 self.selectedTab = .articles
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    completionHandler(article)
+                    continuation.resume(returning: article)
                 }
             } else if let author = entity as? Author {
                 self.selectedTab = .authors
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    completionHandler(author)
+                    continuation.resume(returning: author)
                 }
             }
         }
