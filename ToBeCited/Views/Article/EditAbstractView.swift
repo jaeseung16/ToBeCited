@@ -39,7 +39,8 @@ struct EditAbstractView: View {
         ZStack {
             HStack {
                 Spacer()
-                Text("Edit Abstract")
+                Text("ABSTRACT")
+                    .font(.headline)
                 Spacer()
             }
             
