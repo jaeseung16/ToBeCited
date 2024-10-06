@@ -77,6 +77,7 @@ struct SelectReferencesView: View {
             HStack {
                 Spacer()
                 Text("REFERENCES")
+                    .font(.headline)
                 Spacer()
             }
         }
