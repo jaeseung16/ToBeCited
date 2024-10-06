@@ -20,45 +20,40 @@ struct CollectionSummaryView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Text("COLLECTION")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                
-                Text("\(collection.name ?? "N/A")")
-            }
-            
-            Divider()
-            
             List {
                 ForEach(ordersInCollection) { order in
                     if let article = order.article {
                         NavigationLink {
                             ArticleSummaryView(article: article)
                         } label: {
-                            HStack {
-                                Text("\(order.order + 1)")
-                                
-                                Spacer()
-                                    .frame(width: 20)
-                                
-                                Text(article.title ?? "")
-                                
-                                Spacer()
-                                
-                                Text(article.journal ?? "")
-                                
-                                Spacer()
-                                    .frame(width: 20)
-                                
-                                Text("\(ToBeCitedDateFormatter.yearOnly.string(from: article.published ?? Date()))")
-                            }
+                            label(for: order, article: article)
                         }
                     }
                 }
             }
+            .listStyle(PlainListStyle())
         }
         .navigationTitle(collection.name ?? "")
         .padding()
+    }
+    
+    private func label(for order: OrderInCollection, article: Article) -> some View {
+        HStack {
+            Text("\(order.order + 1)")
+            
+            Spacer()
+                .frame(width: 20)
+            
+            Text(article.title ?? "")
+            
+            Spacer()
+            
+            Text(article.journal ?? "")
+            
+            Spacer()
+                .frame(width: 20)
+            
+            Text("\(ToBeCitedDateFormatter.yearOnly.string(from: article.published ?? Date()))")
+        }
     }
 }
