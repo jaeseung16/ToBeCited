@@ -13,7 +13,6 @@ struct AuthorListView: View {
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
 
     @State private var selectedAuthor: Author?
-    @State private var searchString: String = ""
     
     var body: some View {
         NavigationSplitView {
@@ -43,15 +42,14 @@ struct AuthorListView: View {
                 .id(author)
             }
         }
-        .searchable(text: $searchString)
-        .onChange(of: searchString) {
-            viewModel.authorSearchString = searchString
+        .searchable(text: $viewModel.authorSearchString)
+        .onChange(of: viewModel.authorSearchString) {
             viewModel.searchAuthor()
         }
         .onContinueUserActivity(CSSearchableItemActionType) { activity in
             Task(priority: .userInitiated) {
                 if let author = await viewModel.continueActivity(activity) as? Author {
-                    searchString = ToBeCitedNameFormatHelper.formatName(of: author)
+                    viewModel.authorSearchString = ToBeCitedNameFormatHelper.formatName(of: author)
                     selectedAuthor = author
                 }
             }
