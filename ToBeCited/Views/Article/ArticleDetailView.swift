@@ -18,7 +18,6 @@ struct ArticleDetailView: View, DropDelegate {
     @State private var pdfData = Data()
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
-    @State private var presentSelectReferenceView = false
     @State private var presentAddToCollectionsView = false
     @State private var presentImportCollectionAsReferences = false
     
@@ -106,10 +105,6 @@ struct ArticleDetailView: View, DropDelegate {
                 showErrorAlert = true
             }
         }
-        .sheet(isPresented: $presentSelectReferenceView) {
-            SelectReferencesView(article: article, references: references)
-                .environmentObject(viewModel)
-        }
         .sheet(isPresented: $presentAddToCollectionsView) {
             AddToCollectionsView(article: article)
                 .environmentObject(viewModel)
@@ -137,6 +132,7 @@ struct ArticleDetailView: View, DropDelegate {
                     
                     NavigationLink {
                         EditRISView(ris: ris, content: content)
+                            .environmentObject(viewModel)
                             .navigationTitle(title)
                     } label: {
                         Label("Edit", systemImage: "pencil.circle")
@@ -349,6 +345,7 @@ struct ArticleDetailView: View, DropDelegate {
                 
                 NavigationLink {
                     EditAbstractView(article: article, abstract: article.abstract ?? "")
+                        .environmentObject(viewModel)
                         .navigationTitle(title)
                 } label: {
                     Label("edit", systemImage: "pencil.circle")
@@ -375,8 +372,10 @@ struct ArticleDetailView: View, DropDelegate {
                 
                 Spacer()
                 
-                Button {
-                    presentSelectReferenceView = true
+                NavigationLink {
+                    SelectReferencesView(article: article, references: references)
+                        .environmentObject(viewModel)
+                        .navigationTitle(title)
                 } label: {
                     Label("edit", systemImage: "pencil.circle")
                 }
