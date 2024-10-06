@@ -43,7 +43,7 @@ struct RISFilePickerViewController: UIViewControllerRepresentable {
             for url in urls {
                 if url.absoluteString.lowercased().contains("ris") {
                     let _ = url.startAccessingSecurityScopedResource()
-                    if let risString = try? String(contentsOf: url) {
+                    if let risString = try? String(contentsOf: url, encoding: .utf8) {
                         self.parent.risString = risString
                         break
                     }

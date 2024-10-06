@@ -107,7 +107,7 @@ struct AddRISView: View, DropDelegate {
                     
                     if let url = data as? URL {
                         let _ = url.startAccessingSecurityScopedResource()
-                        if let contents = try? String(contentsOf: url) {
+                        if let contents = try? String(contentsOf: url, encoding: .utf8) {
                             risString = contents
                         }
                         url.stopAccessingSecurityScopedResource()

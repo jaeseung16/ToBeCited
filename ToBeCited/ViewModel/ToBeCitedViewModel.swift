@@ -688,8 +688,10 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private func searchArticles() {
         let escapedText = articleSearchString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
         let queryString = "(title == \"*\(escapedText)*\"cd) || (textContent == \"*\(escapedText)*\"cd)"
+        let queryContext = CSSearchQueryContext()
+        queryContext.fetchAttributes = ["title", "textContent"]
         
-        articleSearchQuery = CSSearchQuery(queryString: queryString, attributes: ["title", "textContent"])
+        articleSearchQuery = CSSearchQuery(queryString: queryString, queryContext: queryContext)
         
         articleSearchQuery?.foundItemsHandler = { items in
             DispatchQueue.main.async {
@@ -739,8 +741,10 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private func searchAuthors() {
         let escapedText = authorSearchString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
         let queryString = "(title == \"*\(escapedText)*\"cd)"
+        let queryContext = CSSearchQueryContext()
+        queryContext.fetchAttributes = ["title"]
         logger.log("searchAuthors: \(queryString, privacy: .public)")
-        authorSearchQuery = CSSearchQuery(queryString: queryString, attributes: ["title"])
+        authorSearchQuery = CSSearchQuery(queryString: queryString, queryContext: queryContext)
         
         authorSearchQuery?.foundItemsHandler = { items in
             DispatchQueue.main.async {
