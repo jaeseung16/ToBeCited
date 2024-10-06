@@ -349,6 +349,7 @@ struct ArticleDetailView: View, DropDelegate {
                 
                 NavigationLink {
                     EditAbstractView(article: article, abstract: article.abstract ?? "")
+                        .navigationTitle(title)
                 } label: {
                     Label("edit", systemImage: "pencil.circle")
                 }
