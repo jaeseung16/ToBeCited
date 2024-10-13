@@ -13,15 +13,6 @@ struct ArticleListView: View {
     
     @State private var presentAddArticleView = false
     @State private var presentFilterArticleView = false
-    
-    private var publishedIn: String {
-        if let selectedPublishedIn = viewModel.selectedPublishedIn {
-            return "\(selectedPublishedIn)"
-        } else {
-            return ""
-        }
-    }
-    
     @State private var selectedArticle: Article?
     
     private var filteredArticles: [Article] {
@@ -82,6 +73,7 @@ struct ArticleListView: View {
                                   title: article.title ?? "Title is not available",
                                   published: article.published ?? Date())
                 .id(article)
+                .environmentObject(viewModel)
             }
         }
         .searchable(text: $viewModel.articleSearchString)
