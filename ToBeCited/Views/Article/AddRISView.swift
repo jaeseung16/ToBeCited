@@ -15,6 +15,7 @@ struct AddRISView: View, DropDelegate {
     @State private var presentRISFilePicker = false
     @State var risString: String = ""
     @State private var risRecords = [RISRecord]()
+    @State private var showAlert = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -39,6 +40,12 @@ struct AddRISView: View, DropDelegate {
             .padding()
             .sheet(isPresented: $presentRISFilePicker) {
                 RISFilePickerViewController(risString: $risString)
+                    .environmentObject(viewModel)
+            }
+            .alert("Failed to open RIS file", isPresented: $showAlert) {
+                Button("Dismiss", role: .cancel) {
+                    //
+                }
             }
         }
     }
@@ -61,20 +68,19 @@ struct AddRISView: View, DropDelegate {
             }
             
             HStack {
-                Button(action: {
-                    dismiss.callAsFunction()
-                }, label: {
+                Button {
+                    dismissView()
+                } label: {
                     Text("Cancel")
-                })
-                
+                }
+
                 Spacer()
                 
-                Button(action: {
+                Button {
                     addNewArticle()
-                    dismiss.callAsFunction()
-                }, label: {
+                } label: {
                     Text("Save")
-                })
+                }
             }
         }
     }
@@ -92,16 +98,22 @@ struct AddRISView: View, DropDelegate {
         viewModel.save(risRecords: risRecords)
         
         risRecords.removeAll()
+        
+        dismissView()
+    }
+    
+    private func dismissView() -> Void {
+        viewModel.risString = ""
+        dismiss.callAsFunction()
     }
     
     func performDrop(info: DropInfo) -> Bool {
         if info.hasItemsConforming(to: [.text]) {
             info.itemProviders(for: [.text]).forEach { itemProvider in
+                // TODO: Use the corresponding asynchronous method?
                 itemProvider.loadItem(forTypeIdentifier: UTType.text.identifier, options: nil) { data, error in
                     guard let data = data else {
-                        if let error = error {
-                            print("\(error)")
-                        }
+                        showAlert.toggle()
                         return
                     }
                     
