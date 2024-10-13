@@ -11,11 +11,6 @@ struct AddAuthorToCollectionView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Collection.name, ascending: true)],
-        animation: .default)
-    private var collections: FetchedResults<Collection>
-    
     @State var articles: [Article]
     @State var collectionsToAdd = [Collection]()
     
@@ -33,19 +28,7 @@ struct AddAuthorToCollectionView: View {
                                 collectionsToAdd.remove(at: index)
                             }
                         } label: {
-                            VStack {
-                                HStack {
-                                    Text(name)
-                                    Spacer()
-                                }
-                                
-                                HStack {
-                                    Spacer()
-                                    Text(collection.lastupd ?? Date(), style: .date)
-                                        .font(.callout)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
+                            collectionRowView(name: name, lastupd: collection.lastupd ?? Date())
                         }
                     }
                 }
@@ -54,7 +37,7 @@ struct AddAuthorToCollectionView: View {
             Divider()
             
             HStack {
-                Label("COLLECTIONS (\(collections.count))", systemImage: "square.stack.3d.up")
+                Label("COLLECTIONS (\(viewModel.allCollections.count))", systemImage: "square.stack.3d.up")
                     .font(.callout)
                 Spacer()
             }
@@ -85,29 +68,35 @@ struct AddAuthorToCollectionView: View {
     
     private func collectionListView() -> some View {
         List {
-            ForEach(collections) { collection in
+            ForEach(viewModel.allCollections) { collection in
                 if let name = collection.name, name != "" {
                     Button {
-                        collectionsToAdd.append(collection)
-                    } label: {
-                        VStack {
-                            HStack {
-                                Text(name)
-                                Spacer()
-                            }
-                            
-                            HStack {
-                                Spacer()
-                                Text(collection.lastupd ?? Date(), style: .date)
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                            }
+                        if collectionsToAdd.firstIndex(of: collection) == nil {
+                            collectionsToAdd.append(collection)
                         }
+                    } label: {
+                        collectionRowView(name: name, lastupd: collection.lastupd ?? Date())
                     }
                 }
             }
         }
         .listStyle(InsetListStyle())
+    }
+    
+    private func collectionRowView(name: String, lastupd: Date) -> some View {
+        VStack {
+            HStack {
+                Text(name)
+                Spacer()
+            }
+            
+            HStack {
+                Spacer()
+                Text(lastupd, style: .date)
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+            }
+        }
     }
     
 }

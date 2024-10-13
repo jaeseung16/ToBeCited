@@ -182,6 +182,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         fetchCollections()
         fetchAllArticles()
         fetchAllAuthors()
+        fetchAllColections()
     }
     
     func fetchArticles() {
