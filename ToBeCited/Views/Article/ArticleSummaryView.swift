@@ -51,8 +51,8 @@ struct ArticleSummaryView: View {
                 publishedView()
             }
             
-            if article.doi != nil, let url = URL(string: "https://dx.doi.org/\(article.doi!)") {
-                doiLinkView(url: url)
+            if let doi = article.doi, let url = URL(string: "https://dx.doi.org/\(doi)") {
+                linkView(for: doi, url: url)
             }
             
             authorList()
@@ -66,12 +66,7 @@ struct ArticleSummaryView: View {
     private func publishedView() -> some View {
         ZStack {
             HStack {
-                #if targetEnvironment(macCatalyst)
-                Label("PUBLISHED ON", systemImage: "calendar")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-                #else
-                if UIDevice.current.userInterfaceIdiom == .pad {
+                if UIDevice.current.userInterfaceIdiom != .phone {
                     Label("PUBLISHED ON", systemImage: "calendar")
                         .font(.callout)
                         .foregroundColor(.secondary)
@@ -80,8 +75,6 @@ struct ArticleSummaryView: View {
                         .font(.callout)
                         .foregroundColor(.secondary)
                 }
-                #endif
-                
                 Spacer()
             }
             
@@ -90,15 +83,10 @@ struct ArticleSummaryView: View {
         }
     }
     
-    private func doiLinkView(url: URL) -> some View {
+    private func linkView(for doi: String, url: URL) -> some View {
         ZStack {
             HStack {
-                #if targetEnvironment(macCatalyst)
-                Label("DOI LINK", systemImage: "link")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-                #else
-                if UIDevice.current.userInterfaceIdiom == .pad {
+                if UIDevice.current.userInterfaceIdiom != .phone {
                     Label("DOI LINK", systemImage: "link")
                         .font(.callout)
                         .foregroundColor(.secondary)
@@ -107,12 +95,11 @@ struct ArticleSummaryView: View {
                         .font(.callout)
                         .foregroundColor(.secondary)
                 }
-                #endif
                 
                 Spacer()
             }
             
-            Link(article.doi!, destination: url)
+            Link(doi, destination: url)
                 .foregroundColor(.blue)
         }
     }
