@@ -104,6 +104,11 @@ struct ArticleListView: View {
                 }
             }
         }
+        .onAppear() {
+            if viewModel.selectedTab != .articles {
+                viewModel.selectedTab = .articles
+            }
+        }
     }
     
     private func deleteArticles(offsets: IndexSet) {
@@ -116,6 +121,5 @@ struct ArticleListView: View {
         viewModel.articleSearchString = ""
         viewModel.selectedAuthors = nil
         viewModel.selectedPublishedIn = nil
-        viewModel.selectedTab = .articles
     }
 }

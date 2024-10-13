@@ -40,6 +40,7 @@ struct AuthorListView: View {
                                  nameSuffix: author.nameSuffix ?? "",
                                  orcid: author.orcid ?? "")
                 .id(author)
+                .environmentObject(viewModel)
             }
         }
         .searchable(text: $viewModel.authorSearchString)
@@ -52,6 +53,11 @@ struct AuthorListView: View {
                     viewModel.authorSearchString = ToBeCitedNameFormatHelper.formatName(of: author)
                     selectedAuthor = author
                 }
+            }
+        }
+        .onAppear() {
+            if viewModel.selectedTab != .authors {
+                viewModel.selectedTab = .authors
             }
         }
     }

@@ -48,7 +48,6 @@ struct CollectionListView: View {
             .toolbar {
                 ToolbarItem {
                     Button {
-                        viewModel.selectedTab = .collections
                         presentAddCollectionView = true
                     } label: {
                         Label("Add Collection", systemImage: "plus")
@@ -65,7 +64,11 @@ struct CollectionListView: View {
             AddCollectionView()
                 .environmentObject(viewModel)
         }
-
+        .onAppear() {
+            if viewModel.selectedTab != .collections {
+                viewModel.selectedTab = .collections
+            }
+        }
     }
     
     private func deleteCollections(offsets: IndexSet) {
