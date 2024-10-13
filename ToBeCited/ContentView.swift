@@ -37,7 +37,7 @@ struct ContentView: View {
             }
         }
         .onChange(of: viewModel.risString) {
-            presentAddRISView = true
+            presentAddRISView = !viewModel.risString.isEmpty
         }
         .onChange(of: viewModel.selectedTab) {
             viewModel.fetchAll()
