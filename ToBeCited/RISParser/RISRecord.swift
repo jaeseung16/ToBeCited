@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct RISRecord: CustomStringConvertible {
+public struct RISRecord: CustomStringConvertible, Sendable {
     var referenceType: RISReferenceType
     var primaryAuthor: String?
     var secondaryAuthor: String?

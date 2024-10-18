@@ -77,7 +77,9 @@ struct AddRISView: View, DropDelegate {
                 Spacer()
                 
                 Button {
-                    addNewArticle()
+                    Task {
+                        await addNewArticle()
+                    }
                 } label: {
                     Text("Save")
                 }
@@ -85,10 +87,9 @@ struct AddRISView: View, DropDelegate {
         }
     }
     
-    private func addNewArticle() {
+    private func addNewArticle() async {
         if !risString.isEmpty {
-            let parser = RISParser()
-            if let records = try? parser.parse(risString) {
+            if let records = await viewModel.parse(risString: risString) {
                 for record in records {
                     self.risRecords.append(record)
                 }

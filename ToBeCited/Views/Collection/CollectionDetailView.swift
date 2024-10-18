@@ -102,8 +102,10 @@ struct CollectionDetailView: View {
                 Spacer()
                 
                 Button {
-                    viewModel.export(collection: collection)
-                    presentExportCollectionView = true
+                    Task {
+                        await viewModel.export(collection: collection)
+                        presentExportCollectionView = true
+                    }
                 } label: {
                     Label("EXPORT", systemImage: "square.and.arrow.up")
                 }
