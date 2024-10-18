@@ -18,7 +18,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     let logger = Logger()
     
     @AppStorage("ToBeCited.spotlightArticleIndexing") private var spotlightArticleIndexing: Bool = false
-    @AppStorage("ToBeCited.spotlightAuthorIndexing") private var spotlightAuthorIndexing: Bool = false
     
     private var persistence: Persistence
     private let parser = RISParser()
@@ -57,15 +56,16 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         
         self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         
+        if UserDefaults.standard.bool(forKey: "ToBeCited.spotlightAuthorIndexing") {
+            UserDefaults.standard.removeObject(forKey: "ToBeCited.spotlightAuthorIndexing")
+            self.spotlightArticleIndexing = false
+        }
+        
         self.spotlightArticleIndexing = UserDefaults.standard.bool(forKey: "ToBeCited.spotlightArticleIndexing")
-        self.spotlightAuthorIndexing = UserDefaults.standard.bool(forKey: "ToBeCited.spotlightAuthorIndexing")
         
-        
-        if let articleIndexer: ArticleSpotlightDelegate = self.persistenceHelper.getSpotlightDelegate(), let authorIndexer: AuthorSpotlightDelegate = self.persistenceHelper.getSpotlightDelegate() {
+        if let articleIndexer: ArticleSpotlightDelegate = self.persistenceHelper.getSpotlightDelegate() {
             self.articleIndexer = articleIndexer
-            self.authorIndexer = authorIndexer
             self.toggleIndexing(self.articleIndexer, enabled: true)
-            self.toggleIndexing(self.authorIndexer, enabled: true)
             NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
         }
         
@@ -73,17 +73,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         if !spotlightArticleIndexing {
             DispatchQueue.main.async {
                 self.indexArticles()
-                self.spotlightArticleIndexing.toggle()
-                
-            }
-        }
-        
-        logger.log("spotlightAuthorIndexing=\(self.spotlightAuthorIndexing, privacy: .public)")
-        if !spotlightAuthorIndexing {
-            DispatchQueue.main.async {
                 self.indexAuthors()
-                self.spotlightAuthorIndexing.toggle()
-                
+                self.spotlightArticleIndexing.toggle()
             }
         }
         
@@ -91,19 +82,19 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     @objc private func defaultsChanged() -> Void {
-        if !self.spotlightAuthorIndexing {
+        if !self.spotlightArticleIndexing {
             DispatchQueue.main.async {
                 self.toggleIndexing(self.articleIndexer, enabled: false)
                 self.toggleIndexing(self.articleIndexer, enabled: true)
                 self.spotlightArticleIndexing.toggle()
             }
         }
-        if !self.spotlightAuthorIndexing {
-            DispatchQueue.main.async {
-                self.toggleIndexing(self.authorIndexer, enabled: false)
-                self.toggleIndexing(self.authorIndexer, enabled: true)
-                self.spotlightAuthorIndexing.toggle()
-            }
+    }
+    
+    func parse(risString: String) async -> [RISRecord]? {
+        let task = Task {
+            let records = try await parser.parse(risString)
+            return records
         }
         return try? await task.value
     }
