@@ -13,9 +13,7 @@ struct PDFFile: FileDocument {
         return [.pdf]
     }
     
-    static var writableContentTypes: [UTType] {
-        return [.pdf]
-    }
+    static let writableContentTypes = [UTType.pdf]
 
     var pdfData = Data()
 
