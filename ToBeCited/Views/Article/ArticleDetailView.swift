@@ -467,16 +467,25 @@ struct ArticleDetailView: View, DropDelegate {
                 itemProvider.loadItem(forTypeIdentifier: UTType.pdf.identifier, options: nil) { url, error in
                     guard let url = url as? URL else {
                         if let error = error {
-                            errorMessage = error.localizedDescription
-                            showErrorAlert = true
+                            Task {
+                                await MainActor.run {
+                                    errorMessage = error.localizedDescription
+                                    showErrorAlert = true
+                                }
+                            }
                         }
                         return
                     }
 
                     let _ = url.startAccessingSecurityScopedResource()
                     if let data = try? Data(contentsOf: url) {
-                        self.pdfData = data
-                        self.updatePDF()
+                        Task {
+                            await MainActor.run {
+                                pdfData = data
+                                updatePDF()
+                            }
+                        }
+                        
                     }
                     url.stopAccessingSecurityScopedResource()
                 }
