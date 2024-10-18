@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct AuthorNameView: View {
-    @EnvironmentObject private var viewModel: ToBeCitedViewModel
-    
     @State var author: Author
     
     var body: some View {
