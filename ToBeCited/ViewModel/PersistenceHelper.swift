@@ -8,9 +8,9 @@
 import Foundation
 import CoreData
 import os
-import Persistence
+@preconcurrency import Persistence
 
-class PersistenceHelper {
+final class PersistenceHelper: Sendable {
     private static let logger = Logger()
     
     private let persistence: Persistence
@@ -35,19 +35,6 @@ class PersistenceHelper {
     func getSpotlightDelegate<T: NSCoreDataCoreSpotlightDelegate>() -> T? {
         return persistence.createCoreSpotlightDelegate()
     }
-    
-    @available(*, renamed: "save()")
-    func save(completionHandler: @escaping (Result<Void,Error>) -> Void) -> Void {
-        Task {
-            do {
-                try await save()
-                completionHandler(.success(()))
-            } catch {
-                completionHandler(.failure(error))
-            }
-        }
-    }
-    
     
     func save() async throws {
         do {
