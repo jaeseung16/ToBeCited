@@ -114,14 +114,22 @@ struct AddRISView: View, DropDelegate {
                 // TODO: Use the corresponding asynchronous method?
                 itemProvider.loadItem(forTypeIdentifier: UTType.text.identifier, options: nil) { data, error in
                     guard let data = data else {
-                        showAlert.toggle()
+                        Task {
+                            await MainActor.run {
+                                showAlert.toggle()
+                            }
+                        }
                         return
                     }
                     
                     if let url = data as? URL {
                         let _ = url.startAccessingSecurityScopedResource()
                         if let contents = try? String(contentsOf: url, encoding: .utf8) {
-                            risString = contents
+                            Task {
+                                await MainActor.run {
+                                    risString = contents
+                                }
+                            }
                         }
                         url.stopAccessingSecurityScopedResource()
                     }
