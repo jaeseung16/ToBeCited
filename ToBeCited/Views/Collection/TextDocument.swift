@@ -10,7 +10,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct TextFile: FileDocument {
-    static var readableContentTypes = [UTType.plainText]
+    static let readableContentTypes = [UTType.plainText]
 
     var text = ""
 
