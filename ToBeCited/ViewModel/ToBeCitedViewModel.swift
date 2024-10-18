@@ -105,15 +105,12 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 self.spotlightAuthorIndexing.toggle()
             }
         }
-    }
-    
-    func parse(risString: String) -> [RISRecord]? {
-        try? parser.parse(risString)
+        return try? await task.value
     }
     
     @Published var stringToExport: String = ""
     
-    func export(collection: Collection, with order: ExportOrder = .dateEnd) -> Void {
+    func export(collection: Collection, with order: ExportOrder = .dateEnd) async -> Void {
         let articles = collection.orders?
             .map { $0 as! OrderInCollection }
             .sorted(by: { $0.order < $1.order })
@@ -127,7 +124,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         var count = 1
         for article in articles {
             if let risString = article.ris?.content {
-                if let ris = parse(risString: risString), !ris.isEmpty {
+                if let ris = await parse(risString: risString), !ris.isEmpty {
                     result += "\(count);"
                     switch order {
                     case .dateFirst:
