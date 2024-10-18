@@ -54,7 +54,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             .sink { self.fetchUpdates($0) }
             .store(in: &subscriptions)
         
-        self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        self.persistence.container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
         
         if UserDefaults.standard.bool(forKey: "ToBeCited.spotlightAuthorIndexing") {
             UserDefaults.standard.removeObject(forKey: "ToBeCited.spotlightAuthorIndexing")
