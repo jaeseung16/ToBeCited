@@ -38,6 +38,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private(set) var articleIndexer: ArticleSpotlightDelegate?
     private(set) var authorIndexer: AuthorSpotlightDelegate?
     
+    private let spotlightHelper: SpotlightHelper
+    
     private var persistenceContainer: NSPersistentCloudKitContainer {
         persistence.cloudContainer!
     }
@@ -45,49 +47,64 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     init(persistence: Persistence) {
         self.persistence = persistence
+        self.persistence.container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+        
         self.persistenceHelper = PersistenceHelper(persistence: persistence)
         
+        self.spotlightArticleIndexing = UserDefaults.standard.bool(forKey: "ToBeCited.spotlightArticleIndexing")
+        self.spotlightHelper = SpotlightHelper(persistenceHelper: persistenceHelper)
+        
         super.init()
+        
+        fetchAll()
         
         NotificationCenter.default
             .publisher(for: .NSPersistentStoreRemoteChange)
             .sink { self.fetchUpdates($0) }
             .store(in: &subscriptions)
         
-        self.persistence.container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-        
         if UserDefaults.standard.bool(forKey: "ToBeCited.spotlightAuthorIndexing") {
             UserDefaults.standard.removeObject(forKey: "ToBeCited.spotlightAuthorIndexing")
+            
             self.spotlightArticleIndexing = false
-        }
-        
-        self.spotlightArticleIndexing = UserDefaults.standard.bool(forKey: "ToBeCited.spotlightArticleIndexing")
-        
-        if let articleIndexer: ArticleSpotlightDelegate = self.persistenceHelper.getSpotlightDelegate() {
-            self.articleIndexer = articleIndexer
-            self.toggleIndexing(self.articleIndexer, enabled: true)
-            NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
+            Task {
+                await self.spotlightHelper.removeAuthorsFromIndex()
+            }
         }
         
         logger.log("spotlightArticleIndexing=\(self.spotlightArticleIndexing, privacy: .public)")
         if !spotlightArticleIndexing {
-            DispatchQueue.main.async {
-                self.indexArticles()
-                self.indexAuthors()
+            Task {
+                let articleAttributeSets = self.articles.compactMap {
+                    SpotlightAttributeSet(uid: $0.objectID.uriRepresentation().absoluteString,
+                                          title: $0.title,
+                                          textContent: $0.abstract,
+                                          displayName: $0.title,
+                                          contentDescription: $0.journal)
+                }
+                
+                await self.spotlightHelper.index(articleAttributeSets)
+                
+                let authorAttributeSets = self.authors.compactMap {
+                    let authorName = ToBeCitedNameFormatHelper.formatName(of: $0)
+                    return SpotlightAttributeSet(uid: $0.objectID.uriRepresentation().absoluteString,
+                                                 title: authorName,
+                                                 displayName: authorName)
+                }
+                
+                await self.spotlightHelper.index(authorAttributeSets)
+                
                 self.spotlightArticleIndexing.toggle()
             }
         }
         
-        fetchAll()
+        NotificationCenter.default
+            .addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
     }
     
     @objc private func defaultsChanged() -> Void {
         if !self.spotlightArticleIndexing {
-            DispatchQueue.main.async {
-                self.toggleIndexing(self.articleIndexer, enabled: false)
-                self.toggleIndexing(self.articleIndexer, enabled: true)
-                self.spotlightArticleIndexing.toggle()
-            }
+            self.spotlightArticleIndexing.toggle()
         }
     }
     
@@ -275,6 +292,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 author.addToArticles(newArticle)
             }
         }
+        
+        // TODO: Add to index
         
         let ris = persistenceHelper.createRIS(from: record)
         ris.article = newArticle
@@ -599,35 +618,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
-    private func indexArticles() -> Void {
-        logger.log("Indexing \(self.articles.count, privacy: .public) articles")
-        index<Article>(articles, indexName: ToBeCitedConstants.articleIndexName.rawValue)
-    }
-    
-    private func indexAuthors() -> Void {
-        logger.log("Indexing \(self.authors.count, privacy: .public) authors")
-        index<Author>(authors, indexName: ToBeCitedConstants.authorIndexName.rawValue)
-    }
-    
-    private func index<T: NSManagedObject>(_ entities: [T], indexName: String) {
-        let searchableItems: [CSSearchableItem] = entities.compactMap { (entity: T) -> CSSearchableItem? in
-            guard let attributeSet = attributeSet(for: entity) else {
-                self.logger.log("Cannot generate attribute set for \(entity, privacy: .public)")
-                return nil
-            }
-            return CSSearchableItem(uniqueIdentifier: entity.objectID.uriRepresentation().absoluteString, domainIdentifier: ToBeCitedConstants.domainIdentifier.rawValue, attributeSet: attributeSet)
-        }
-        
-        logger.log("Adding \(searchableItems.count) items to index=\(indexName, privacy: .public)")
-        
-        CSSearchableIndex(name: indexName).indexSearchableItems(searchableItems) { error in
-            guard let error = error else {
-                return
-            }
-            self.logger.log("Error while indexing \(T.self): \(error.localizedDescription, privacy: .public)")
-        }
-    }
-    
     private func deleteFromIndex(article: Article) -> Void {
         logger.log("Remove \(article, privacy: .public) from the index")
         remove<Article>(article, from: ToBeCitedConstants.articleIndexName.rawValue)
@@ -644,25 +634,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         CSSearchableIndex(name: indexName).deleteSearchableItems(withIdentifiers: [identifier]) { error in
             self.logger.log("Can't delete an item with identifier=\(identifier, privacy: .public)")
         }
-    }
-    
-    private func attributeSet(for object: NSManagedObject) -> CSSearchableItemAttributeSet? {
-        if let article = object as? Article {
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
-            attributeSet.title = article.title
-            attributeSet.textContent = article.abstract
-            attributeSet.displayName = article.title
-            attributeSet.contentDescription = article.journal
-            return attributeSet
-        }
-        if let author = object as? Author {
-            let authorName = ToBeCitedNameFormatHelper.formatName(of: author)
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
-            attributeSet.title = authorName
-            attributeSet.displayName = authorName
-            return attributeSet
-        }
-        return nil
     }
     
     func searchArticle() -> Void {
@@ -683,9 +654,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         articleSearchQuery = CSSearchQuery(queryString: queryString, queryContext: queryContext)
         
         articleSearchQuery?.foundItemsHandler = { items in
-            DispatchQueue.main.async {
-                self.spotlightFoundArticles += items
-            }
+            self.spotlightFoundArticles += items
         }
         
         articleSearchQuery?.completionHandler = { error in
