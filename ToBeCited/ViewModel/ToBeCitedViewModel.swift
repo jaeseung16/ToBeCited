@@ -257,12 +257,15 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     func save(risRecords: [RISRecord]) -> Void {
         let created = Date()
         persistenceHelper.perform {
-            risRecords.forEach { self.createEntities(from: $0, created: created) }
+            risRecords.forEach {
+                let article = self.createEntities(from: $0, created: created)
+                self.addToIndex(article: article)
+            }
             self.saveAndFetch()
         }
     }
     
-    private func createEntities(from record: RISRecord, created at: Date) -> Void {
+    private func createEntities(from record: RISRecord, created at: Date) -> Article {
         let newArticle = persistenceHelper.createrticle(from: record, created: at)
         
         // Need to parse DA or PY, Y1
@@ -297,6 +300,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         
         let ris = persistenceHelper.createRIS(from: record)
         ris.article = newArticle
+        
+        return newArticle
     }
     
     func add(contact: ContactDTO, to author: Author) -> Void {
@@ -615,6 +620,33 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             indexer.startSpotlightIndexing()
         } else {
             indexer.stopSpotlightIndexing()
+        }
+    }
+    
+    private func addToIndex(article: Article) -> Void {
+        Task {
+            let articleAttributeSet = SpotlightAttributeSet(uid: article.objectID.uriRepresentation().absoluteString,
+                                                            title: article.title,
+                                                            textContent: article.abstract,
+                                                            displayName: article.title,
+                                                            contentDescription: article.journal)
+            
+            await self.spotlightHelper.index([articleAttributeSet])
+            
+            if let authors = article.authors {
+                let authorAttributeSets = authors.compactMap { author in
+                    if let author = author as? Author {
+                        let authorName = ToBeCitedNameFormatHelper.formatName(of: author)
+                        return SpotlightAttributeSet(uid: author.objectID.uriRepresentation().absoluteString,
+                                                     title: authorName,
+                                                     displayName: authorName)
+                    } else {
+                        return nil
+                    }
+                }
+                
+                await self.spotlightHelper.index(authorAttributeSets)
+            }
         }
     }
     
