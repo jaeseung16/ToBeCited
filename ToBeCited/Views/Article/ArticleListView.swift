@@ -67,6 +67,9 @@ struct ArticleListView: View {
                     }
                 }
             }
+            .refreshable {
+                viewModel.fetchAll()
+            }
         } detail: {
             if let article = selectedArticle {
                 ArticleDetailView(article: article,

@@ -174,7 +174,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     // MARK: - Persistence
     @Published var articles = [Article]()
-    @Published var allArticles = [Article]()
+    var allArticles = [Article]()
     @Published var authors = [Author]()
     @Published var allAuthors = [Author]()
     @Published var collections = [Collection]()

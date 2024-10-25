@@ -54,6 +54,9 @@ struct CollectionListView: View {
                     }
                 }
             }
+            .refreshable {
+                viewModel.fetchAll()
+            }
         } detail: {
             if let collection = selectedCollection {
                 CollectionDetailView(collection: collection, collectionName: collection.name ?? "")

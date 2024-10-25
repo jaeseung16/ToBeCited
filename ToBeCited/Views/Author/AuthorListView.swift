@@ -31,6 +31,9 @@ struct AuthorListView: View {
                 .onDelete(perform: deleteAuthors)
             }
             .navigationTitle(Text("Authors"))
+            .refreshable {
+                viewModel.fetchAll()
+            }
         } detail: {
             if let author = selectedAuthor {
                 AuthorDetailView(author: author,

@@ -39,9 +39,6 @@ struct ContentView: View {
         .onChange(of: viewModel.risString) {
             presentAddRISView = !viewModel.risString.isEmpty
         }
-        .onChange(of: viewModel.selectedTab) {
-            viewModel.fetchAll()
-        }
         .sheet(isPresented: $presentAddRISView) {
             AddRISView(risString: viewModel.risString)
                 .environmentObject(viewModel)
