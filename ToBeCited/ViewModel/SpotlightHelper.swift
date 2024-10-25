@@ -42,7 +42,7 @@ actor SpotlightHelper {
     }
     
     public func index(_ attributeSets: [SpotlightAttributeSet]) {
-        guard let indexName = articleIndexer?.indexName as? String else {
+        guard let indexName = articleIndexer?.indexName() as? String else {
             self.logger.log("Cannot get index name for \(self.articleIndexer, privacy: .public)")
             return
         }
@@ -71,15 +71,20 @@ actor SpotlightHelper {
     
     public func deleteFromIndex(article: Article) -> Void {
         logger.log("Remove \(article, privacy: .public) from the index")
-        remove<Article>(article, from: ToBeCitedConstants.articleIndexName.rawValue)
+        remove<Article>(article)
     }
     
     public func deleteFromIndex(author: Author) -> Void {
         logger.log("Remove \(author, privacy: .public) from the index")
-        remove<Author>(author, from: ToBeCitedConstants.authorIndexName.rawValue)
+        remove<Author>(author)
     }
     
-    private func remove<T: NSManagedObject>(_ entity: T, from indexName: String) -> Void {
+    private func remove<T: NSManagedObject>(_ entity: T) -> Void {
+        guard let indexName = articleIndexer?.indexName() as? String else {
+            self.logger.log("Cannot get index name for \(self.articleIndexer, privacy: .public)")
+            return
+        }
+        
         let identifier = entity.objectID.uriRepresentation().absoluteString
         
         CSSearchableIndex(name: indexName).deleteSearchableItems(withIdentifiers: [identifier]) { error in
