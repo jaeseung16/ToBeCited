@@ -40,9 +40,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     private let spotlightHelper: SpotlightHelper
     
-    private var persistenceContainer: NSPersistentCloudKitContainer {
-        persistence.cloudContainer!
-    }
     private let persistenceHelper: PersistenceHelper
     
     init(persistence: Persistence) {
@@ -52,6 +49,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         self.persistenceHelper = PersistenceHelper(persistence: persistence)
         
         self.spotlightArticleIndexing = UserDefaults.standard.bool(forKey: "ToBeCited.spotlightArticleIndexing")
+        
         self.spotlightHelper = SpotlightHelper(persistenceHelper: persistenceHelper)
         
         super.init()
@@ -571,9 +569,11 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     // MARK: - Persistence History Request
     private func fetchUpdates(_ notification: Notification) -> Void {
-        persistence.fetchUpdates(notification) { _ in
-            DispatchQueue.main.async {
-                self.logger.log("Called persistence.fetchUpdates")
+        Task {
+            await persistence.fetchUpdates(notification) { _ in
+                DispatchQueue.main.async {
+                    self.logger.log("Called persistence.fetchUpdates")
+                }
             }
         }
     }

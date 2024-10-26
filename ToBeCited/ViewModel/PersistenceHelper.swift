@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import CoreData
+@preconcurrency import CoreData
 import os
-@preconcurrency import Persistence
+import Persistence
 
 final class PersistenceHelper: Sendable {
     private static let logger = Logger()
@@ -32,7 +32,7 @@ final class PersistenceHelper: Sendable {
         return fetchedEntities
     }
     
-    func getSpotlightDelegate<T: NSCoreDataCoreSpotlightDelegate>() -> T? {
+    nonisolated func getSpotlightDelegate() -> NSCoreDataCoreSpotlightDelegate? {
         return persistence.createCoreSpotlightDelegate()
     }
     

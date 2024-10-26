@@ -8,7 +8,7 @@
 import Foundation
 import CoreSpotlight
 import os
-import CoreData
+@preconcurrency import CoreData
 
 actor SpotlightHelper {
     let logger = Logger()
@@ -18,7 +18,8 @@ actor SpotlightHelper {
     
     init(persistenceHelper: PersistenceHelper) {
         self.persistenceHelper = persistenceHelper
-        if let articleIndexer: ArticleSpotlightDelegate = persistenceHelper.getSpotlightDelegate() {
+        
+        if let articleIndexer: ArticleSpotlightDelegate = persistenceHelper.getSpotlightDelegate() as? ArticleSpotlightDelegate {
             self.articleIndexer = articleIndexer
         } else {
             self.articleIndexer = nil
