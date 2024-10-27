@@ -659,19 +659,16 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     private func deleteFromIndex(article: Article) -> Void {
         logger.log("Remove \(article, privacy: .public) from the index")
-        remove<Article>(article, from: ToBeCitedConstants.articleIndexName.rawValue)
+        Task {
+            await self.spotlightHelper.deleteFromIndex(article: article)
+        }
+        
     }
     
     private func deleteFromIndex(author: Author) -> Void {
         logger.log("Remove \(author, privacy: .public) from the index")
-        remove<Author>(author, from: ToBeCitedConstants.authorIndexName.rawValue)
-    }
-    
-    private func remove<T: NSManagedObject>(_ entity: T, from indexName: String) -> Void {
-        let identifier = entity.objectID.uriRepresentation().absoluteString
-        
-        CSSearchableIndex(name: indexName).deleteSearchableItems(withIdentifiers: [identifier]) { error in
-            self.logger.log("Can't delete an item with identifier=\(identifier, privacy: .public)")
+        Task {
+            await self.spotlightHelper.deleteFromIndex(author: author)
         }
     }
     
