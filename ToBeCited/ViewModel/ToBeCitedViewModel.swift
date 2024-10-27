@@ -58,7 +58,10 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         
         NotificationCenter.default
             .publisher(for: .NSPersistentStoreRemoteChange)
-            .sink { self.fetchUpdates($0) }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                self?.fetchUpdates(notification)
+            }
             .store(in: &subscriptions)
         
         if UserDefaults.standard.bool(forKey: "ToBeCited.spotlightAuthorIndexing") {
@@ -97,10 +100,16 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
         
         NotificationCenter.default
-            .addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
+            .publisher(for: UserDefaults.didChangeNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.defaultsChanged()
+            }
+            .store(in: &subscriptions)
     }
     
-    @objc private func defaultsChanged() -> Void {
+    private func defaultsChanged() -> Void {
+        logger.log("default changed")
         if !self.spotlightArticleIndexing {
             self.spotlightArticleIndexing.toggle()
         }

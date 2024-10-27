@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import UIKit
+@preconcurrency import UIKit
 import os
 import CloudKit
 import CoreData
@@ -58,7 +58,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                 let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
                 
                 if granted {
-                    getNotificationSettings()
+                    await getNotificationSettings()
                 }
             } catch {
                 logger.log("Can't register for push notifications: \(error.localizedDescription, privacy: .public)")
@@ -66,15 +66,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         }
     }
 
-    private func getNotificationSettings() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            guard settings.authorizationStatus == .authorized else {
-                return
-            }
-            DispatchQueue.main.async {
-                UIApplication.shared.registerForRemoteNotifications()
-            }
+    private func getNotificationSettings() async {
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+        
+        if settings.authorizationStatus == .authorized {
+            UIApplication.shared.registerForRemoteNotifications()
+        } else {
+            logger.log("User notification is not authorized \(settings, privacy: .public)")
         }
+        
     }
     
     private func subscribe() {
