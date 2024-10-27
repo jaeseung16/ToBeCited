@@ -53,13 +53,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
     private func registerForPushNotifications() {
-        UNUserNotificationCenter.current()
-            .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
-                guard granted else {
-                    return
+        Task {
+            do {
+                let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+                
+                if granted {
+                    getNotificationSettings()
                 }
-                self?.getNotificationSettings()
+            } catch {
+                logger.log("Can't register for push notifications: \(error.localizedDescription, privacy: .public)")
             }
+        }
     }
 
     private func getNotificationSettings() {
