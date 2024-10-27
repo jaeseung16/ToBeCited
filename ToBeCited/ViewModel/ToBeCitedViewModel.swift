@@ -571,9 +571,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private func fetchUpdates(_ notification: Notification) -> Void {
         Task {
             await persistence.fetchUpdates(notification) { _ in
-                DispatchQueue.main.async {
-                    self.logger.log("Called persistence.fetchUpdates")
-                }
+                self.logger.log("Called persistence.fetchUpdates")
             }
         }
     }
