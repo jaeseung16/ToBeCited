@@ -170,6 +170,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         logger.log("Processed \(record)")
     }
 
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        viewModel.stopIndexing()
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        viewModel.startIndexing()
+    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {

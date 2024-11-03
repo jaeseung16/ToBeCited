@@ -879,6 +879,18 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
+    public func stopIndexing() {
+        Task {
+            await spotlightHelper.stopIndexing()
+        }
+    }
+    
+    public func startIndexing() {
+        Task {
+            await spotlightHelper.startIndexing()
+        }
+    }
+    
     // TODO:
     @available(*, renamed: "continueActivity(_:)")
     func continueActivity(_ activity: NSUserActivity, completionHandler: @escaping (NSManagedObject?) -> Void) {
