@@ -56,14 +56,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         
         fetchAll()
         
-        NotificationCenter.default
-            .publisher(for: .NSPersistentStoreRemoteChange)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                self?.fetchUpdates(notification)
-            }
-            .store(in: &subscriptions)
-        
         if UserDefaults.standard.bool(forKey: "ToBeCited.spotlightAuthorIndexing") {
             UserDefaults.standard.removeObject(forKey: "ToBeCited.spotlightAuthorIndexing")
             
@@ -89,8 +81,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 let authorAttributeSets = self.authors.compactMap {
                     let authorName = ToBeCitedNameFormatHelper.formatName(of: $0)
                     return SpotlightAttributeSet(uid: $0.objectID.uriRepresentation().absoluteString,
-                                                 title: authorName,
-                                                 displayName: authorName)
+                                                 displayName: authorName,
+                                                 authorNames: [authorName])
                 }
                 
                 await self.spotlightHelper.index(authorAttributeSets)
@@ -98,6 +90,14 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 self.spotlightArticleIndexing.toggle()
             }
         }
+        
+        NotificationCenter.default
+            .publisher(for: .NSPersistentStoreRemoteChange)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                self?.fetchUpdates(notification)
+            }
+            .store(in: &subscriptions)
         
         NotificationCenter.default
             .publisher(for: UserDefaults.didChangeNotification)
@@ -674,10 +674,12 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     private func addToIndex(_ objectID: NSManagedObjectID) async -> Void {
-        // TODO: - Distinguish update from insert
+        guard let object = persistenceHelper.find(with: objectID) else {
+            await self.spotlightHelper.removeFromIndex(identifier: objectID.uriRepresentation().absoluteString)
+            logger.log("Removed from index: \(objectID)")
+            return
+        }
         
-        let object = persistenceHelper.find(with: objectID)
-
         if let article = object as? Article {
             let articleAttributeSet = SpotlightAttributeSet(uid: article.objectID.uriRepresentation().absoluteString,
                                                             title: article.title,
@@ -691,8 +693,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         if let author = object as? Author {
             let authorName = ToBeCitedNameFormatHelper.formatName(of: author)
             let authorAttributeSets = SpotlightAttributeSet(uid: author.objectID.uriRepresentation().absoluteString,
-                                                            title: authorName,
-                                                            displayName: authorName)
+                                                            displayName: authorName,
+                                                            authorNames: [authorName])
             await self.spotlightHelper.index([authorAttributeSets])
         }
     }
@@ -712,8 +714,8 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     if let author = author as? Author {
                         let authorName = ToBeCitedNameFormatHelper.formatName(of: author)
                         return SpotlightAttributeSet(uid: author.objectID.uriRepresentation().absoluteString,
-                                                     title: authorName,
-                                                     displayName: authorName)
+                                                     displayName: authorName,
+                                                     authorNames: [authorName])
                     } else {
                         return nil
                     }
@@ -766,9 +768,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         
         Task {
             do {
-                print("getting search results")
                 for try await item in articleSearchQuery.responses {
-                    print("item: \(item)")
                     switch item {
                     case .item(let item):
                         self.spotlightFoundArticles += [item.item]
@@ -814,9 +814,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     private func searchAuthors() {
         let escapedText = authorSearchString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
-        let queryString = "(title == \"*\(escapedText)*\"cd)"
+        let queryString = "(authorNames == \"*\(escapedText)*\"cd)"
         let queryContext = CSUserQueryContext()
-        queryContext.fetchAttributes = ["title"]
+        queryContext.fetchAttributes = ["authorNames", "displayName"]
         queryContext.maxSuggestionCount = 10
         
         authorSearchQuery = CSUserQuery(queryString: queryString, queryContext: queryContext)
@@ -830,9 +830,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         
         Task {
             do {
-                print("getting search results")
                 for try await item in authorSearchQuery.responses {
-                    print("item: \(item)")
                     switch item {
                     case .item(let item):
                         self.spotlightFoundAuthors += [item.item]

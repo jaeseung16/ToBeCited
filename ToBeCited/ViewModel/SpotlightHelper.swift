@@ -83,12 +83,14 @@ actor SpotlightHelper {
     }
     
     private func remove<T: NSManagedObject>(_ entity: T) -> Void {
+        removeFromIndex(identifier: entity.objectID.uriRepresentation().absoluteString)
+    }
+    
+    public func removeFromIndex(identifier: String) {
         guard let indexName = articleIndexer?.indexName() as? String else {
             self.logger.log("Cannot get index name for \(self.articleIndexer, privacy: .public)")
             return
         }
-        
-        let identifier = entity.objectID.uriRepresentation().absoluteString
         
         CSSearchableIndex(name: indexName).deleteSearchableItems(withIdentifiers: [identifier]) { error in
             self.logger.log("Can't delete an item with identifier=\(identifier, privacy: .public)")
