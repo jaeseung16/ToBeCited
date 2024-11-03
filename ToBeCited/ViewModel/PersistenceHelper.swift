@@ -171,6 +171,10 @@ final class PersistenceHelper: Sendable {
         viewContext.perform(block)
     }
     
+    func performAndWait(_ block: @escaping () -> Void) -> Void {
+        viewContext.performAndWait(block)
+    }
+    
     func getFetchRequest<Entity: NSFetchRequestResult>(for type: Entity.Type, entityName: String, sortDescriptors: [NSSortDescriptor] = [], predicate: NSPredicate? = nil) -> NSFetchRequest<Entity> {
         let fetchRequest = NSFetchRequest<Entity>(entityName: entityName)
         if !sortDescriptors.isEmpty {

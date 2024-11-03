@@ -287,14 +287,16 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     // create
     func save(risRecords: [RISRecord]) -> Void {
-        let created = Date()
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
+            let created = Date()
             risRecords.forEach {
                 let article = self.createEntities(from: $0, created: created)
                 self.addToIndex(article: article)
             }
-            self.saveAndFetch()
+            
         }
+        
+        saveAndFetch()
     }
     
     private func createEntities(from record: RISRecord, created at: Date) -> Article {
@@ -345,36 +347,36 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func add(collection name: String, of articles: [Article]) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             let collection = self.persistenceHelper.create(collection: name, of: articles)
             
             for index in 0..<articles.count {
                 collection.addToArticles(articles[index])
                 let _ = self.persistenceHelper.createOrder(in: collection, for: articles[index], with: Int64(index))
             }
-            
-            self.saveAndFetch()
         }
+        
+        saveAndFetch()
     }
     
     func add(article: Article, to collections: [Collection]) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             collections.forEach { collection in
                 let count = collection.articles == nil ? 0 : collection.articles!.count
                 let _ = self.persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
                 collection.addToArticles(article)
             }
-            
-            self.saveAndFetch() { success in
-                if !success {
-                    self.logger.log("AddToCollectionsView: Failed to update")
-                }
+        }
+        
+        saveAndFetch() { success in
+            if !success {
+                self.logger.log("AddToCollectionsView: Failed to update")
             }
         }
     }
     
     func add(references collections: [Collection], to article: Article) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             for collection in collections {
                 collection.articles?.forEach { reference in
                     guard let reference = reference as? Article, reference != article else {
@@ -389,11 +391,11 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     article.addToReferences(reference)
                 }
             }
-            
-            self.saveAndFetch() { success in
-                if !success {
-                    self.logger.log("ImportCollectionAsReferencesView: Failed to update")
-                }
+        }
+        
+        saveAndFetch() { success in
+            if !success {
+                self.logger.log("ImportCollectionAsReferencesView: Failed to update")
             }
         }
     }
@@ -404,7 +406,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func delete(_ articles: [Article]) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             articles.forEach { article in
                 article.collections?.forEach { collection in
                     if let collection = collection as? Collection {
@@ -424,37 +426,39 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 self.deleteFromIndex(article: article)
                 self.delete(article)
             }
-            
-            self.saveAndFetch() { success in
-                self.logger.log("Delete data: success=\(success)")
-            }
+        }
+        
+        saveAndFetch() { success in
+            self.logger.log("Delete data: success=\(success)")
         }
     }
     
     func delete(_ authors: [Author]) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             authors.forEach { author in
                 if author.articles == nil || author.articles!.count == 0 {
                     self.deleteFromIndex(author: author)
                     self.delete(author)
                 }
             }
-            self.saveAndFetch()
         }
+        
+        saveAndFetch()
     }
     
     func delete(_ contacts: [AuthorContact], from author: Author) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             contacts.forEach { contact in
                 author.removeFromContacts(contact)
                 self.delete(contact)
             }
-            self.saveAndFetch()
         }
+        
+        saveAndFetch()
     }
     
     func delete(_ collections: [Collection]) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             collections.forEach { collection in
                 collection.articles?.forEach { article in
                     if let article = article as? Article {
@@ -470,13 +474,13 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 
                 self.delete(collection)
             }
-            
-            self.saveAndFetch()
         }
+        
+        saveAndFetch()
     }
     
     func delete(_ orders: [OrderInCollection], at offsets: IndexSet, in collection: Collection) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             orders.forEach { order in
                 order.article?.removeFromCollections(collection)
                 self.delete(order)
@@ -489,9 +493,9 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     }
                 }
             }
-
-            self.saveAndFetch()
         }
+        
+        saveAndFetch()
     }
     
     func rollback() -> Void {
@@ -500,85 +504,93 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     // update
     func merge(authors: [Author]) -> Void {
-        let toMerge = authors[0]
-        
-        for index in 1..<authors.count {
-            authors[index].articles?.forEach { article in
-                if let article = article as? Article {
-                    toMerge.addToArticles(article)
-                    authors[index].removeFromArticles(article)
+        persistenceHelper.performAndWait {
+            let toMerge = authors[0]
+            
+            for index in 1..<authors.count {
+                authors[index].articles?.forEach { article in
+                    if let article = article as? Article {
+                        toMerge.addToArticles(article)
+                        authors[index].removeFromArticles(article)
+                    }
                 }
-            }
-            
-            authors[index].contacts?.forEach { contact in
-                if let contact = contact as? AuthorContact {
-                    toMerge.addToContacts(contact)
-                    authors[index].removeFromContacts(contact)
+                
+                authors[index].contacts?.forEach { contact in
+                    if let contact = contact as? AuthorContact {
+                        toMerge.addToContacts(contact)
+                        authors[index].removeFromContacts(contact)
+                    }
                 }
+                
+                if let orcid = authors[index].orcid, toMerge.orcid == nil {
+                    toMerge.orcid = orcid
+                }
+                
+                self.deleteFromIndex(author: authors[index])
+                self.delete(authors[index])
             }
-            
-            if let orcid = authors[index].orcid, toMerge.orcid == nil {
-                toMerge.orcid = orcid
-            }
-            
-            deleteFromIndex(author: authors[index])
-            delete(authors[index])
         }
         
         saveAndFetch()
     }
     
     func update(article: Article, with authors: [Author]) -> Void {
-        logger.log("Updating article=\(article) with authors=\(authors)")
-        article.authors?.forEach { author in
-            if let author = author as? Author {
-                author.removeFromArticles(article)
+        persistenceHelper.performAndWait {
+            self.logger.log("Updating article=\(article) with authors=\(authors)")
+            article.authors?.forEach { author in
+                if let author = author as? Author {
+                    author.removeFromArticles(article)
+                }
             }
-        }
-        
-        authors.forEach { author in
-            author.addToArticles(article)
+            
+            authors.forEach { author in
+                author.addToArticles(article)
+            }
         }
 
         saveAndFetch()
     }
     
     func update(collection: Collection, with articles: [Article]) -> Void {
-        logger.log("Updating collection=\(collection) with articles=\(articles)")
-        collection.orders?.forEach { order in
-            if let order = order as? OrderInCollection {
-                delete(order)
+        persistenceHelper.performAndWait {
+            self.logger.log("Updating collection=\(collection) with articles=\(articles)")
+            collection.orders?.forEach { order in
+                if let order = order as? OrderInCollection {
+                    self.delete(order)
+                }
             }
-        }
-        logger.log("Deleted orders")
-        collection.articles?.forEach { article in
-            if let article = article as? Article {
-                article.removeFromCollections(collection)
+            self.logger.log("Deleted orders")
+            collection.articles?.forEach { article in
+                if let article = article as? Article {
+                    article.removeFromCollections(collection)
+                }
             }
+            self.logger.log("Removed articles")
+            for index in 0..<articles.count {
+                let article = articles[index]
+                article.addToCollections(collection)
+                
+                let _ = self.persistenceHelper.createOrder(in: collection, for: article, with: Int64(index))
+            }
+            self.logger.log("Saving the update")
         }
-        logger.log("Removed articles")
-        for index in 0..<articles.count {
-            let article = articles[index]
-            article.addToCollections(collection)
-            
-            let _ = persistenceHelper.createOrder(in: collection, for: article, with: Int64(index))
-        }
-        logger.log("Saving the update")
-        saveAndFetch()
         
+        saveAndFetch()
     }
     
     func add(_ articles: [Article], to collections: [Collection]) -> Void {
-        if !articles.isEmpty {
-            collections.forEach { collection in
-                var count = collection.articles == nil ? 0 : collection.articles!.count
-                for article in articles {
-                    let _ = persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
-                    article.addToCollections(collection)
-                    count += 1
+        persistenceHelper.performAndWait {
+            if !articles.isEmpty {
+                collections.forEach { collection in
+                    var count = collection.articles == nil ? 0 : collection.articles!.count
+                    for article in articles {
+                        let _ = self.persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
+                        article.addToCollections(collection)
+                        count += 1
+                    }
                 }
+                self.save()
             }
-            save()
         }
     }
     
