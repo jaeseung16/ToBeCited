@@ -113,6 +113,13 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 self.searchArticle()
             }
             .store(in: &subscriptions)
+        
+        $authorSearchString
+            .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
+            .sink { _ in
+                self.searchAuthor()
+            }
+            .store(in: &subscriptions)
     }
     
     private func defaultsChanged() -> Void {
@@ -651,10 +658,11 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private var spotlightFoundArticles: [CSSearchableItem] = []
     private var spotlightFoundAuthors: [CSSearchableItem] = []
     private var articleSearchQuery: CSUserQuery?
-    private var authorSearchQuery: CSSearchQuery?
+    private var authorSearchQuery: CSUserQuery?
     @Published var articleSearchString = ""
     @Published var articleSuggestions: [String] = []
     @Published var authorSearchString = ""
+    @Published var authorSuggestions: [String] = []
     
     private func toggleIndexing(_ indexer: NSCoreDataCoreSpotlightDelegate?, enabled: Bool) {
         guard let indexer = indexer else { return }
@@ -807,30 +815,40 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private func searchAuthors() {
         let escapedText = authorSearchString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
         let queryString = "(title == \"*\(escapedText)*\"cd)"
-        let queryContext = CSSearchQueryContext()
+        let queryContext = CSUserQueryContext()
         queryContext.fetchAttributes = ["title"]
+        queryContext.maxSuggestionCount = 10
+        
+        authorSearchQuery = CSUserQuery(queryString: queryString, queryContext: queryContext)
+        
+        guard let authorSearchQuery = authorSearchQuery else {
+            logger.log("authorSearchQuery is null")
+            return
+        }
+        
         logger.log("searchAuthors: \(queryString, privacy: .public)")
-        authorSearchQuery = CSSearchQuery(queryString: queryString, queryContext: queryContext)
-        logger.log("searchAuthors: \(self.authorSearchQuery, privacy: .public)")
         
-        authorSearchQuery?.foundItemsHandler = { items in
-            DispatchQueue.main.async {
-                self.spotlightFoundAuthors += items
-            }
-        }
-        
-        authorSearchQuery?.completionHandler = { error in
-            if let error = error {
-                self.logger.log("Searching \(self.authorSearchString) came back with error: \(error.localizedDescription, privacy: .public)")
-            } else {
-                DispatchQueue.main.async {
-                    self.fetchAuthors(self.spotlightFoundAuthors)
-                    self.spotlightFoundAuthors.removeAll()
+        Task {
+            do {
+                print("getting search results")
+                for try await item in authorSearchQuery.responses {
+                    print("item: \(item)")
+                    switch item {
+                    case .item(let item):
+                        self.spotlightFoundAuthors += [item.item]
+                    case .suggestion(let suggestion):
+                        self.authorSuggestions += [String(suggestion.suggestion.localizedAttributedSuggestion.characters)]
+                    @unknown default:
+                        break
+                    }
                 }
+                
+                self.fetchAuthors(self.spotlightFoundAuthors)
+                self.spotlightFoundAuthors.removeAll()
+            } catch {
+                self.logger.log("Searching \(self.authorSearchString) came back with error: \(error.localizedDescription, privacy: .public)")
             }
         }
-        
-        authorSearchQuery?.start()
     }
     
     private func fetchAuthors(_ items: [CSSearchableItem]) {

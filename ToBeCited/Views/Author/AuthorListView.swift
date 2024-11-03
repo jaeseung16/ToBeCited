@@ -30,6 +30,13 @@ struct AuthorListView: View {
                 }
                 .onDelete(perform: deleteAuthors)
             }
+            .searchable(text: $viewModel.authorSearchString)
+            .searchSuggestions({
+                ForEach($viewModel.authorSuggestions, id: \.self) { suggestion in
+                    Text(suggestion.wrappedValue)
+                        .searchCompletion(suggestion.wrappedValue)
+                }
+            })
             .navigationTitle(Text("Authors"))
             .refreshable {
                 viewModel.fetchAll()
@@ -45,10 +52,6 @@ struct AuthorListView: View {
                 .id(author)
                 .environmentObject(viewModel)
             }
-        }
-        .searchable(text: $viewModel.authorSearchString)
-        .onChange(of: viewModel.authorSearchString) {
-            viewModel.searchAuthor()
         }
         .onContinueUserActivity(CSSearchableItemActionType) { activity in
             Task(priority: .userInitiated) {
