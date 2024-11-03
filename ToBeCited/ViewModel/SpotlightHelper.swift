@@ -19,10 +19,12 @@ actor SpotlightHelper {
     init(persistenceHelper: PersistenceHelper) {
         self.persistenceHelper = persistenceHelper
         
-        if let articleIndexer: ArticleSpotlightDelegate = persistenceHelper.getSpotlightDelegate() as? ArticleSpotlightDelegate {
+        if let articleIndexer: ArticleSpotlightDelegate = persistenceHelper.getSpotlightDelegate() {
             self.articleIndexer = articleIndexer
+            logger.log("articleIndexer=\(articleIndexer)")
         } else {
             self.articleIndexer = nil
+            logger.log("articleIndexer=nil")
         }
         
         Task {

@@ -47,6 +47,13 @@ struct ArticleListView: View {
                 }
                 .onDelete(perform: deleteArticles)
             }
+            .searchable(text: $viewModel.articleSearchString)
+            .searchSuggestions({
+                ForEach($viewModel.articleSuggestions, id: \.self) { suggestion in
+                    Text(suggestion.wrappedValue)
+                        .searchCompletion(suggestion.wrappedValue)
+                }
+            })
             .navigationTitle(Text("Articles"))
             .toolbar {
                 ToolbarItemGroup {
@@ -78,10 +85,6 @@ struct ArticleListView: View {
                 .id(article)
                 .environmentObject(viewModel)
             }
-        }
-        .searchable(text: $viewModel.articleSearchString)
-        .onChange(of: viewModel.articleSearchString) {
-            viewModel.searchArticle()
         }
         .sheet(isPresented: $presentAddArticleView) {
             AddRISView()

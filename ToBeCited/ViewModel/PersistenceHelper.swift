@@ -32,7 +32,7 @@ final class PersistenceHelper: Sendable {
         return fetchedEntities
     }
     
-    nonisolated func getSpotlightDelegate() -> NSCoreDataCoreSpotlightDelegate? {
+    nonisolated func getSpotlightDelegate<T: NSCoreDataCoreSpotlightDelegate>() -> T? {
         return persistence.createCoreSpotlightDelegate()
     }
     
@@ -160,6 +160,10 @@ final class PersistenceHelper: Sendable {
             PersistenceHelper.logger.log("objectID is nil for url=\(url)")
             return nil
         }
+        return find(with: objectID)
+    }
+    
+    func find(with objectID: NSManagedObjectID) -> NSManagedObject? {
         return viewContext.object(with: objectID)
     }
     
