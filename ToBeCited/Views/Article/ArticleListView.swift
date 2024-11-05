@@ -114,6 +114,7 @@ struct ArticleListView: View {
     private func deleteArticles(offsets: IndexSet) {
         withAnimation {
             viewModel.delete(offsets.map { filteredArticles[$0] } )
+            selectedArticle = nil
         }
     }
     

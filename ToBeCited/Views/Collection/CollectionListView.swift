@@ -80,6 +80,7 @@ struct CollectionListView: View {
     private func deleteCollections(offsets: IndexSet) {
         withAnimation {
             viewModel.delete(offsets.map { filteredCollections[$0] })
+            selectedCollection = nil
         }
     }
 }

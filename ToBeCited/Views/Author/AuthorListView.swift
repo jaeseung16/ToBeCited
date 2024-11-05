@@ -73,6 +73,7 @@ struct AuthorListView: View {
     private func deleteAuthors(offsets: IndexSet) {
         withAnimation {
             viewModel.delete(offsets.map { viewModel.authors[$0] } )
+            selectedAuthor = nil
         }
     }
 }
