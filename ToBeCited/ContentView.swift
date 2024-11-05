@@ -18,6 +18,7 @@ struct ContentView: View {
         TabView(selection: $viewModel.selectedTab) {
             Tab("Articles", systemImage: "doc.on.doc", value: .articles) {
                 ArticleListView()
+                    .environment(\.managedObjectContext, viewContext)
                     .environmentObject(viewModel)
             }
             

@@ -9,6 +9,7 @@ import SwiftUI
 import CoreSpotlight
 
 struct ArticleListView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var presentAddArticleView = false
@@ -83,6 +84,7 @@ struct ArticleListView: View {
                                   title: article.title ?? "Title is not available",
                                   published: article.published ?? Date())
                 .id(article)
+                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
             }
         }

@@ -9,6 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ArticleDetailView: View, DropDelegate {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var importPdf = false
@@ -132,6 +133,7 @@ struct ArticleDetailView: View, DropDelegate {
                     
                     NavigationLink {
                         EditRISView(ris: ris, content: content)
+                            .environment(\.managedObjectContext, viewContext)
                             .environmentObject(viewModel)
                             .navigationTitle(title)
                     } label: {
@@ -180,10 +182,15 @@ struct ArticleDetailView: View, DropDelegate {
     
     private func updatePDF() -> Void {
         if !pdfData.isEmpty {
-            article.pdf = pdfData
-            viewModel.save() { success in
-                if !success {
-                    viewModel.log("Failed to save pdf")
+            viewContext.perform {
+                article.pdf = pdfData
+                
+                Task {
+                    do {
+                        try await viewModel.save()
+                    } catch {
+                        viewModel.log("Failed to save pdf: \(error.localizedDescription)")
+                    }
                 }
             }
         }
@@ -212,11 +219,18 @@ struct ArticleDetailView: View, DropDelegate {
     
     private func updateTitle() -> Void {
         if !title.isEmpty {
-            article.title = title
-            viewModel.saveAndFetch() { success in
-                if !success {
-                    viewModel.log("Failed to save title")
+            viewContext.perform {
+                article.title = title
+                
+                Task {
+                    do {
+                        try await viewModel.save()
+                    } catch {
+                        viewModel.log("Failed to update title: \(error.localizedDescription)")
+                    }
                 }
+                
+                // TODO: Fetch after save?
             }
         }
     }
@@ -270,11 +284,18 @@ struct ArticleDetailView: View, DropDelegate {
     }
     
     private func updatePublished() -> Void {
-        article.published = published
-        viewModel.save() { success in
-            if !success {
-                viewModel.log("Failed to save published")
+        viewContext.perform {
+            article.published = published
+            
+            Task {
+                do {
+                    try await viewModel.save()
+                } catch {
+                    viewModel.log("Failed to update published: \(error.localizedDescription)")
+                }
             }
+            
+            // TODO: Fetch after save?
         }
     }
     
@@ -320,6 +341,7 @@ struct ArticleDetailView: View, DropDelegate {
                 
                 NavigationLink {
                     EditAuthorsView(article: article, authors: authors)
+                        .environmentObject(viewModel)
                         .navigationTitle(title)
                 } label: {
                     Label("edit", systemImage: "pencil.circle")
@@ -345,6 +367,7 @@ struct ArticleDetailView: View, DropDelegate {
                 
                 NavigationLink {
                     EditAbstractView(article: article, abstract: article.abstract ?? "")
+                        .environment(\.managedObjectContext, viewContext)
                         .environmentObject(viewModel)
                         .navigationTitle(title)
                 } label: {
@@ -374,6 +397,7 @@ struct ArticleDetailView: View, DropDelegate {
                 
                 NavigationLink {
                     SelectReferencesView(article: article, references: references)
+                        .environment(\.managedObjectContext, viewContext)
                         .environmentObject(viewModel)
                         .navigationTitle(title)
                 } label: {

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SelectReferencesView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var article: Article
@@ -125,27 +126,35 @@ struct SelectReferencesView: View {
     }
     
     private func update(reference: Article) -> Void {
-        if reference == article {
-            showAlertSameArticle = true
-        } else if let references = reference.references, references.contains(article) {
-            showAlertCitedArticle = true
-        } else {
-            if references.contains(reference) {
-                if let index = references.firstIndex(of: reference) {
-                    references.remove(at: index)
-                }
-                article.removeFromReferences(reference)
-                reference.removeFromCited(article)
+        viewContext.perform {
+            if reference == article {
+                showAlertSameArticle = true
+            } else if let references = reference.references, references.contains(article) {
+                showAlertCitedArticle = true
             } else {
-                references.append(reference)
-                article.addToReferences(reference)
-                reference.addToCited(article)
-            }
-            
-            viewModel.saveAndFetch() { success in
-                if !success {
-                    viewModel.log("Failed to update references")
+                if references.contains(reference) {
+                    if let index = references.firstIndex(of: reference) {
+                        references.remove(at: index)
+                    }
+                    article.removeFromReferences(reference)
+                    reference.removeFromCited(article)
+                } else {
+                    references.append(reference)
+                    article.addToReferences(reference)
+                    reference.addToCited(article)
                 }
+                
+                Task {
+                    do {
+                        try await viewModel.save()
+                    } catch {
+                        viewModel.log("Failed to update references: \(error.localizedDescription)")
+                    }
+                }
+                
+                viewModel.fetchAll()
+                
+                // TODO: - move this to viewModel?
             }
         }
     }

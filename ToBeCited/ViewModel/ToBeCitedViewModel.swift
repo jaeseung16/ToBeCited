@@ -285,6 +285,10 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
+    func save() async throws -> Void {
+        try await persistenceHelper.save()
+    }
+    
     // create
     func save(risRecords: [RISRecord]) -> Void {
         persistenceHelper.performAndWait {
@@ -354,9 +358,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 collection.addToArticles(articles[index])
                 let _ = self.persistenceHelper.createOrder(in: collection, for: articles[index], with: Int64(index))
             }
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to add articles to collection=\(name): \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
-        
-        saveAndFetch()
     }
     
     func add(article: Article, to collections: [Collection]) -> Void {
@@ -366,11 +378,15 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 let _ = self.persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
                 collection.addToArticles(article)
             }
-        }
-        
-        saveAndFetch() { success in
-            if !success {
-                self.logger.log("AddToCollectionsView: Failed to update")
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to add an article to collections: \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
             }
         }
     }
@@ -391,11 +407,15 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     article.addToReferences(reference)
                 }
             }
-        }
-        
-        saveAndFetch() { success in
-            if !success {
-                self.logger.log("ImportCollectionAsReferencesView: Failed to update")
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to import collections as references for \(article) \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
             }
         }
     }
@@ -546,9 +566,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             authors.forEach { author in
                 author.addToArticles(article)
             }
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to update article=\(article) with authors=\(authors): \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
-
-        saveAndFetch()
     }
     
     func update(collection: Collection, with articles: [Article]) -> Void {

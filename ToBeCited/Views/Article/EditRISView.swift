@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EditRISView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     var ris: RIS
@@ -56,11 +57,18 @@ struct EditRISView: View {
     }
     
     private func update() -> Void {
-        ris.content = content
-        viewModel.saveAndFetch() { success in
-            if !success {
-                viewModel.log("Failed to update RIS")
+        viewContext.perform {
+            ris.content = content
+
+            Task {
+                do {
+                    try await viewModel.save()
+                } catch {
+                    viewModel.log("Failed to update RIS: \(error.localizedDescription)")
+                }
             }
+            
+            viewModel.fetchAll()
         }
     }
 }
