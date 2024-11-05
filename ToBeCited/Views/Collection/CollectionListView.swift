@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CollectionListView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var presentAddCollectionView = false
@@ -61,6 +62,8 @@ struct CollectionListView: View {
             if let collection = selectedCollection {
                 CollectionDetailView(collection: collection, collectionName: collection.name ?? "")
                     .id(collection)
+                    .environment(\.managedObjectContext, viewContext)
+                    .environmentObject(viewModel)
             }
         }
         .sheet(isPresented: $presentAddCollectionView) {

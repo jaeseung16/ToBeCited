@@ -30,6 +30,7 @@ struct ContentView: View {
             
             Tab("Collections", systemImage: "square.stack.3d.up", value: .collections) {
                 CollectionListView()
+                    .environment(\.managedObjectContext, viewContext)
                     .environmentObject(viewModel)
             }
         }

@@ -523,9 +523,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 
                 self.delete(collection)
             }
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to delete collections: \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
-        
-        saveAndFetch()
     }
     
     func delete(_ orders: [OrderInCollection], at offsets: IndexSet, in collection: Collection) -> Void {
@@ -542,13 +550,23 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     }
                 }
             }
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to delete collections: \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
-        
-        saveAndFetch()
     }
     
     func rollback() -> Void {
-        persistenceHelper.rollback()
+        persistenceHelper.performAndWait {
+            self.persistenceHelper.rollback()
+        }
     }
     
     // update
@@ -638,9 +656,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 let _ = self.persistenceHelper.createOrder(in: collection, for: article, with: Int64(index))
             }
             self.logger.log("Saving the update")
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to update collection=\(collection) with articles=\(articles): \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
-        
-        saveAndFetch()
     }
     
     func add(_ articles: [Article], to collections: [Collection]) -> Void {

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CollectionDetailView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var collection: Collection
@@ -126,9 +127,19 @@ struct CollectionDetailView: View {
                 .disabled(!edited)
                 
                 Button {
-                    collection.name = collectionName
-                    
-                    viewModel.saveAndFetch()
+                    viewContext.perform {
+                        collection.name = collectionName
+                        
+                        Task {
+                            do {
+                                try await viewModel.save()
+                            } catch {
+                                viewModel.log("Failed to save first name: \(error.localizedDescription)")
+                            }
+                            
+                            viewModel.fetchAll()
+                        }
+                    }
                     
                     edited = false
                 } label: {
