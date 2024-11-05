@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AuthorContactView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var contact: AuthorContact
@@ -25,8 +26,17 @@ struct AuthorContactView: View {
                 
                 TextField("email", text: $email, prompt: nil)
                     .onSubmit {
-                        contact.email = email
-                        viewModel.save()
+                        viewContext.perform {
+                            contact.email = email
+                            
+                            Task {
+                                do {
+                                    try await viewModel.save()
+                                } catch {
+                                    viewModel.log("Failed to save email: \(error.localizedDescription)")
+                                }
+                            }
+                        }
                     }
             }
             
@@ -38,8 +48,17 @@ struct AuthorContactView: View {
                 
                 TextField("institution", text: $institution, prompt: nil)
                     .onSubmit {
-                        contact.institution = institution
-                        viewModel.save()
+                        viewContext.perform {
+                            contact.institution = institution
+                            
+                            Task {
+                                do {
+                                    try await viewModel.save()
+                                } catch {
+                                    viewModel.log("Failed to save institution: \(error.localizedDescription)")
+                                }
+                            }
+                        }
                     }
             }
             
@@ -51,8 +70,17 @@ struct AuthorContactView: View {
                 
                 TextField("address", text: $address, prompt: nil)
                     .onSubmit {
-                        contact.address = address
-                        viewModel.save()
+                        viewContext.perform {
+                            contact.address = address
+                            
+                            Task {
+                                do {
+                                    try await viewModel.save()
+                                } catch {
+                                    viewModel.log("Failed to save address: \(error.localizedDescription)")
+                                }
+                            }
+                        }
                     }
             }
             

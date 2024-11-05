@@ -10,6 +10,7 @@ import CoreData
 
 struct AuthorDetailView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var author: Author
@@ -70,8 +71,17 @@ struct AuthorDetailView: View {
                     
                     TextField("orcid", text: $orcid, prompt: nil)
                         .onSubmit {
-                            author.orcid = orcid
-                            viewModel.saveAndFetch()
+                            viewContext.perform {
+                                author.orcid = orcid
+                                
+                                Task {
+                                    do {
+                                        try await viewModel.save()
+                                    } catch {
+                                        viewModel.log("Failed to save last name: \(error.localizedDescription)")
+                                    }
+                                }
+                            }
                         }
                     
                     if let orcidURL = orcidURL {
@@ -140,8 +150,17 @@ struct AuthorDetailView: View {
                 
                 TextField("last name", text: $lastName, prompt: nil)
                     .onSubmit {
-                        author.lastName = lastName
-                        viewModel.saveAndFetch()
+                        viewContext.perform {
+                            author.lastName = lastName
+                            
+                            Task {
+                                do {
+                                    try await viewModel.save()
+                                } catch {
+                                    viewModel.log("Failed to save last name: \(error.localizedDescription)")
+                                }
+                            }
+                        }
                     }
             }
             
@@ -156,8 +175,17 @@ struct AuthorDetailView: View {
                 
                 TextField("fist name", text: $firstName, prompt: nil)
                     .onSubmit {
-                        author.firstName = firstName
-                        viewModel.saveAndFetch()
+                        viewContext.perform {
+                            author.firstName = firstName
+                            
+                            Task {
+                                do {
+                                    try await viewModel.save()
+                                } catch {
+                                    viewModel.log("Failed to save first name: \(error.localizedDescription)")
+                                }
+                            }
+                        }
                     }
             }
             
@@ -172,8 +200,17 @@ struct AuthorDetailView: View {
                 
                 TextField("middle name", text: $middleName, prompt: nil)
                     .onSubmit {
-                        author.middleName = middleName
-                        viewModel.saveAndFetch()
+                        viewContext.perform {
+                            author.middleName = middleName
+                            
+                            Task {
+                                do {
+                                    try await viewModel.save()
+                                } catch {
+                                    viewModel.log("Failed to save middle name: \(error.localizedDescription)")
+                                }
+                            }
+                        }
                     }
             }
             
@@ -188,8 +225,17 @@ struct AuthorDetailView: View {
                 
                 TextField("suffix", text: $nameSuffix, prompt: nil)
                     .onSubmit {
-                        author.nameSuffix = nameSuffix
-                        viewModel.saveAndFetch()
+                        viewContext.perform {
+                            author.nameSuffix = nameSuffix
+                            
+                            Task {
+                                do {
+                                    try await viewModel.save()
+                                } catch {
+                                    viewModel.log("Failed to save name suffix: \(error.localizedDescription)")
+                                }
+                            }
+                        }
                     }
             }
             
@@ -209,6 +255,8 @@ struct AuthorDetailView: View {
             List {
                 ForEach(contacts) { contact in
                     AuthorContactView(contact: contact, email: contact.email ?? "", institution: contact.institution ?? "", address: contact.address ?? "")
+                        .environment(\.managedObjectContext, viewContext)
+                        .environmentObject(viewModel)
                 }
                 .onDelete(perform: deleteContact)
             }

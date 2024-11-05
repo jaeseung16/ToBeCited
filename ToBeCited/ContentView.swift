@@ -24,6 +24,7 @@ struct ContentView: View {
             
             Tab("Authors", systemImage: "person.3", value: .authors) {
                 AuthorListView()
+                    .environment(\.managedObjectContext, viewContext)
                     .environmentObject(viewModel)
             }
             

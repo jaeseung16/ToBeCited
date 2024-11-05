@@ -343,10 +343,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func add(contact: ContactDTO, to author: Author) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             let contactEntity = self.persistenceHelper.createAuthorContact(from: contact)
             author.addToContacts(contactEntity)
-            self.save()
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to add contact=\(String(describing: contact)) to author=\(author): \(error.localizedDescription)")
+                }
+            }
         }
     }
     
@@ -446,10 +453,16 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 self.deleteFromIndex(article: article)
                 self.delete(article)
             }
-        }
-        
-        saveAndFetch() { success in
-            self.logger.log("Delete data: success=\(success)")
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to delete articles: \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
     }
     
@@ -461,9 +474,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     self.delete(author)
                 }
             }
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to delete authors: \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
-        
-        saveAndFetch()
     }
     
     func delete(_ contacts: [AuthorContact], from author: Author) -> Void {
@@ -472,9 +493,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 author.removeFromContacts(contact)
                 self.delete(contact)
             }
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to delete authors: \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
-        
-        saveAndFetch()
     }
     
     func delete(_ collections: [Collection]) -> Void {
@@ -549,9 +578,17 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 self.deleteFromIndex(author: authors[index])
                 self.delete(authors[index])
             }
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to merge authors=\(authors): \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
-        
-        saveAndFetch()
     }
     
     func update(article: Article, with authors: [Author]) -> Void {
@@ -617,7 +654,14 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                         count += 1
                     }
                 }
-                self.save()
+                
+                Task {
+                    do {
+                        try await self.save()
+                    } catch {
+                        self.logger.log("Failed to add articles to collections: \(error.localizedDescription)")
+                    }
+                }
             }
         }
     }

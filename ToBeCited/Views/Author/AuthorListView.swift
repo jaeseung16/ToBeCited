@@ -10,6 +10,7 @@ import CoreData
 import CoreSpotlight
 
 struct AuthorListView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
 
     @State private var selectedAuthor: Author?
@@ -50,6 +51,7 @@ struct AuthorListView: View {
                                  nameSuffix: author.nameSuffix ?? "",
                                  orcid: author.orcid ?? "")
                 .id(author)
+                .environment(\.managedObjectContext, viewContext)
                 .environmentObject(viewModel)
             }
         }
