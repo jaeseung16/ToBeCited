@@ -99,14 +99,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             }
             .store(in: &subscriptions)
         
-        NotificationCenter.default
-            .publisher(for: UserDefaults.didChangeNotification)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.defaultsChanged()
-            }
-            .store(in: &subscriptions)
-        
         $articleSearchString
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
             .sink { _ in
@@ -120,13 +112,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 self.searchAuthor()
             }
             .store(in: &subscriptions)
-    }
-    
-    private func defaultsChanged() -> Void {
-        logger.log("default changed")
-        if !self.spotlightArticleIndexing {
-            self.spotlightArticleIndexing.toggle()
-        }
     }
     
     func parse(risString: String) async -> [RISRecord]? {
@@ -773,15 +758,6 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     @Published var articleSuggestions: [String] = []
     @Published var authorSearchString = ""
     @Published var authorSuggestions: [String] = []
-    
-    private func toggleIndexing(_ indexer: NSCoreDataCoreSpotlightDelegate?, enabled: Bool) {
-        guard let indexer = indexer else { return }
-        if enabled {
-            indexer.startSpotlightIndexing()
-        } else {
-            indexer.stopSpotlightIndexing()
-        }
-    }
     
     private func addToIndex(_ objectID: NSManagedObjectID) async -> Void {
         guard let object = persistenceHelper.find(with: objectID) else {
