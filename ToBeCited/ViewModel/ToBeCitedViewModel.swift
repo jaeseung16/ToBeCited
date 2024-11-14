@@ -426,12 +426,25 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     }
                 }
                       
-                // TODO: Reorder articles in collection
-                // TODO: Move these operations to viewModel
+                // TODO: Reorder articles in collection -> Rework the many-to-many relationship
                       
                 article.orders?.forEach { order in
                     if let order = order as? OrderInCollection {
                         article.removeFromOrders(order)
+                    }
+                }
+                
+                article.authors?.forEach { author in
+                    if let author = author as? Author {
+                        article.removeFromAuthors(author)
+                        
+                        if author.articles == nil || author.articles!.count == 0 {
+                            if author.contacts == nil || author.contacts!.count == 0 {
+                                if author.orcid == nil || author.orcid!.isEmpty {
+                                    self.delete(author)
+                                }
+                            }
+                        }
                     }
                 }
                 
