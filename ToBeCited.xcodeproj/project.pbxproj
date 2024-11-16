@@ -50,6 +50,7 @@
 		90C8D7B22753E36D0063DE71 /* AuthorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C8D7B12753E36D0063DE71 /* AuthorListView.swift */; };
 		90D89A632725A9440079EBD2 /* UpdateTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D89A622725A9440079EBD2 /* UpdateTextView.swift */; };
 		90D89A652725F18E0079EBD2 /* AddContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D89A642725F18E0079EBD2 /* AddContactView.swift */; };
+		90DA604E2CE952C5004080C9 /* AuthorRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DA604D2CE952C5004080C9 /* AuthorRowView.swift */; };
 		90DBDCCC2CACB340002504D3 /* PDFReadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DBDCCB2CACB340002504D3 /* PDFReadView.swift */; };
 		90DEAF54274ADE8100058AAC /* ArticleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DEAF53274ADE8100058AAC /* ArticleListView.swift */; };
 		90DEAF56274AE2C300058AAC /* FilterArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DEAF55274AE2C300058AAC /* FilterArticleView.swift */; };
@@ -137,6 +138,7 @@
 		90C8D7B12753E36D0063DE71 /* AuthorListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorListView.swift; sourceTree = "<group>"; };
 		90D89A622725A9440079EBD2 /* UpdateTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateTextView.swift; sourceTree = "<group>"; };
 		90D89A642725F18E0079EBD2 /* AddContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactView.swift; sourceTree = "<group>"; };
+		90DA604D2CE952C5004080C9 /* AuthorRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorRowView.swift; sourceTree = "<group>"; };
 		90DBDCCB2CACB340002504D3 /* PDFReadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFReadView.swift; sourceTree = "<group>"; };
 		90DEAF53274ADE8100058AAC /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
 		90DEAF55274AE2C300058AAC /* FilterArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterArticleView.swift; sourceTree = "<group>"; };
@@ -268,6 +270,7 @@
 				90EF91ED27584F3300B1CD6F /* AuthorContactView.swift */,
 				90EB0CE6275BD6A0002106B2 /* AuthorNameView.swift */,
 				9012D31F28038FDB00860731 /* AddAuthorToCollectionView.swift */,
+				90DA604D2CE952C5004080C9 /* AuthorRowView.swift */,
 			);
 			path = Author;
 			sourceTree = "<group>";
@@ -560,6 +563,7 @@
 				9080FBBD2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift in Sources */,
 				90113C22276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift in Sources */,
 				90760B472A89167A00E1536F /* JournalTitleView.swift in Sources */,
+				90DA604E2CE952C5004080C9 /* AuthorRowView.swift in Sources */,
 				900D77042745BB0C00F0416C /* ExportOrder.swift in Sources */,
 				9009B6792721FB640023C316 /* AuthorMergeView.swift in Sources */,
 				9031FE0F278285FB005DADC8 /* EditRISView.swift in Sources */,

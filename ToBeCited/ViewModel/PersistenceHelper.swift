@@ -36,9 +36,15 @@ final class PersistenceHelper: Sendable {
         return persistence.createCoreSpotlightDelegate()
     }
     
-    func save() async throws {
+    // TODO: - Cannot use persistence.save()
+    @MainActor func save() async throws {
+        guard viewContext.hasChanges else {
+            PersistenceHelper.logger.debug("There are no changes to save")
+            return
+        }
+        
         do {
-            try await persistence.save()
+            try viewContext.save()
             return
         } catch let error {
             PersistenceHelper.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")

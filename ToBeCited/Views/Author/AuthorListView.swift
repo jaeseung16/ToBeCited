@@ -20,13 +20,8 @@ struct AuthorListView: View {
             List(selection: $selectedAuthor) {
                 ForEach(viewModel.authors) { author in
                     NavigationLink(value: author) {
-                        HStack {
-                            AuthorNameView(author: author)
-                            Spacer()
-                            Label("\(author.articles?.count ?? 0)", systemImage: "doc.on.doc")
-                                .font(.callout)
-                                .foregroundColor(Color.secondary)
-                        }
+                        AuthorRowView(author: author)
+                            .id(author)
                     }
                 }
                 .onDelete(perform: deleteAuthors)
