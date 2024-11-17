@@ -62,7 +62,7 @@ struct FilterArticleView: View {
                 if author.lastName != nil && author.lastName != "" {
                     Button {
                         if viewModel.selectedAuthors != nil {
-                            if selected(author) {
+                            if isSelected(author) {
                                 viewModel.selectedAuthors!.remove(author)
                             } else {
                                 viewModel.selectedAuthors!.insert(author)
@@ -84,7 +84,7 @@ struct FilterArticleView: View {
                 .font(.callout)
                 .foregroundColor(Color.secondary)
             Divider()
-            if selected(author) {
+            if isSelected(author) {
                 Image(systemName: "checkmark.square")
             } else {
                 Image(systemName: "square")
@@ -92,7 +92,7 @@ struct FilterArticleView: View {
         }
     }
     
-    private func selected(_ author: Author) -> Bool {
+    private func isSelected(_ author: Author) -> Bool {
         if let selectedAuthors = viewModel.selectedAuthors {
             return selectedAuthors.contains(author)
         } else {
@@ -135,12 +135,6 @@ struct FilterArticleView: View {
                 Image(systemName: "clear")
             }
         }
-    }
-    
-    private var yearFormatter: NumberFormatter {
-        let dateFormatter = NumberFormatter()
-        dateFormatter.numberStyle = .none
-        return dateFormatter
     }
     
     private func selectedPublishedView() -> some View {

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import UIKit
+@preconcurrency import UIKit
 import os
 import CloudKit
 import CoreData
@@ -53,24 +53,29 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
     private func registerForPushNotifications() {
-        UNUserNotificationCenter.current()
-            .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
-                guard granted else {
-                    return
+        Task {
+            do {
+                let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+                
+                if granted {
+                    await getNotificationSettings()
                 }
-                self?.getNotificationSettings()
-            }
-    }
-
-    private func getNotificationSettings() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            guard settings.authorizationStatus == .authorized else {
-                return
-            }
-            DispatchQueue.main.async {
-                UIApplication.shared.registerForRemoteNotifications()
+            } catch {
+                logger.log("Can't register for push notifications: \(error.localizedDescription, privacy: .public)")
             }
         }
+    }
+
+    private func getNotificationSettings() async {
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+        
+        if settings.authorizationStatus == .authorized {
+            UIApplication.shared.registerForRemoteNotifications()
+        } else {
+            logger.log("User notification is not authorized \(settings, privacy: .public)")
+        }
+        
     }
     
     private func subscribe() {
@@ -165,15 +170,22 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         logger.log("Processed \(record)")
     }
 
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        viewModel.stopIndexing()
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        viewModel.startIndexing()
+    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         logger.info("userNotificationCenter: notification=\(notification)")
         completionHandler([.banner, .sound])
     }
     
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()
     }
 }

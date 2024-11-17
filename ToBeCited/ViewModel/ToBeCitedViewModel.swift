@@ -13,11 +13,11 @@ import Persistence
 import SwiftUI
 import CoreSpotlight
 
+@MainActor
 class ToBeCitedViewModel: NSObject, ObservableObject {
     let logger = Logger()
     
     @AppStorage("ToBeCited.spotlightArticleIndexing") private var spotlightArticleIndexing: Bool = false
-    @AppStorage("ToBeCited.spotlightAuthorIndexing") private var spotlightAuthorIndexing: Bool = false
     
     private var persistence: Persistence
     private let parser = RISParser()
@@ -38,81 +38,93 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private(set) var articleIndexer: ArticleSpotlightDelegate?
     private(set) var authorIndexer: AuthorSpotlightDelegate?
     
-    private var persistenceContainer: NSPersistentCloudKitContainer {
-        persistence.cloudContainer!
-    }
+    private let spotlightHelper: SpotlightHelper
+    
     private let persistenceHelper: PersistenceHelper
     
     init(persistence: Persistence) {
         self.persistence = persistence
+        self.persistence.container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+        
         self.persistenceHelper = PersistenceHelper(persistence: persistence)
+        
+        self.spotlightArticleIndexing = UserDefaults.standard.bool(forKey: "ToBeCited.spotlightArticleIndexing")
+        
+        self.spotlightHelper = SpotlightHelper(persistenceHelper: persistenceHelper)
         
         super.init()
         
-        NotificationCenter.default
-            .publisher(for: .NSPersistentStoreRemoteChange)
-            .sink { self.fetchUpdates($0) }
-            .store(in: &subscriptions)
+        fetchAll()
         
-        self.persistence.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        
-        self.spotlightArticleIndexing = UserDefaults.standard.bool(forKey: "ToBeCited.spotlightArticleIndexing")
-        self.spotlightAuthorIndexing = UserDefaults.standard.bool(forKey: "ToBeCited.spotlightAuthorIndexing")
-        
-        
-        if let articleIndexer: ArticleSpotlightDelegate = self.persistenceHelper.getSpotlightDelegate(), let authorIndexer: AuthorSpotlightDelegate = self.persistenceHelper.getSpotlightDelegate() {
-            self.articleIndexer = articleIndexer
-            self.authorIndexer = authorIndexer
-            self.toggleIndexing(self.articleIndexer, enabled: true)
-            self.toggleIndexing(self.authorIndexer, enabled: true)
-            NotificationCenter.default.addObserver(self, selector: #selector(defaultsChanged), name: UserDefaults.didChangeNotification, object: nil)
+        if UserDefaults.standard.bool(forKey: "ToBeCited.spotlightAuthorIndexing") {
+            UserDefaults.standard.removeObject(forKey: "ToBeCited.spotlightAuthorIndexing")
+            
+            self.spotlightArticleIndexing = false
+            Task {
+                await self.spotlightHelper.removeAuthorsFromIndex()
+            }
         }
         
         logger.log("spotlightArticleIndexing=\(self.spotlightArticleIndexing, privacy: .public)")
         if !spotlightArticleIndexing {
-            DispatchQueue.main.async {
-                self.indexArticles()
-                self.spotlightArticleIndexing.toggle()
+            Task {
+                let articleAttributeSets = self.articles.compactMap {
+                    SpotlightAttributeSet(uid: $0.objectID.uriRepresentation().absoluteString,
+                                          title: $0.title,
+                                          textContent: $0.abstract,
+                                          displayName: $0.title,
+                                          contentDescription: $0.journal)
+                }
                 
-            }
-        }
-        
-        logger.log("spotlightAuthorIndexing=\(self.spotlightAuthorIndexing, privacy: .public)")
-        if !spotlightAuthorIndexing {
-            DispatchQueue.main.async {
-                self.indexAuthors()
-                self.spotlightAuthorIndexing.toggle()
+                await self.spotlightHelper.index(articleAttributeSets)
                 
-            }
-        }
-        
-        fetchAll()
-    }
-    
-    @objc private func defaultsChanged() -> Void {
-        if !self.spotlightAuthorIndexing {
-            DispatchQueue.main.async {
-                self.toggleIndexing(self.articleIndexer, enabled: false)
-                self.toggleIndexing(self.articleIndexer, enabled: true)
+                let authorAttributeSets = self.authors.compactMap {
+                    let authorName = ToBeCitedNameFormatHelper.formatName(of: $0)
+                    return SpotlightAttributeSet(uid: $0.objectID.uriRepresentation().absoluteString,
+                                                 displayName: authorName,
+                                                 authorNames: [authorName])
+                }
+                
+                await self.spotlightHelper.index(authorAttributeSets)
+                
                 self.spotlightArticleIndexing.toggle()
             }
         }
-        if !self.spotlightAuthorIndexing {
-            DispatchQueue.main.async {
-                self.toggleIndexing(self.authorIndexer, enabled: false)
-                self.toggleIndexing(self.authorIndexer, enabled: true)
-                self.spotlightAuthorIndexing.toggle()
+        
+        NotificationCenter.default
+            .publisher(for: .NSPersistentStoreRemoteChange)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                self?.fetchUpdates(notification)
             }
-        }
+            .store(in: &subscriptions)
+        
+        $articleSearchString
+            .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
+            .sink { _ in
+                self.searchArticle()
+            }
+            .store(in: &subscriptions)
+        
+        $authorSearchString
+            .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
+            .sink { _ in
+                self.searchAuthor()
+            }
+            .store(in: &subscriptions)
     }
     
-    func parse(risString: String) -> [RISRecord]? {
-        try? parser.parse(risString)
+    func parse(risString: String) async -> [RISRecord]? {
+        let task = Task {
+            let records = try await parser.parse(risString)
+            return records
+        }
+        return try? await task.value
     }
     
     @Published var stringToExport: String = ""
     
-    func export(collection: Collection, with order: ExportOrder = .dateEnd) -> Void {
+    func export(collection: Collection, with order: ExportOrder = .dateEnd) async -> Void {
         let articles = collection.orders?
             .map { $0 as! OrderInCollection }
             .sorted(by: { $0.order < $1.order })
@@ -126,7 +138,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         var count = 1
         for article in articles {
             if let risString = article.ris?.content {
-                if let ris = parse(risString: risString), !ris.isEmpty {
+                if let ris = await parse(risString: risString), !ris.isEmpty {
                     result += "\(count);"
                     switch order {
                     case .dateFirst:
@@ -168,7 +180,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     // MARK: - Persistence
     @Published var articles = [Article]()
-    @Published var allArticles = [Article]()
+    var allArticles = [Article]()
     @Published var authors = [Author]()
     @Published var allAuthors = [Author]()
     @Published var collections = [Collection]()
@@ -176,11 +188,21 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     // read
     func fetchAll() {
-        fetchArticles()
-        fetchAuthors()
-        fetchCollections()
-        fetchAllArticles()
-        fetchAllAuthors()
+        persistenceHelper.perform {
+            self.logger.log("fetching articles")
+            self.fetchArticles()
+            self.logger.log("fetching authors")
+            self.fetchAuthors()
+            self.logger.log("fetching collections")
+            self.fetchCollections()
+            self.logger.log("fetching all articles")
+            self.fetchAllArticles()
+            self.logger.log("fetching all authors")
+            self.fetchAllAuthors()
+            self.logger.log("fetching all collections")
+            self.fetchAllColections()
+            self.logger.log("fetched all")
+        }
     }
     
     func fetchArticles() {
@@ -225,39 +247,48 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func saveAndFetch(completionHandler: ((Bool) -> Void)? = nil) -> Void {
-        save() { success in
-            completionHandler?(success)
-            self.articleSearchString = ""
-            self.authorSearchString = ""
-            self.fetchAll()
-        }
-    }
-    
-    func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
-        persistenceHelper.save { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(_):
-                    completionHandler?(true)
-                case .failure(let error):
-                    self.logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
-                    self.showAlert.toggle()
-                    completionHandler?(false)
-                }
+        persistenceHelper.perform {
+            self.save() { success in
+                completionHandler?(success)
+                self.articleSearchString = ""
+                self.authorSearchString = ""
+                self.fetchAll()
             }
         }
     }
     
-    // create
-    func save(risRecords: [RISRecord]) -> Void {
-        let created = Date()
-        persistenceHelper.perform {
-            risRecords.forEach { self.createEntities(from: $0, created: created) }
-            self.saveAndFetch()
+    func save(completionHandler: ((Bool) -> Void)? = nil) -> Void {
+        Task {
+            do {
+                try await persistenceHelper.save()
+                completionHandler?(true)
+            } catch {
+                logger.log("Error while saving data: \(error.localizedDescription, privacy: .public)")
+                showAlert.toggle()
+                completionHandler?(false)
+            }
         }
     }
     
-    private func createEntities(from record: RISRecord, created at: Date) -> Void {
+    func save() async throws -> Void {
+        try await persistenceHelper.save()
+    }
+    
+    // create
+    func save(risRecords: [RISRecord]) -> Void {
+        persistenceHelper.performAndWait {
+            let created = Date()
+            risRecords.forEach {
+                let article = self.createEntities(from: $0, created: created)
+                self.addToIndex(article: article)
+            }
+            
+        }
+        
+        saveAndFetch()
+    }
+    
+    private func createEntities(from record: RISRecord, created at: Date) -> Article {
         let newArticle = persistenceHelper.createrticle(from: record, created: at)
         
         // Need to parse DA or PY, Y1
@@ -288,20 +319,31 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
             }
         }
         
+        // TODO: Add to index
+        
         let ris = persistenceHelper.createRIS(from: record)
         ris.article = newArticle
+        
+        return newArticle
     }
     
     func add(contact: ContactDTO, to author: Author) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             let contactEntity = self.persistenceHelper.createAuthorContact(from: contact)
             author.addToContacts(contactEntity)
-            self.save()
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to add contact=\(String(describing: contact)) to author=\(author): \(error.localizedDescription)")
+                }
+            }
         }
     }
     
     func add(collection name: String, of articles: [Article]) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             let collection = self.persistenceHelper.create(collection: name, of: articles)
             
             for index in 0..<articles.count {
@@ -309,28 +351,40 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 let _ = self.persistenceHelper.createOrder(in: collection, for: articles[index], with: Int64(index))
             }
             
-            self.saveAndFetch()
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to add articles to collection=\(name): \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
     }
     
     func add(article: Article, to collections: [Collection]) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             collections.forEach { collection in
                 let count = collection.articles == nil ? 0 : collection.articles!.count
                 let _ = self.persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
                 collection.addToArticles(article)
             }
             
-            self.saveAndFetch() { success in
-                if !success {
-                    self.logger.log("AddToCollectionsView: Failed to update")
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to add an article to collections: \(error.localizedDescription)")
                 }
+                
+                self.fetchAll()
             }
         }
     }
     
     func add(references collections: [Collection], to article: Article) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             for collection in collections {
                 collection.articles?.forEach { reference in
                     guard let reference = reference as? Article, reference != article else {
@@ -346,10 +400,14 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 }
             }
             
-            self.saveAndFetch() { success in
-                if !success {
-                    self.logger.log("ImportCollectionAsReferencesView: Failed to update")
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to import collections as references for \(article) \(error.localizedDescription)")
                 }
+                
+                self.fetchAll()
             }
         }
     }
@@ -360,7 +418,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     }
     
     func delete(_ articles: [Article]) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             articles.forEach { article in
                 article.collections?.forEach { collection in
                     if let collection = collection as? Collection {
@@ -368,8 +426,7 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     }
                 }
                       
-                // TODO: Reorder articles in collection
-                // TODO: Move these operations to viewModel
+                // TODO: Reorder articles in collection -> Rework the many-to-many relationship
                       
                 article.orders?.forEach { order in
                     if let order = order as? OrderInCollection {
@@ -377,40 +434,78 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     }
                 }
                 
+                article.authors?.forEach { author in
+                    if let author = author as? Author {
+                        article.removeFromAuthors(author)
+                        
+                        if author.articles == nil || author.articles!.count == 0 {
+                            if author.contacts == nil || author.contacts!.count == 0 {
+                                if author.orcid == nil || author.orcid!.isEmpty {
+                                    self.delete(author)
+                                }
+                            }
+                        }
+                    }
+                }
+                
                 self.deleteFromIndex(article: article)
                 self.delete(article)
             }
             
-            self.saveAndFetch() { success in
-                self.logger.log("Delete data: success=\(success)")
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to delete articles: \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
             }
         }
     }
     
     func delete(_ authors: [Author]) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             authors.forEach { author in
                 if author.articles == nil || author.articles!.count == 0 {
                     self.deleteFromIndex(author: author)
                     self.delete(author)
                 }
             }
-            self.saveAndFetch()
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to delete authors: \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
     }
     
     func delete(_ contacts: [AuthorContact], from author: Author) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             contacts.forEach { contact in
                 author.removeFromContacts(contact)
                 self.delete(contact)
             }
-            self.saveAndFetch()
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to delete authors: \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
     }
     
     func delete(_ collections: [Collection]) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             collections.forEach { collection in
                 collection.articles?.forEach { article in
                     if let article = article as? Article {
@@ -427,12 +522,20 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                 self.delete(collection)
             }
             
-            self.saveAndFetch()
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to delete collections: \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
     }
     
     func delete(_ orders: [OrderInCollection], at offsets: IndexSet, in collection: Collection) -> Void {
-        persistenceHelper.perform {
+        persistenceHelper.performAndWait {
             orders.forEach { order in
                 order.article?.removeFromCollections(collection)
                 self.delete(order)
@@ -445,96 +548,145 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
                     }
                 }
             }
-
-            self.saveAndFetch()
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to delete collections: \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
     }
     
     func rollback() -> Void {
-        persistenceHelper.rollback()
+        persistenceHelper.performAndWait {
+            self.persistenceHelper.rollback()
+        }
     }
     
     // update
     func merge(authors: [Author]) -> Void {
-        let toMerge = authors[0]
-        
-        for index in 1..<authors.count {
-            authors[index].articles?.forEach { article in
-                if let article = article as? Article {
-                    toMerge.addToArticles(article)
-                    authors[index].removeFromArticles(article)
+        persistenceHelper.performAndWait {
+            let toMerge = authors[0]
+            
+            for index in 1..<authors.count {
+                authors[index].articles?.forEach { article in
+                    if let article = article as? Article {
+                        toMerge.addToArticles(article)
+                        authors[index].removeFromArticles(article)
+                    }
                 }
-            }
-            
-            authors[index].contacts?.forEach { contact in
-                if let contact = contact as? AuthorContact {
-                    toMerge.addToContacts(contact)
-                    authors[index].removeFromContacts(contact)
+                
+                authors[index].contacts?.forEach { contact in
+                    if let contact = contact as? AuthorContact {
+                        toMerge.addToContacts(contact)
+                        authors[index].removeFromContacts(contact)
+                    }
                 }
+                
+                if let orcid = authors[index].orcid, toMerge.orcid == nil {
+                    toMerge.orcid = orcid
+                }
+                
+                self.deleteFromIndex(author: authors[index])
+                self.delete(authors[index])
             }
             
-            if let orcid = authors[index].orcid, toMerge.orcid == nil {
-                toMerge.orcid = orcid
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to merge authors=\(authors): \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
             }
-            
-            deleteFromIndex(author: authors[index])
-            delete(authors[index])
         }
-        
-        saveAndFetch()
     }
     
     func update(article: Article, with authors: [Author]) -> Void {
-        logger.log("Updating article=\(article) with authors=\(authors)")
-        article.authors?.forEach { author in
-            if let author = author as? Author {
-                author.removeFromArticles(article)
+        persistenceHelper.performAndWait {
+            self.logger.log("Updating article=\(article) with authors=\(authors)")
+            article.authors?.forEach { author in
+                if let author = author as? Author {
+                    author.removeFromArticles(article)
+                }
+            }
+            
+            authors.forEach { author in
+                author.addToArticles(article)
+            }
+            
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to update article=\(article) with authors=\(authors): \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
             }
         }
-        
-        authors.forEach { author in
-            author.addToArticles(article)
-        }
-
-        saveAndFetch()
     }
     
     func update(collection: Collection, with articles: [Article]) -> Void {
-        logger.log("Updating collection=\(collection) with articles=\(articles)")
-        collection.orders?.forEach { order in
-            if let order = order as? OrderInCollection {
-                delete(order)
+        persistenceHelper.performAndWait {
+            self.logger.log("Updating collection=\(collection) with articles=\(articles)")
+            collection.orders?.forEach { order in
+                if let order = order as? OrderInCollection {
+                    self.delete(order)
+                }
             }
-        }
-        logger.log("Deleted orders")
-        collection.articles?.forEach { article in
-            if let article = article as? Article {
-                article.removeFromCollections(collection)
+            self.logger.log("Deleted orders")
+            collection.articles?.forEach { article in
+                if let article = article as? Article {
+                    article.removeFromCollections(collection)
+                }
             }
-        }
-        logger.log("Removed articles")
-        for index in 0..<articles.count {
-            let article = articles[index]
-            article.addToCollections(collection)
+            self.logger.log("Removed articles")
+            for index in 0..<articles.count {
+                let article = articles[index]
+                article.addToCollections(collection)
+                
+                let _ = self.persistenceHelper.createOrder(in: collection, for: article, with: Int64(index))
+            }
+            self.logger.log("Saving the update")
             
-            let _ = persistenceHelper.createOrder(in: collection, for: article, with: Int64(index))
+            Task {
+                do {
+                    try await self.save()
+                } catch {
+                    self.logger.log("Failed to update collection=\(collection) with articles=\(articles): \(error.localizedDescription)")
+                }
+                
+                self.fetchAll()
+            }
         }
-        logger.log("Saving the update")
-        saveAndFetch()
-        
     }
     
     func add(_ articles: [Article], to collections: [Collection]) -> Void {
-        if !articles.isEmpty {
-            collections.forEach { collection in
-                var count = collection.articles == nil ? 0 : collection.articles!.count
-                for article in articles {
-                    let _ = persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
-                    article.addToCollections(collection)
-                    count += 1
+        persistenceHelper.performAndWait {
+            if !articles.isEmpty {
+                collections.forEach { collection in
+                    var count = collection.articles == nil ? 0 : collection.articles!.count
+                    for article in articles {
+                        let _ = self.persistenceHelper.createOrder(in: collection, for: article, with: Int64(count))
+                        article.addToCollections(collection)
+                        count += 1
+                    }
+                }
+                
+                Task {
+                    do {
+                        try await self.save()
+                    } catch {
+                        self.logger.log("Failed to add articles to collections: \(error.localizedDescription)")
+                    }
                 }
             }
-            save()
         }
     }
     
@@ -559,9 +711,25 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     // MARK: - Persistence History Request
     private func fetchUpdates(_ notification: Notification) -> Void {
-        persistence.fetchUpdates(notification) { _ in
-            DispatchQueue.main.async {
-                self.logger.log("Called persistence.fetchUpdates")
+        Task {
+            await persistence.fetchUpdates(notification) { result in
+                switch result {
+                case .success(let notification):
+                    if let userInfo = notification.userInfo {
+                        userInfo.forEach { key, value in
+                            if let objectIDs = value as? Set<NSManagedObjectID> {
+                                for objectId in objectIDs {
+                                    Task {
+                                        await self.addToIndex(objectId)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break
+                case .failure(let error):
+                    self.logger.log("Error while persistence.fetchUpdates: \(error.localizedDescription, privacy: .public)")
+                }
             }
         }
     }
@@ -597,84 +765,79 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     // MARK: - Spotlight
     private var spotlightFoundArticles: [CSSearchableItem] = []
     private var spotlightFoundAuthors: [CSSearchableItem] = []
-    private var articleSearchQuery: CSSearchQuery?
-    private var authorSearchQuery: CSSearchQuery?
+    private var articleSearchQuery: CSUserQuery?
+    private var authorSearchQuery: CSUserQuery?
     @Published var articleSearchString = ""
+    @Published var articleSuggestions: [String] = []
     @Published var authorSearchString = ""
+    @Published var authorSuggestions: [String] = []
     
-    private func toggleIndexing(_ indexer: NSCoreDataCoreSpotlightDelegate?, enabled: Bool) {
-        guard let indexer = indexer else { return }
-        if enabled {
-            indexer.startSpotlightIndexing()
-        } else {
-            indexer.stopSpotlightIndexing()
+    private func addToIndex(_ objectID: NSManagedObjectID) async -> Void {
+        guard let object = persistenceHelper.find(with: objectID) else {
+            await self.spotlightHelper.removeFromIndex(identifier: objectID.uriRepresentation().absoluteString)
+            logger.log("Removed from index: \(objectID)")
+            return
+        }
+        
+        if let article = object as? Article {
+            let articleAttributeSet = SpotlightAttributeSet(uid: article.objectID.uriRepresentation().absoluteString,
+                                                            title: article.title,
+                                                            textContent: article.abstract,
+                                                            displayName: article.title,
+                                                            contentDescription: article.journal)
+            
+            await self.spotlightHelper.index([articleAttributeSet])
+        }
+        
+        if let author = object as? Author {
+            let authorName = ToBeCitedNameFormatHelper.formatName(of: author)
+            let authorAttributeSets = SpotlightAttributeSet(uid: author.objectID.uriRepresentation().absoluteString,
+                                                            displayName: authorName,
+                                                            authorNames: [authorName])
+            await self.spotlightHelper.index([authorAttributeSets])
         }
     }
     
-    private func indexArticles() -> Void {
-        logger.log("Indexing \(self.articles.count, privacy: .public) articles")
-        index<Article>(articles, indexName: ToBeCitedConstants.articleIndexName.rawValue)
-    }
-    
-    private func indexAuthors() -> Void {
-        logger.log("Indexing \(self.authors.count, privacy: .public) authors")
-        index<Author>(authors, indexName: ToBeCitedConstants.authorIndexName.rawValue)
-    }
-    
-    private func index<T: NSManagedObject>(_ entities: [T], indexName: String) {
-        let searchableItems: [CSSearchableItem] = entities.compactMap { (entity: T) -> CSSearchableItem? in
-            guard let attributeSet = attributeSet(for: entity) else {
-                self.logger.log("Cannot generate attribute set for \(entity, privacy: .public)")
-                return nil
+    private func addToIndex(article: Article) -> Void {
+        Task {
+            let articleAttributeSet = SpotlightAttributeSet(uid: article.objectID.uriRepresentation().absoluteString,
+                                                            title: article.title,
+                                                            textContent: article.abstract,
+                                                            displayName: article.title,
+                                                            contentDescription: article.journal)
+            
+            await self.spotlightHelper.index([articleAttributeSet])
+            
+            if let authors = article.authors {
+                let authorAttributeSets = authors.compactMap { author in
+                    if let author = author as? Author {
+                        let authorName = ToBeCitedNameFormatHelper.formatName(of: author)
+                        return SpotlightAttributeSet(uid: author.objectID.uriRepresentation().absoluteString,
+                                                     displayName: authorName,
+                                                     authorNames: [authorName])
+                    } else {
+                        return nil
+                    }
+                }
+                
+                await self.spotlightHelper.index(authorAttributeSets)
             }
-            return CSSearchableItem(uniqueIdentifier: entity.objectID.uriRepresentation().absoluteString, domainIdentifier: ToBeCitedConstants.domainIdentifier.rawValue, attributeSet: attributeSet)
-        }
-        
-        logger.log("Adding \(searchableItems.count) items to index=\(indexName, privacy: .public)")
-        
-        CSSearchableIndex(name: indexName).indexSearchableItems(searchableItems) { error in
-            guard let error = error else {
-                return
-            }
-            self.logger.log("Error while indexing \(T.self): \(error.localizedDescription, privacy: .public)")
         }
     }
     
     private func deleteFromIndex(article: Article) -> Void {
         logger.log("Remove \(article, privacy: .public) from the index")
-        remove<Article>(article, from: ToBeCitedConstants.articleIndexName.rawValue)
+        Task {
+            await self.spotlightHelper.deleteFromIndex(article: article)
+        }
+        
     }
     
     private func deleteFromIndex(author: Author) -> Void {
         logger.log("Remove \(author, privacy: .public) from the index")
-        remove<Author>(author, from: ToBeCitedConstants.authorIndexName.rawValue)
-    }
-    
-    private func remove<T: NSManagedObject>(_ entity: T, from indexName: String) -> Void {
-        let identifier = entity.objectID.uriRepresentation().absoluteString
-        
-        CSSearchableIndex(name: indexName).deleteSearchableItems(withIdentifiers: [identifier]) { error in
-            self.logger.log("Can't delete an item with identifier=\(identifier, privacy: .public)")
+        Task {
+            await self.spotlightHelper.deleteFromIndex(author: author)
         }
-    }
-    
-    private func attributeSet(for object: NSManagedObject) -> CSSearchableItemAttributeSet? {
-        if let article = object as? Article {
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
-            attributeSet.title = article.title
-            attributeSet.textContent = article.abstract
-            attributeSet.displayName = article.title
-            attributeSet.contentDescription = article.journal
-            return attributeSet
-        }
-        if let author = object as? Author {
-            let authorName = ToBeCitedNameFormatHelper.formatName(of: author)
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .text)
-            attributeSet.title = authorName
-            attributeSet.displayName = authorName
-            return attributeSet
-        }
-        return nil
     }
     
     func searchArticle() -> Void {
@@ -689,27 +852,38 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     private func searchArticles() {
         let escapedText = articleSearchString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
         let queryString = "(title == \"*\(escapedText)*\"cd) || (textContent == \"*\(escapedText)*\"cd)"
+        let queryContext = CSUserQueryContext()
+        queryContext.fetchAttributes = ["title", "textContent"]
+        queryContext.maxSuggestionCount = 10
         
-        articleSearchQuery = CSSearchQuery(queryString: queryString, attributes: ["title", "textContent"])
+        articleSearchQuery = CSUserQuery(queryString: queryString, queryContext: queryContext)
         
-        articleSearchQuery?.foundItemsHandler = { items in
-            DispatchQueue.main.async {
-                self.spotlightFoundArticles += items
-            }
+        guard let articleSearchQuery = articleSearchQuery else {
+            logger.log("articleSearchQuery is null")
+            return
         }
         
-        articleSearchQuery?.completionHandler = { error in
-            if let error = error {
-                self.logger.log("Searching \(self.articleSearchString) came back with error: \(error.localizedDescription, privacy: .public)")
-            } else {
-                DispatchQueue.main.async {
-                    self.fetchArticles(self.spotlightFoundArticles)
-                    self.spotlightFoundArticles.removeAll()
+        logger.log("searchArticles: \(queryString, privacy: .public)")
+        
+        Task {
+            do {
+                for try await item in articleSearchQuery.responses {
+                    switch item {
+                    case .item(let item):
+                        self.spotlightFoundArticles += [item.item]
+                    case .suggestion(let suggestion):
+                        self.articleSuggestions += [String(suggestion.suggestion.localizedAttributedSuggestion.characters)]
+                    @unknown default:
+                        break
+                    }
                 }
+                
+                self.fetchArticles(self.spotlightFoundArticles)
+                self.spotlightFoundArticles.removeAll()
+            } catch {
+                self.logger.log("Searching \(self.articleSearchString) came back with error: \(error.localizedDescription, privacy: .public)")
             }
         }
-        
-        articleSearchQuery?.start()
     }
     
     private func fetchArticles(_ items: [CSSearchableItem]) {
@@ -739,28 +913,39 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
     
     private func searchAuthors() {
         let escapedText = authorSearchString.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
-        let queryString = "(title == \"*\(escapedText)*\"cd)"
+        let queryString = "(authorNames == \"*\(escapedText)*\"cd)"
+        let queryContext = CSUserQueryContext()
+        queryContext.fetchAttributes = ["authorNames", "displayName"]
+        queryContext.maxSuggestionCount = 10
+        
+        authorSearchQuery = CSUserQuery(queryString: queryString, queryContext: queryContext)
+        
+        guard let authorSearchQuery = authorSearchQuery else {
+            logger.log("authorSearchQuery is null")
+            return
+        }
+        
         logger.log("searchAuthors: \(queryString, privacy: .public)")
-        authorSearchQuery = CSSearchQuery(queryString: queryString, attributes: ["title"])
         
-        authorSearchQuery?.foundItemsHandler = { items in
-            DispatchQueue.main.async {
-                self.spotlightFoundAuthors += items
-            }
-        }
-        
-        authorSearchQuery?.completionHandler = { error in
-            if let error = error {
-                self.logger.log("Searching \(self.authorSearchString) came back with error: \(error.localizedDescription, privacy: .public)")
-            } else {
-                DispatchQueue.main.async {
-                    self.fetchAuthors(self.spotlightFoundAuthors)
-                    self.spotlightFoundAuthors.removeAll()
+        Task {
+            do {
+                for try await item in authorSearchQuery.responses {
+                    switch item {
+                    case .item(let item):
+                        self.spotlightFoundAuthors += [item.item]
+                    case .suggestion(let suggestion):
+                        self.authorSuggestions += [String(suggestion.suggestion.localizedAttributedSuggestion.characters)]
+                    @unknown default:
+                        break
+                    }
                 }
+                
+                self.fetchAuthors(self.spotlightFoundAuthors)
+                self.spotlightFoundAuthors.removeAll()
+            } catch {
+                self.logger.log("Searching \(self.authorSearchString) came back with error: \(error.localizedDescription, privacy: .public)")
             }
         }
-        
-        authorSearchQuery?.start()
     }
     
     private func fetchAuthors(_ items: [CSSearchableItem]) {
@@ -781,30 +966,50 @@ class ToBeCitedViewModel: NSObject, ObservableObject {
         }
     }
     
+    public func stopIndexing() {
+        Task {
+            await spotlightHelper.stopIndexing()
+        }
+    }
+    
+    public func startIndexing() {
+        Task {
+            await spotlightHelper.startIndexing()
+        }
+    }
+    
     // TODO:
-    func continueActivity(_ activity: NSUserActivity, completionHandler: @escaping (NSManagedObject) -> Void) {
+    @available(*, renamed: "continueActivity(_:)")
+    func continueActivity(_ activity: NSUserActivity, completionHandler: @escaping (NSManagedObject?) -> Void) {
+        Task {
+            let result = await continueActivity(activity)
+            completionHandler(result)
+        }
+    }
+    
+    func continueActivity(_ activity: NSUserActivity) async -> NSManagedObject? {
         logger.log("continueActivity: \(activity)")
         guard let info = activity.userInfo, let objectIdentifier = info[CSSearchableItemActivityIdentifier] as? String else {
-            return
+            return nil
         }
-
+        
         guard let objectURI = URL(string: objectIdentifier), let entity = persistenceHelper.find(for: objectURI) else {
             logger.log("Can't find an object with objectIdentifier=\(objectIdentifier)")
-            return
+            return nil
         }
         
         logger.log("entity = \(entity)")
         
-        DispatchQueue.main.async {
+        return await withCheckedContinuation { continuation in
             if let article = entity as? Article {
                 self.selectedTab = .articles
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    completionHandler(article)
+                    continuation.resume(returning: article)
                 }
             } else if let author = entity as? Author {
                 self.selectedTab = .authors
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    completionHandler(author)
+                    continuation.resume(returning: author)
                 }
             }
         }

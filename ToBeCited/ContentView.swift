@@ -16,34 +16,31 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $viewModel.selectedTab) {
-            ArticleListView()
-                .tabItem {
-                    Label("Articles", systemImage: "doc.on.doc")
-                }
-                .tag(ToBeCitedTab.articles)
+            Tab("Articles", systemImage: "doc.on.doc", value: .articles) {
+                ArticleListView()
+                    .environment(\.managedObjectContext, viewContext)
+                    .environmentObject(viewModel)
+            }
             
-            AuthorListView()
-                .tabItem {
-                    Label("Authors", systemImage: "person.3")
-                }
-                .tag(ToBeCitedTab.authors)
+            Tab("Authors", systemImage: "person.3", value: .authors) {
+                AuthorListView()
+                    .environment(\.managedObjectContext, viewContext)
+                    .environmentObject(viewModel)
+            }
             
-            CollectionListView()
-                .tabItem {
-                    Label("Collections", systemImage: "square.stack.3d.up")
-                }
-                .tag(ToBeCitedTab.collections)
+            Tab("Collections", systemImage: "square.stack.3d.up", value: .collections) {
+                CollectionListView()
+                    .environment(\.managedObjectContext, viewContext)
+                    .environmentObject(viewModel)
+            }
         }
         .alert("Failed to save data", isPresented: $viewModel.showAlert) {
             Button("Dismiss", role: .cancel) {
                 //
             }
         }
-        .onChange(of: viewModel.risString) { _ in
-            presentAddRISView = true
-        }
-        .onChange(of: viewModel.selectedTab) { _ in
-            viewModel.fetchAll()
+        .onChange(of: viewModel.risString) {
+            presentAddRISView = !viewModel.risString.isEmpty
         }
         .sheet(isPresented: $presentAddRISView) {
             AddRISView(risString: viewModel.risString)

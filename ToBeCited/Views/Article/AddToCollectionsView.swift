@@ -30,19 +30,7 @@ struct AddToCollectionsView: View {
                                 collectionsToAdd.append(collection)
                             }
                         } label: {
-                            VStack {
-                                HStack {
-                                    Text(name)
-                                    Spacer()
-                                }
-                                
-                                HStack {
-                                    Spacer()
-                                    Text(collection.lastupd ?? Date(), style: .date)
-                                        .font(.callout)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
+                            collectionRowView(name: name, lastupd: collection.lastupd ?? Date())
                         }
                     }
                 }
@@ -79,23 +67,11 @@ struct AddToCollectionsView: View {
             ForEach(viewModel.allCollections) { collection in
                 if let name = collection.name, name != "" {
                     Button {
-                        if let collections = article.collections, !collections.contains(collection) {
+                        if let collections = article.collections, !collections.contains(collection) && collectionsToAdd.firstIndex(of: collection) == nil {
                             collectionsToAdd.append(collection)
                         }
                     } label: {
-                        VStack {
-                            HStack {
-                                Text(name)
-                                Spacer()
-                            }
-                            
-                            HStack {
-                                Spacer()
-                                Text(collection.lastupd ?? Date(), style: .date)
-                                    .font(.callout)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
+                        collectionRowView(name: name, lastupd: collection.lastupd ?? Date())
                     }
                 }
             }
@@ -106,5 +82,20 @@ struct AddToCollectionsView: View {
         viewModel.add(article: article, to: collectionsToAdd)
     }
     
+    private func collectionRowView(name: String, lastupd: Date) -> some View {
+        VStack {
+            HStack {
+                Text(name)
+                Spacer()
+            }
+            
+            HStack {
+                Spacer()
+                Text(lastupd, style: .date)
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
 }
 

@@ -6,11 +6,11 @@
 //
 
 import Foundation
-import CoreData
+@preconcurrency import CoreData
 import os
 import Persistence
 
-class PersistenceHelper {
+final class PersistenceHelper: Sendable {
     private static let logger = Logger()
     
     private let persistence: Persistence
@@ -32,19 +32,23 @@ class PersistenceHelper {
         return fetchedEntities
     }
     
-    func getSpotlightDelegate<T: NSCoreDataCoreSpotlightDelegate>() -> T? {
+    nonisolated func getSpotlightDelegate<T: NSCoreDataCoreSpotlightDelegate>() -> T? {
         return persistence.createCoreSpotlightDelegate()
     }
     
-    func save(completionHandler: @escaping (Result<Void,Error>) -> Void) -> Void {
-        persistence.save { result in
-            switch result {
-            case .success(_):
-                completionHandler(.success(()))
-            case .failure(let error):
-                PersistenceHelper.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
-                completionHandler(.failure(error))
-            }
+    // TODO: - Cannot use persistence.save()
+    @MainActor func save() async throws {
+        guard viewContext.hasChanges else {
+            PersistenceHelper.logger.debug("There are no changes to save")
+            return
+        }
+        
+        do {
+            try viewContext.save()
+            return
+        } catch let error {
+            PersistenceHelper.logger.log("Error while saving data: \(Thread.callStackSymbols, privacy: .public)")
+            throw error
         }
     }
     
@@ -162,11 +166,19 @@ class PersistenceHelper {
             PersistenceHelper.logger.log("objectID is nil for url=\(url)")
             return nil
         }
+        return find(with: objectID)
+    }
+    
+    func find(with objectID: NSManagedObjectID) -> NSManagedObject? {
         return viewContext.object(with: objectID)
     }
     
     func perform(_ block: @escaping () -> Void) -> Void {
         viewContext.perform(block)
+    }
+    
+    func performAndWait(_ block: @escaping () -> Void) -> Void {
+        viewContext.performAndWait(block)
     }
     
     func getFetchRequest<Entity: NSFetchRequestResult>(for type: Entity.Type, entityName: String, sortDescriptors: [NSSortDescriptor] = [], predicate: NSPredicate? = nil) -> NSFetchRequest<Entity> {

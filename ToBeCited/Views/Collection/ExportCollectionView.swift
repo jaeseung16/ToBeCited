@@ -76,13 +76,6 @@ struct ExportCollectionView: View {
         }
     }
     
-    private func stringToExport(for risContent: String) -> String {
-        if let ris = viewModel.parse(risString: risContent), !ris.isEmpty {
-            return ris[0].description
-        }
-        return ""
-    }
-    
     private func templatePickerView() -> some View {
         VStack {
             Text("Selected: \(exportOrder.description)")
@@ -93,8 +86,10 @@ struct ExportCollectionView: View {
                 }
             }
             .pickerStyle(InlinePickerStyle())
-            .onChange(of: exportOrder) { _ in
-                viewModel.export(collection: collection, with: exportOrder)
+            .onChange(of: exportOrder) {
+                Task {
+                    await viewModel.export(collection: collection, with: exportOrder)
+                }
             }
         }
     }

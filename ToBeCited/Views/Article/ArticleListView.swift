@@ -9,19 +9,11 @@ import SwiftUI
 import CoreSpotlight
 
 struct ArticleListView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var presentAddArticleView = false
     @State private var presentFilterArticleView = false
-    
-    private var publishedIn: String {
-        if let selectedPublishedIn = viewModel.selectedPublishedIn {
-            return "\(selectedPublishedIn)"
-        } else {
-            return ""
-        }
-    }
-    
     @State private var selectedArticle: Article?
     
     private var filteredArticles: [Article] {
@@ -47,20 +39,22 @@ struct ArticleListView: View {
     }
     
     var body: some View {
-        NavigationView {
-            List {
+        NavigationSplitView {
+            List(selection: $selectedArticle) {
                 ForEach(filteredArticles) { article in
-                    NavigationLink(tag: article, selection: $selectedArticle) {
-                        ArticleDetailView(article: article,
-                                          title: article.title ?? "Title is not available",
-                                          published: article.published ?? Date())
-                    } label: {
+                    NavigationLink(value: article) {
                         ArticleRowView(article: article)
                     }
                 }
                 .onDelete(perform: deleteArticles)
             }
             .searchable(text: $viewModel.articleSearchString)
+            .searchSuggestions({
+                ForEach($viewModel.articleSuggestions, id: \.self) { suggestion in
+                    Text(suggestion.wrappedValue)
+                        .searchCompletion(suggestion.wrappedValue)
+                }
+            })
             .navigationTitle(Text("Articles"))
             .toolbar {
                 ToolbarItemGroup {
@@ -81,9 +75,18 @@ struct ArticleListView: View {
                     }
                 }
             }
-        }
-        .onChange(of: viewModel.articleSearchString) { newValue in
-            viewModel.searchArticle()
+            .refreshable {
+                viewModel.fetchAll()
+            }
+        } detail: {
+            if let article = selectedArticle {
+                ArticleDetailView(article: article,
+                                  title: article.title ?? "Title is not available",
+                                  published: article.published ?? Date())
+                .id(article)
+                .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
+            }
         }
         .sheet(isPresented: $presentAddArticleView) {
             AddRISView()
@@ -94,11 +97,16 @@ struct ArticleListView: View {
                 .environmentObject(viewModel)
         }
         .onContinueUserActivity(CSSearchableItemActionType) { activity in
-            viewModel.continueActivity(activity) { entity in
-                if let article = entity as? Article {
+            Task(priority: .userInitiated) {
+                if let article = await viewModel.continueActivity(activity) as? Article {
                     viewModel.articleSearchString = article.title ?? ""
                     selectedArticle = article
                 }
+            }
+        }
+        .onAppear() {
+            if viewModel.selectedTab != .articles {
+                viewModel.selectedTab = .articles
             }
         }
     }
@@ -106,6 +114,7 @@ struct ArticleListView: View {
     private func deleteArticles(offsets: IndexSet) {
         withAnimation {
             viewModel.delete(offsets.map { filteredArticles[$0] } )
+            selectedArticle = nil
         }
     }
     

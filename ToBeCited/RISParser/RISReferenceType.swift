@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum RISReferenceType: String {
+public enum RISReferenceType: String, Sendable {
     case ABST // "Abstract"
     case ADVS // "Audiovisual material"
     case AGGR // "Aggregated Database"

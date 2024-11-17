@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CollectionListView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var presentAddCollectionView = false
@@ -25,20 +26,15 @@ struct CollectionListView: View {
         }
     }
     
+    @State private var selectedCollection: Collection?
+    
     var body: some View {
-        NavigationView {
-            List {
+        NavigationSplitView {
+            List(selection: $selectedCollection) {
                 ForEach(filteredCollections) { collection in
-                    if let name = collection.name, name != "" {
-                        NavigationLink(destination: CollectionDetailView(collection: collection, collectionName: name)) {
-                            HStack {
-                                Text(name)
-                                Spacer()
-                                Label("\(collection.articles?.count ?? 0)", systemImage: "doc.on.doc")
-                                    .font(.callout)
-                                    .foregroundColor(Color.secondary)
-                            }
-                        }
+                    NavigationLink(value: collection) {
+                        CollectionRowView(collection: collection)
+                            .id(collection)
                     }
                 }
                 .onDelete(perform: deleteCollections)
@@ -47,23 +43,39 @@ struct CollectionListView: View {
             .searchable(text: $titleToSearch)
             .toolbar {
                 ToolbarItem {
-                    Button(action: {
+                    Button {
                         presentAddCollectionView = true
-                    }) {
+                    } label: {
                         Label("Add Collection", systemImage: "plus")
                     }
                 }
+            }
+            .refreshable {
+                viewModel.fetchAll()
+            }
+        } detail: {
+            if let collection = selectedCollection {
+                CollectionDetailView(collection: collection, collectionName: collection.name ?? "")
+                    .id(collection)
+                    .environment(\.managedObjectContext, viewContext)
+                    .environmentObject(viewModel)
             }
         }
         .sheet(isPresented: $presentAddCollectionView) {
             AddCollectionView()
                 .environmentObject(viewModel)
         }
+        .onAppear() {
+            if viewModel.selectedTab != .collections {
+                viewModel.selectedTab = .collections
+            }
+        }
     }
     
     private func deleteCollections(offsets: IndexSet) {
         withAnimation {
             viewModel.delete(offsets.map { filteredCollections[$0] })
+            selectedCollection = nil
         }
     }
 }

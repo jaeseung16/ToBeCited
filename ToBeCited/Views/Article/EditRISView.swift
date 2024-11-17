@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EditRISView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     var ris: RIS
@@ -22,9 +23,9 @@ struct EditRISView: View {
             Divider()
             
             TextEditor(text: $content)
-                .onChange(of: content, perform: { _ in
+                .onChange(of: content) {
                     enableSaveButton = true
-                })
+                }
                 .disableAutocorrection(true)
                 .multilineTextAlignment(.leading)
                 .lineSpacing(10)
@@ -36,39 +37,38 @@ struct EditRISView: View {
     }
     
     private func header() -> some View {
-        ZStack {
-            HStack {
-                Spacer()
-                Text("Edit RIS")
-                Spacer()
+        HStack {
+            Button {
+                dismiss.callAsFunction()
+            } label: {
+                Text("Cancel")
             }
             
-            HStack {
-                Button {
-                    dismiss.callAsFunction()
-                } label: {
-                    Text("Cancel")
-                }
-                
-                Spacer()
-                
-                Button {
-                    update()
-                    dismiss.callAsFunction()
-                } label: {
-                    Text("Save")
-                }
-                .disabled(!enableSaveButton)
+            Spacer()
+            
+            Button {
+                update()
+                dismiss.callAsFunction()
+            } label: {
+                Text("Save")
             }
+            .disabled(!enableSaveButton)
         }
     }
     
     private func update() -> Void {
-        ris.content = content
-        viewModel.saveAndFetch() { success in
-            if !success {
-                viewModel.log("Failed to update RIS")
+        viewContext.perform {
+            ris.content = content
+
+            Task {
+                do {
+                    try await viewModel.save()
+                } catch {
+                    viewModel.log("Failed to update RIS: \(error.localizedDescription)")
+                }
             }
+            
+            viewModel.fetchAll()
         }
     }
 }

@@ -59,21 +59,30 @@ struct EditAuthorsView: View {
     }
     
     private func header() -> some View {
-        HStack {
-            Button {
-                dismiss.callAsFunction()
-            } label: {
-                Text("Cancel")
+        ZStack {
+            HStack {
+                Spacer()
+                Text("AUTHORS")
+                    .font(.headline)
+                Spacer()
             }
-
-            Spacer()
             
-            Button(action: {
-                viewModel.update(article: article, with: authors)
-                dismiss.callAsFunction()
-            }, label: {
-                Text("Save")
-            })
+            HStack {
+                Button {
+                    dismiss.callAsFunction()
+                } label: {
+                    Text("Cancel")
+                }
+
+                Spacer()
+                
+                Button {
+                    viewModel.update(article: article, with: authors)
+                    dismiss.callAsFunction()
+                } label: {
+                    Text("Save")
+                }
+            }
         }
     }
     

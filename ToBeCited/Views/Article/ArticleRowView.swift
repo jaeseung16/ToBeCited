@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct ArticleRowView: View {
-    @EnvironmentObject private var viewModel: ToBeCitedViewModel
-    
-    @State var article: Article
+    @ObservedObject var article: Article
     
     var body: some View {
         VStack {

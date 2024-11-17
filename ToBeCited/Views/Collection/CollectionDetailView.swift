@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CollectionDetailView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State var collection: Collection
@@ -33,44 +34,7 @@ struct CollectionDetailView: View {
             
             Divider()
             
-            HStack {
-                Button {
-                    collectionName = collection.name ?? ""
-                    
-                    edited = false
-                } label: {
-                    Label("CANCEL", systemImage: "gobackward")
-                }
-                .disabled(!edited)
-                
-                Button {
-                    collection.name = collectionName
-                    
-                    viewModel.saveAndFetch()
-                    
-                    edited = false
-                } label: {
-                    Label("SAVE", systemImage: "square.and.arrow.down")
-                }
-                .disabled(!edited)
-                
-                Spacer()
-            }
-            
-            HStack {
-                Text("NAME")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                
-                TextField("\(collection.name ?? "N/A")", text: $collectionName, prompt: nil)
-                    .onSubmit {
-                        if collectionName == "" {
-                            collectionName = collection.name ?? "N/A"
-                        } else {
-                            edited = true
-                        }
-                    }
-            }
+            info()
             
             Divider()
             
@@ -91,26 +55,30 @@ struct CollectionDetailView: View {
                 }
             }
 
-            List {
-                ForEach(ordersInCollection) { order in
-                    if let article = order.article {
-                        NavigationLink {
-                            if let article = order.article {
-                                ArticleSummaryView(article: article)
-                            }
-                        } label: {
-                            HStack {
-                                Text("\(order.order + 1)")
-                                
-                                Spacer()
-                                    .frame(width: 20)
-                                
-                                ArticleRowView(article: article)
+            NavigationStack {
+                List {
+                    ForEach(ordersInCollection) { order in
+                        if let article = order.article {
+                            NavigationLink(value: order) {
+                                HStack {
+                                    Text("\(order.order + 1)")
+                                    
+                                    Spacer()
+                                        .frame(width: 20)
+                                    
+                                    ArticleRowView(article: article)
+                                }
                             }
                         }
                     }
+                    .onDelete(perform: delete)
                 }
-                .onDelete(perform: delete)
+                .navigationDestination(for: OrderInCollection.self) { order in
+                    if let article = order.article {
+                        ArticleSummaryView(article: article)
+                    }
+                }
+                .listStyle(PlainListStyle())
             }
         }
         .navigationTitle(collection.name ?? "")
@@ -135,11 +103,66 @@ struct CollectionDetailView: View {
                 Spacer()
                 
                 Button {
-                    viewModel.export(collection: collection)
-                    presentExportCollectionView = true
+                    Task {
+                        await viewModel.export(collection: collection)
+                        presentExportCollectionView = true
+                    }
                 } label: {
                     Label("EXPORT", systemImage: "square.and.arrow.up")
                 }
+            }
+        }
+    }
+    
+    private func info() -> some View {
+        VStack {
+            HStack {
+                Button {
+                    collectionName = collection.name ?? ""
+                    
+                    edited = false
+                } label: {
+                    Label("CANCEL", systemImage: "gobackward")
+                }
+                .disabled(!edited)
+                
+                Button {
+                    viewContext.perform {
+                        collection.name = collectionName
+                        
+                        Task {
+                            do {
+                                try await viewModel.save()
+                            } catch {
+                                viewModel.log("Failed to save first name: \(error.localizedDescription)")
+                            }
+                            
+                            viewModel.fetchAll()
+                        }
+                    }
+                    
+                    edited = false
+                } label: {
+                    Label("SAVE", systemImage: "square.and.arrow.down")
+                }
+                .disabled(!edited)
+                
+                Spacer()
+            }
+            
+            HStack {
+                Text("NAME")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                TextField("\(collection.name ?? "N/A")", text: $collectionName, prompt: nil)
+                    .onSubmit {
+                        if collectionName == "" {
+                            collectionName = collection.name ?? "N/A"
+                        } else {
+                            edited = true
+                        }
+                    }
             }
         }
     }

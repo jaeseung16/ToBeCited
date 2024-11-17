@@ -9,6 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ArticleDetailView: View, DropDelegate {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     @State private var importPdf = false
@@ -18,7 +19,6 @@ struct ArticleDetailView: View, DropDelegate {
     @State private var pdfData = Data()
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
-    @State private var presentSelectReferenceView = false
     @State private var presentAddToCollectionsView = false
     @State private var presentImportCollectionAsReferences = false
     
@@ -106,10 +106,6 @@ struct ArticleDetailView: View, DropDelegate {
                 showErrorAlert = true
             }
         }
-        .sheet(isPresented: $presentSelectReferenceView) {
-            SelectReferencesView(article: article, references: references)
-                .environmentObject(viewModel)
-        }
         .sheet(isPresented: $presentAddToCollectionsView) {
             AddToCollectionsView(article: article)
                 .environmentObject(viewModel)
@@ -137,6 +133,8 @@ struct ArticleDetailView: View, DropDelegate {
                     
                     NavigationLink {
                         EditRISView(ris: ris, content: content)
+                            .environment(\.managedObjectContext, viewContext)
+                            .environmentObject(viewModel)
                             .navigationTitle(title)
                     } label: {
                         Label("Edit", systemImage: "pencil.circle")
@@ -169,7 +167,7 @@ struct ArticleDetailView: View, DropDelegate {
                 .disabled(!pdfExists)
                 
                 NavigationLink {
-                    PDFKitView(pdfData: article.pdf ?? Data())
+                    PDFReadView(pdfData: article.pdf ?? Data())
                         .navigationTitle(title)
                 } label: {
                     Label("Open", systemImage: "eye")
@@ -184,10 +182,15 @@ struct ArticleDetailView: View, DropDelegate {
     
     private func updatePDF() -> Void {
         if !pdfData.isEmpty {
-            article.pdf = pdfData
-            viewModel.save() { success in
-                if !success {
-                    viewModel.log("Failed to save pdf")
+            viewContext.perform {
+                article.pdf = pdfData
+                
+                Task {
+                    do {
+                        try await viewModel.save()
+                    } catch {
+                        viewModel.log("Failed to save pdf: \(error.localizedDescription)")
+                    }
                 }
             }
         }
@@ -216,11 +219,18 @@ struct ArticleDetailView: View, DropDelegate {
     
     private func updateTitle() -> Void {
         if !title.isEmpty {
-            article.title = title
-            viewModel.saveAndFetch() { success in
-                if !success {
-                    viewModel.log("Failed to save title")
+            viewContext.perform {
+                article.title = title
+                
+                Task {
+                    do {
+                        try await viewModel.save()
+                    } catch {
+                        viewModel.log("Failed to update title: \(error.localizedDescription)")
+                    }
                 }
+                
+                // TODO: Fetch after save?
             }
         }
     }
@@ -267,18 +277,25 @@ struct ArticleDetailView: View, DropDelegate {
             DatePicker("", selection: $published, displayedComponents: [.date])
                 .datePickerStyle(DefaultDatePickerStyle())
                 .labelsHidden()
-                .onChange(of: published) { _ in
+                .onChange(of: published) {
                     updatePublished()
                 }
         }
     }
     
     private func updatePublished() -> Void {
-        article.published = published
-        viewModel.save() { success in
-            if !success {
-                viewModel.log("Failed to save published")
+        viewContext.perform {
+            article.published = published
+            
+            Task {
+                do {
+                    try await viewModel.save()
+                } catch {
+                    viewModel.log("Failed to update published: \(error.localizedDescription)")
+                }
             }
+            
+            // TODO: Fetch after save?
         }
     }
     
@@ -324,6 +341,8 @@ struct ArticleDetailView: View, DropDelegate {
                 
                 NavigationLink {
                     EditAuthorsView(article: article, authors: authors)
+                        .environmentObject(viewModel)
+                        .navigationTitle(title)
                 } label: {
                     Label("edit", systemImage: "pencil.circle")
                 }
@@ -348,6 +367,9 @@ struct ArticleDetailView: View, DropDelegate {
                 
                 NavigationLink {
                     EditAbstractView(article: article, abstract: article.abstract ?? "")
+                        .environment(\.managedObjectContext, viewContext)
+                        .environmentObject(viewModel)
+                        .navigationTitle(title)
                 } label: {
                     Label("edit", systemImage: "pencil.circle")
                 }
@@ -373,8 +395,11 @@ struct ArticleDetailView: View, DropDelegate {
                 
                 Spacer()
                 
-                Button {
-                    presentSelectReferenceView = true
+                NavigationLink {
+                    SelectReferencesView(article: article, references: references)
+                        .environment(\.managedObjectContext, viewContext)
+                        .environmentObject(viewModel)
+                        .navigationTitle(title)
                 } label: {
                     Label("edit", systemImage: "pencil.circle")
                 }
@@ -442,22 +467,20 @@ struct ArticleDetailView: View, DropDelegate {
                 }
             }
             
-            List {
-                ForEach(collections) { collection in
-                    NavigationLink {
-                        CollectionSummaryView(collection: collection)
-                    } label: {
-                        HStack {
-                            Text(collection.name ?? "No title")
-                            Spacer()
-                            Text(collection.created ?? Date(), style: .date)
-                                .font(.callout)
-                                .foregroundColor(.secondary)
+            NavigationStack {
+                List {
+                    ForEach(collections) { collection in
+                        NavigationLink(value: collection) {
+                            CollectionSummaryRowView(collection: collection)
                         }
                     }
                 }
+                .navigationDestination(for: Collection.self) { collection in
+                    CollectionSummaryView(collection: collection)
+                }
+                .listStyle(PlainListStyle())
             }
-            .listStyle(PlainListStyle())
+            .navigationTitle(title)
         }
         .frame(height: 200.0)
     }
@@ -468,16 +491,25 @@ struct ArticleDetailView: View, DropDelegate {
                 itemProvider.loadItem(forTypeIdentifier: UTType.pdf.identifier, options: nil) { url, error in
                     guard let url = url as? URL else {
                         if let error = error {
-                            errorMessage = error.localizedDescription
-                            showErrorAlert = true
+                            Task {
+                                await MainActor.run {
+                                    errorMessage = error.localizedDescription
+                                    showErrorAlert = true
+                                }
+                            }
                         }
                         return
                     }
 
                     let _ = url.startAccessingSecurityScopedResource()
                     if let data = try? Data(contentsOf: url) {
-                        self.pdfData = data
-                        self.updatePDF()
+                        Task {
+                            await MainActor.run {
+                                pdfData = data
+                                updatePDF()
+                            }
+                        }
+                        
                     }
                     url.stopAccessingSecurityScopedResource()
                 }

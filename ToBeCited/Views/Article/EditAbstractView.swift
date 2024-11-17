@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EditAbstractView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
     
     var article: Article
@@ -22,9 +23,9 @@ struct EditAbstractView: View {
             Divider()
             
             TextEditor(text: $abstract)
-                .onChange(of: abstract, perform: { _ in
+                .onChange(of: abstract) {
                     enableSaveButton = true
-                })
+                }
                 .disableAutocorrection(true)
                 .multilineTextAlignment(.leading)
                 .lineSpacing(10)
@@ -39,7 +40,8 @@ struct EditAbstractView: View {
         ZStack {
             HStack {
                 Spacer()
-                Text("Edit Abstract")
+                Text("ABSTRACT")
+                    .font(.headline)
                 Spacer()
             }
             
@@ -64,11 +66,18 @@ struct EditAbstractView: View {
     }
     
     private func update() -> Void {
-        article.abstract = abstract
-        viewModel.saveAndFetch() { success in
-            if !success {
-                viewModel.log("Failed to update abstract")
+        viewContext.perform {
+            article.abstract = abstract
+
+            Task {
+                do {
+                    try await viewModel.save()
+                } catch {
+                    viewModel.log("Failed to update abstract: \(error.localizedDescription)")
+                }
             }
+            
+            viewModel.fetchAll()
         }
     }
 }

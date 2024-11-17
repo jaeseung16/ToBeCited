@@ -9,8 +9,11 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct PDFFile: FileDocument {
-    static var readableContentTypes = [UTType.pdf]
-    static var writableContentTypes = [UTType.pdf]
+    static var readableContentTypes: [UTType] {
+        return [.pdf]
+    }
+    
+    static let writableContentTypes = [UTType.pdf]
 
     var pdfData = Data()
 

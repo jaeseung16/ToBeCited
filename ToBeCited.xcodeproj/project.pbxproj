@@ -36,6 +36,7 @@
 		9080FBBD2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9080FBBC2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift */; };
 		90A7D5202A76E57600324970 /* ToBeCitedSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A7D51F2A76E57600324970 /* ToBeCitedSpotlight.swift */; };
 		90A7D5222A76F6B200324970 /* PersistenceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A7D5212A76F6B200324970 /* PersistenceHelper.swift */; };
+		90ABEACF2CEA34AE00F6281C /* CollectionRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90ABEACE2CEA34AE00F6281C /* CollectionRowView.swift */; };
 		90B62043271E06BE005D0FEA /* RISReferenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62040271E06BE005D0FEA /* RISReferenceType.swift */; };
 		90B62044271E06BE005D0FEA /* RISTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62041271E06BE005D0FEA /* RISTag.swift */; };
 		90B62045271E06BE005D0FEA /* RISRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B62042271E06BE005D0FEA /* RISRecord.swift */; };
@@ -44,11 +45,14 @@
 		90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */; };
 		90B6204D271E2C96005D0FEA /* RISWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B6204C271E2C96005D0FEA /* RISWriter.swift */; };
 		90BE389B2750350A005B98C7 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90BE389A2750350A005B98C7 /* CloudKit.framework */; };
+		90C609C52CB1B7C500FDDF11 /* CollectionSummaryRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C609C42CB1B7C500FDDF11 /* CollectionSummaryRowView.swift */; };
 		90C8D7AE2753C7F70063DE71 /* CollectionSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C8D7AD2753C7F70063DE71 /* CollectionSummaryView.swift */; };
 		90C8D7B02753C99A0063DE71 /* ArticleSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C8D7AF2753C99A0063DE71 /* ArticleSummaryView.swift */; };
 		90C8D7B22753E36D0063DE71 /* AuthorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C8D7B12753E36D0063DE71 /* AuthorListView.swift */; };
 		90D89A632725A9440079EBD2 /* UpdateTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D89A622725A9440079EBD2 /* UpdateTextView.swift */; };
 		90D89A652725F18E0079EBD2 /* AddContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90D89A642725F18E0079EBD2 /* AddContactView.swift */; };
+		90DA604E2CE952C5004080C9 /* AuthorRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DA604D2CE952C5004080C9 /* AuthorRowView.swift */; };
+		90DBDCCC2CACB340002504D3 /* PDFReadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DBDCCB2CACB340002504D3 /* PDFReadView.swift */; };
 		90DEAF54274ADE8100058AAC /* ArticleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DEAF53274ADE8100058AAC /* ArticleListView.swift */; };
 		90DEAF56274AE2C300058AAC /* FilterArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DEAF55274AE2C300058AAC /* FilterArticleView.swift */; };
 		90EADA21274855D10001E150 /* TextDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EADA20274855D10001E150 /* TextDocument.swift */; };
@@ -68,6 +72,8 @@
 		90FD8419273C5F6B00929EF7 /* SelectReferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FD8418273C5F6B00929EF7 /* SelectReferencesView.swift */; };
 		90FD841C273C8B9200929EF7 /* CollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FD841B273C8B9200929EF7 /* CollectionDetailView.swift */; };
 		90FD841E273C917E00929EF7 /* AddCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FD841D273C917E00929EF7 /* AddCollectionView.swift */; };
+		90FDA85A2CC4451A000E1D95 /* SpotlightHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FDA8592CC4451A000E1D95 /* SpotlightHelper.swift */; };
+		90FDA85C2CC46C19000E1D95 /* SpotlightAttributeSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FDA85B2CC46BFB000E1D95 /* SpotlightAttributeSet.swift */; };
 		90FE9771271F68A1002A75C3 /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */; };
 		90FE9773271F7E62002A75C3 /* AuthorDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FE9772271F7E62002A75C3 /* AuthorDetailView.swift */; };
 /* End PBXBuildFile section */
@@ -119,6 +125,7 @@
 		9080FBBC2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedDateFormatter.swift; sourceTree = "<group>"; };
 		90A7D51F2A76E57600324970 /* ToBeCitedSpotlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToBeCitedSpotlight.swift; sourceTree = "<group>"; };
 		90A7D5212A76F6B200324970 /* PersistenceHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceHelper.swift; sourceTree = "<group>"; };
+		90ABEACE2CEA34AE00F6281C /* CollectionRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionRowView.swift; sourceTree = "<group>"; };
 		90B62040271E06BE005D0FEA /* RISReferenceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RISReferenceType.swift; sourceTree = "<group>"; };
 		90B62041271E06BE005D0FEA /* RISTag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RISTag.swift; sourceTree = "<group>"; };
 		90B62042271E06BE005D0FEA /* RISRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RISRecord.swift; sourceTree = "<group>"; };
@@ -127,11 +134,14 @@
 		90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RISFilePickerViewController.swift; sourceTree = "<group>"; };
 		90B6204C271E2C96005D0FEA /* RISWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RISWriter.swift; sourceTree = "<group>"; };
 		90BE389A2750350A005B98C7 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		90C609C42CB1B7C500FDDF11 /* CollectionSummaryRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionSummaryRowView.swift; sourceTree = "<group>"; };
 		90C8D7AD2753C7F70063DE71 /* CollectionSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionSummaryView.swift; sourceTree = "<group>"; };
 		90C8D7AF2753C99A0063DE71 /* ArticleSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleSummaryView.swift; sourceTree = "<group>"; };
 		90C8D7B12753E36D0063DE71 /* AuthorListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorListView.swift; sourceTree = "<group>"; };
 		90D89A622725A9440079EBD2 /* UpdateTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateTextView.swift; sourceTree = "<group>"; };
 		90D89A642725F18E0079EBD2 /* AddContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactView.swift; sourceTree = "<group>"; };
+		90DA604D2CE952C5004080C9 /* AuthorRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorRowView.swift; sourceTree = "<group>"; };
+		90DBDCCB2CACB340002504D3 /* PDFReadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFReadView.swift; sourceTree = "<group>"; };
 		90DEAF53274ADE8100058AAC /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
 		90DEAF55274AE2C300058AAC /* FilterArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterArticleView.swift; sourceTree = "<group>"; };
 		90EADA20274855D10001E150 /* TextDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDocument.swift; sourceTree = "<group>"; };
@@ -155,6 +165,8 @@
 		90FD8418273C5F6B00929EF7 /* SelectReferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectReferencesView.swift; sourceTree = "<group>"; };
 		90FD841B273C8B9200929EF7 /* CollectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailView.swift; sourceTree = "<group>"; };
 		90FD841D273C917E00929EF7 /* AddCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCollectionView.swift; sourceTree = "<group>"; };
+		90FDA8592CC4451A000E1D95 /* SpotlightHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightHelper.swift; sourceTree = "<group>"; };
+		90FDA85B2CC46BFB000E1D95 /* SpotlightAttributeSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightAttributeSet.swift; sourceTree = "<group>"; };
 		90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
 		90FE9772271F7E62002A75C3 /* AuthorDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -189,6 +201,7 @@
 		900B8F3A2741AE1E00D40347 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				90FDA85B2CC46BFB000E1D95 /* SpotlightAttributeSet.swift */,
 				900B8F3B2741AE3500D40347 /* ToBeCitedViewModel.swift */,
 				900D77032745BB0C00F0416C /* ExportOrder.swift */,
 				90113C1D276BDD32007CE1D2 /* ContactDTO.swift */,
@@ -198,6 +211,7 @@
 				9044F6772A7FDF6A00EB06AE /* ToBeCitedTab.swift */,
 				907CC2CF2A884033001FE531 /* ToBeCitedNameFormatHelper.swift */,
 				90760B482A8917ED00E1536F /* ToBeCitedJournalTitleFormatHelper.swift */,
+				90FDA8592CC4451A000E1D95 /* SpotlightHelper.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -233,6 +247,7 @@
 				90FE9770271F68A1002A75C3 /* ArticleDetailView.swift */,
 				90B6204A271E0B92005D0FEA /* RISFilePickerViewController.swift */,
 				9009B6702720B19F0023C316 /* PDFFilePickerViewController.swift */,
+				90DBDCCB2CACB340002504D3 /* PDFReadView.swift */,
 				9009B6722720B31A0023C316 /* PDFKitView.swift */,
 				90FD8418273C5F6B00929EF7 /* SelectReferencesView.swift */,
 				90F9793F2749A6A8008AD083 /* PDFDocument.swift */,
@@ -257,6 +272,7 @@
 				90EF91ED27584F3300B1CD6F /* AuthorContactView.swift */,
 				90EB0CE6275BD6A0002106B2 /* AuthorNameView.swift */,
 				9012D31F28038FDB00860731 /* AddAuthorToCollectionView.swift */,
+				90DA604D2CE952C5004080C9 /* AuthorRowView.swift */,
 			);
 			path = Author;
 			sourceTree = "<group>";
@@ -351,6 +367,8 @@
 				90EADA20274855D10001E150 /* TextDocument.swift */,
 				90F27EE7275171F80072BAA1 /* CollectionListView.swift */,
 				90C8D7AD2753C7F70063DE71 /* CollectionSummaryView.swift */,
+				90C609C42CB1B7C500FDDF11 /* CollectionSummaryRowView.swift */,
+				90ABEACE2CEA34AE00F6281C /* CollectionRowView.swift */,
 			);
 			path = Collection;
 			sourceTree = "<group>";
@@ -422,7 +440,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1300;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					90EDF31C271C85BD0097F0E0 = {
 						CreatedOnToolsVersion = 13.0;
@@ -506,8 +524,11 @@
 				90306DCC28513F6500DEACB2 /* AppDelegate.swift in Sources */,
 				907CC2D02A884033001FE531 /* ToBeCitedNameFormatHelper.swift in Sources */,
 				90A7D5202A76E57600324970 /* ToBeCitedSpotlight.swift in Sources */,
+				90ABEACF2CEA34AE00F6281C /* CollectionRowView.swift in Sources */,
 				90A7D5222A76F6B200324970 /* PersistenceHelper.swift in Sources */,
+				90FDA85C2CC46C19000E1D95 /* SpotlightAttributeSet.swift in Sources */,
 				9009B6772720CF080023C316 /* ShareActivityView.swift in Sources */,
+				90FDA85A2CC4451A000E1D95 /* SpotlightHelper.swift in Sources */,
 				9009B6712720B19F0023C316 /* PDFFilePickerViewController.swift in Sources */,
 				900B8F3E2741B12700D40347 /* EditCollectionView.swift in Sources */,
 				900B8F39274071B300D40347 /* EditOrderView.swift in Sources */,
@@ -527,6 +548,7 @@
 				90DEAF56274AE2C300058AAC /* FilterArticleView.swift in Sources */,
 				9044F67A2A8032A200EB06AE /* EditAuthorsView.swift in Sources */,
 				90B62044271E06BE005D0FEA /* RISTag.swift in Sources */,
+				90DBDCCC2CACB340002504D3 /* PDFReadView.swift in Sources */,
 				90FD841C273C8B9200929EF7 /* CollectionDetailView.swift in Sources */,
 				902978722739A0AD00D82FE7 /* PreviewController.swift in Sources */,
 				9009B6752720B8220023C316 /* EditAbstractView.swift in Sources */,
@@ -540,10 +562,12 @@
 				9012D32028038FDB00860731 /* AddAuthorToCollectionView.swift in Sources */,
 				90EF91EE27584F3300B1CD6F /* AuthorContactView.swift in Sources */,
 				90B6204B271E0B92005D0FEA /* RISFilePickerViewController.swift in Sources */,
+				90C609C52CB1B7C500FDDF11 /* CollectionSummaryRowView.swift in Sources */,
 				90113C20276BF163007CE1D2 /* AddToCollectionsView.swift in Sources */,
 				9080FBBD2A7EF3DF00B547F1 /* ToBeCitedDateFormatter.swift in Sources */,
 				90113C22276BF73E007CE1D2 /* ImportCollectionAsReferencesView.swift in Sources */,
 				90760B472A89167A00E1536F /* JournalTitleView.swift in Sources */,
+				90DA604E2CE952C5004080C9 /* AuthorRowView.swift in Sources */,
 				900D77042745BB0C00F0416C /* ExportOrder.swift in Sources */,
 				9009B6792721FB640023C316 /* AuthorMergeView.swift in Sources */,
 				9031FE0F278285FB005DADC8 /* EditRISView.swift in Sources */,
@@ -587,6 +611,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -620,6 +645,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -648,6 +674,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -681,6 +708,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -706,7 +734,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ToBeCited/ToBeCited.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 65;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "\"ToBeCited/Preview Content\"";
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_PREVIEWS = YES;
@@ -719,19 +747,19 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.tobecited;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -744,7 +772,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ToBeCited/ToBeCited.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 65;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "\"ToBeCited/Preview Content\"";
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
 				ENABLE_PREVIEWS = YES;
@@ -757,19 +785,19 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.jlee.tobecited;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -778,7 +806,6 @@
 		90EDF34A271C85BF0097F0E0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -803,7 +830,6 @@
 		90EDF34B271C85BF0097F0E0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -828,7 +854,6 @@
 		90EDF34D271C85BF0097F0E0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
@@ -851,7 +876,6 @@
 		90EDF34E271C85BF0097F0E0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U8VSJXRJTQ;
@@ -917,8 +941,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jaeseung16/PersistenceSwift";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = exactVersion;
+				version = 0.2.12;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

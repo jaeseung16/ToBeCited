@@ -10,45 +10,57 @@ import CoreData
 import CoreSpotlight
 
 struct AuthorListView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var viewModel: ToBeCitedViewModel
 
     @State private var selectedAuthor: Author?
     
     var body: some View {
-        NavigationView {
-            List {
+        NavigationSplitView {
+            List(selection: $selectedAuthor) {
                 ForEach(viewModel.authors) { author in
-                    NavigationLink(tag: author, selection: $selectedAuthor) {
-                        AuthorDetailView(author: author,
-                                         firstName: author.firstName ?? "",
-                                         middleName: author.middleName ?? "",
-                                         lastName: author.lastName ?? "",
-                                         nameSuffix: author.nameSuffix ?? "",
-                                         orcid: author.orcid ?? "")
-                    } label: {
-                        HStack {
-                            AuthorNameView(author: author)
-                            Spacer()
-                            Label("\(author.articles?.count ?? 0)", systemImage: "doc.on.doc")
-                                .font(.callout)
-                                .foregroundColor(Color.secondary)
-                        }
+                    NavigationLink(value: author) {
+                        AuthorRowView(author: author)
+                            .id(author)
                     }
                 }
                 .onDelete(perform: deleteAuthors)
             }
-            .navigationTitle(Text("Authors"))
             .searchable(text: $viewModel.authorSearchString)
-        }
-        .onChange(of: viewModel.authorSearchString) { newValue in
-            viewModel.searchAuthor()
+            .searchSuggestions({
+                ForEach($viewModel.authorSuggestions, id: \.self) { suggestion in
+                    Text(suggestion.wrappedValue)
+                        .searchCompletion(suggestion.wrappedValue)
+                }
+            })
+            .navigationTitle(Text("Authors"))
+            .refreshable {
+                viewModel.fetchAll()
+            }
+        } detail: {
+            if let author = selectedAuthor {
+                AuthorDetailView(author: author,
+                                 firstName: author.firstName ?? "",
+                                 middleName: author.middleName ?? "",
+                                 lastName: author.lastName ?? "",
+                                 nameSuffix: author.nameSuffix ?? "",
+                                 orcid: author.orcid ?? "")
+                .id(author)
+                .environment(\.managedObjectContext, viewContext)
+                .environmentObject(viewModel)
+            }
         }
         .onContinueUserActivity(CSSearchableItemActionType) { activity in
-            viewModel.continueActivity(activity) { entity in
-                if let author = entity as? Author {
+            Task(priority: .userInitiated) {
+                if let author = await viewModel.continueActivity(activity) as? Author {
                     viewModel.authorSearchString = ToBeCitedNameFormatHelper.formatName(of: author)
                     selectedAuthor = author
                 }
+            }
+        }
+        .onAppear() {
+            if viewModel.selectedTab != .authors {
+                viewModel.selectedTab = .authors
             }
         }
     }
@@ -56,6 +68,7 @@ struct AuthorListView: View {
     private func deleteAuthors(offsets: IndexSet) {
         withAnimation {
             viewModel.delete(offsets.map { viewModel.authors[$0] } )
+            selectedAuthor = nil
         }
     }
 }
