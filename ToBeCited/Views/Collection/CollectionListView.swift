@@ -33,13 +33,8 @@ struct CollectionListView: View {
             List(selection: $selectedCollection) {
                 ForEach(filteredCollections) { collection in
                     NavigationLink(value: collection) {
-                        HStack {
-                            Text(collection.name ?? "")
-                            Spacer()
-                            Label("\(collection.articles?.count ?? 0)", systemImage: "doc.on.doc")
-                                .font(.callout)
-                                .foregroundColor(Color.secondary)
-                        }
+                        CollectionRowView(collection: collection)
+                            .id(collection)
                     }
                 }
                 .onDelete(perform: deleteCollections)
